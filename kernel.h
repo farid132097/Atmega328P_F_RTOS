@@ -4,7 +4,7 @@
  * Author        : MD. Faridul Islam (faridmdislam@gmail.com)
  * Description   : AVR kernel for bare-metal RTOS
  * Created       : Jul 27, 2025, 9:30 PM
- * Last Modified : Dec 08, 2025, 12:19 AM
+ * Last Modified : Feb 19, 2026, 11:39 AM
  */
 
 
@@ -15,12 +15,18 @@
 
 
 //Enable or disable kernel debug via gpio
-#define  KER_DBG_ENABLE
+//#define  KER_DBG_ENABLE
+
+//Enable or disable kernel tick counter
+//#define  KER_TICK_CNTR_ENABLE
+
+//Enable or disable kernel cpu usage calculation
+//#define  KER_CPU_USAGE_CALC_ENABLE
 
 //Uncomment only one
-#define  KER_TIMER2_AS_TICK_SRC
+//#define  KER_TIMER2_AS_TICK_SRC
 //#define  KER_WDT_AS_TICK_SRC
-//#define  KER_TIMER2_ASYNC_AS_TICK_SRC
+#define  KER_TIMER2_ASYNC_AS_TICK_SRC
 
 //Uncomment only one
 //#define  KER_WDT_TICK_16MS
@@ -32,10 +38,10 @@
 //#define  KER_WDT_TICK_1000MS
 
 //Uncomment only one
-//#define  KER_TOSC_TICK_1MS
+#define  KER_TOSC_TICK_1MS
 //#define  KER_TOSC_TICK_10MS
 //#define  KER_TOSC_TICK_50MS
-#define  KER_TOSC_TICK_100MS
+//#define  KER_TOSC_TICK_100MS
 //#define  KER_TOSC_TICK_250MS
 //#define  KER_TOSC_TICK_500MS
 //#define  KER_TOSC_TICK_1000MS
@@ -50,6 +56,12 @@
 //Add function by calling Kernel_PreSleep_Hook(func_name) before Kernel_Start_Tasks() 
 //#define  KER_CALL_FUNC_BEFORE_SLEEP
 
+//Disable ADC & AC inside kernel before entering sleep
+#define  KER_AUTO_DISABLE_ADC_AC_BEFORE_SLEEP
+
+//Define maximum number of task
+//Higher numbers will allocate larger ram space
+#define  KER_MAX_TASK    5
 
 //Define IO address of the DDR & PORT for debug
 #ifdef   KER_DBG_ENABLE

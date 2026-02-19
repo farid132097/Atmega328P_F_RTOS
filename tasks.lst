@@ -30,7 +30,7 @@
   40               	.L4:
   41               	.LM6:
   42               	/* #APP */
-  43               	 ;  94 "tasks.c" 1
+  43               	 ;  96 "tasks.c" 1
   44 0008 F894      		cli
   45               	 ;  0 "" 2
   46               	.LM7:
@@ -40,13 +40,13 @@
   50 000e 88B9      		out 40-32,r24
   51               	.LM8:
   52               	/* #APP */
-  53               	 ;  96 "tasks.c" 1
+  53               	 ;  98 "tasks.c" 1
   54 0010 7894      		sei
   55               	 ;  0 "" 2
   56               	.LM9:
   57               	/* #NOAPP */
-  58 0012 86E4      		ldi r24,lo8(70)
-  59 0014 90E0      		ldi r25,hi8(70)
+  58 0012 88E2      		ldi r24,lo8(40)
+  59 0014 90E0      		ldi r25,hi8(40)
   60 0016 0E94 0000 		call Kernel_Task_Sleep
   61 001a 00C0      		rjmp .L4
   62               	.LFE11:
@@ -64,7 +64,7 @@
   76               	.L7:
   77               	.LM13:
   78               	/* #APP */
-  79               	 ;  78 "tasks.c" 1
+  79               	 ;  80 "tasks.c" 1
   80 0022 F894      		cli
   81               	 ;  0 "" 2
   82               	.LM14:
@@ -74,13 +74,13 @@
   86 0028 88B9      		out 40-32,r24
   87               	.LM15:
   88               	/* #APP */
-  89               	 ;  80 "tasks.c" 1
+  89               	 ;  82 "tasks.c" 1
   90 002a 7894      		sei
   91               	 ;  0 "" 2
   92               	.LM16:
   93               	/* #NOAPP */
-  94 002c 8CE3      		ldi r24,lo8(60)
-  95 002e 90E0      		ldi r25,hi8(60)
+  94 002c 84E1      		ldi r24,lo8(20)
+  95 002e 90E0      		ldi r25,hi8(20)
   96 0030 0E94 0000 		call Kernel_Task_Sleep
   97 0034 00C0      		rjmp .L7
   98               	.LFE10:
@@ -98,7 +98,7 @@
  112               	.L10:
  113               	.LM20:
  114               	/* #APP */
- 115               	 ;  62 "tasks.c" 1
+ 115               	 ;  64 "tasks.c" 1
  116 003c F894      		cli
  117               	 ;  0 "" 2
  118               	.LM21:
@@ -108,13 +108,13 @@
  122 0042 88B9      		out 40-32,r24
  123               	.LM22:
  124               	/* #APP */
- 125               	 ;  64 "tasks.c" 1
+ 125               	 ;  66 "tasks.c" 1
  126 0044 7894      		sei
  127               	 ;  0 "" 2
  128               	.LM23:
  129               	/* #NOAPP */
- 130 0046 88E2      		ldi r24,lo8(40)
- 131 0048 90E0      		ldi r25,hi8(40)
+ 130 0046 8FE0      		ldi r24,lo8(15)
+ 131 0048 90E0      		ldi r25,hi8(15)
  132 004a 0E94 0000 		call Kernel_Task_Sleep
  133 004e 00C0      		rjmp .L10
  134               	.LFE9:
@@ -132,7 +132,7 @@
  148               	.L13:
  149               	.LM27:
  150               	/* #APP */
- 151               	 ;  46 "tasks.c" 1
+ 151               	 ;  48 "tasks.c" 1
  152 0056 F894      		cli
  153               	 ;  0 "" 2
  154               	.LM28:
@@ -142,13 +142,13 @@
  158 005c 88B9      		out 40-32,r24
  159               	.LM29:
  160               	/* #APP */
- 161               	 ;  48 "tasks.c" 1
+ 161               	 ;  50 "tasks.c" 1
  162 005e 7894      		sei
  163               	 ;  0 "" 2
  164               	.LM30:
  165               	/* #NOAPP */
- 166 0060 84E1      		ldi r24,lo8(20)
- 167 0062 90E0      		ldi r25,hi8(20)
+ 166 0060 8AE0      		ldi r24,lo8(10)
+ 167 0062 90E0      		ldi r25,hi8(10)
  168 0064 0E94 0000 		call Kernel_Task_Sleep
  169 0068 00C0      		rjmp .L13
  170               	.LFE8:
@@ -156,51 +156,87 @@
  174               	Tasks_Task1:
  175               	.LFB7:
  176               	.LM31:
- 177 006a 1F93      		push r17
- 178               	/* prologue: function */
- 179               	/* frame size = 0 */
- 180               	.LM32:
- 181 006c 389A      		sbi 39-32,0
- 182               	.LM33:
- 183 006e 11E0      		ldi r17,lo8(1)
- 184               	.L16:
- 185               	.LM34:
- 186               	/* #APP */
- 187               	 ;  30 "tasks.c" 1
- 188 0070 F894      		cli
- 189               	 ;  0 "" 2
- 190               	.LM35:
- 191               	/* #NOAPP */
- 192 0072 88B1      		in r24,40-32
- 193 0074 8127      		eor r24,r17
- 194 0076 88B9      		out 40-32,r24
- 195               	.LM36:
- 196               	/* #APP */
- 197               	 ;  32 "tasks.c" 1
- 198 0078 7894      		sei
- 199               	 ;  0 "" 2
- 200               	.LM37:
- 201               	/* #NOAPP */
- 202 007a 82E3      		ldi r24,lo8(50)
- 203 007c 90E0      		ldi r25,hi8(50)
- 204 007e 0E94 0000 		call Kernel_Task_Sleep
- 205 0082 00C0      		rjmp .L16
- 206               	.LFE7:
- 272               	.Letext0:
+ 177 006a CF93      		push r28
+ 178 006c DF93      		push r29
+ 179               	/* prologue: function */
+ 180               	/* frame size = 0 */
+ 181               	.LM32:
+ 182 006e 549A      		sbi 42-32,4
+ 183               	.LBB24:
+ 184               	.LBB25:
+ 185               	.LBB26:
+ 186               	.LBB27:
+ 187               	.LBB28:
+ 188               	.LBB29:
+ 189               	.LM33:
+ 190 0070 C0ED      		ldi r28,lo8(2000)
+ 191 0072 D7E0      		ldi r29,hi8(2000)
+ 192               	.L16:
+ 193               	.LBE29:
+ 194               	.LBE28:
+ 195               	.LBE27:
+ 196               	.LBE26:
+ 197               	.LBE25:
+ 198               	.LBE24:
+ 199               	.LM34:
+ 200               	/* #APP */
+ 201               	 ;  30 "tasks.c" 1
+ 202 0074 F894      		cli
+ 203               	 ;  0 "" 2
+ 204               	.LM35:
+ 205               	/* #NOAPP */
+ 206 0076 5C9A      		sbi 43-32,4
+ 207               	.LBB35:
+ 208               	.LBB34:
+ 209               	.LBB33:
+ 210               	.LBB32:
+ 211               	.LBB31:
+ 212               	.LBB30:
+ 213               	.LM36:
+ 214 0078 CE01      		movw r24,r28
+ 215               	.LVL0:
+ 216               	/* #APP */
+ 217               	 ;  105 "c:/winavr-20100110/lib/gcc/../../avr/include/util/delay_basic.h" 1
+ 218 007a 0197      		1: sbiw r24,1
+ 219 007c 01F4      		brne 1b
+ 220               	 ;  0 "" 2
+ 221               	/* #NOAPP */
+ 222               	.LBE30:
+ 223               	.LBE31:
+ 224               	.LBE32:
+ 225               	.LBE33:
+ 226               	.LBE34:
+ 227               	.LBE35:
+ 228               	.LM37:
+ 229 007e 5C98      		cbi 43-32,4
+ 230               	.LM38:
+ 231               	/* #APP */
+ 232               	 ;  34 "tasks.c" 1
+ 233 0080 7894      		sei
+ 234               	 ;  0 "" 2
+ 235               	.LM39:
+ 236               	/* #NOAPP */
+ 237 0082 85E0      		ldi r24,lo8(5)
+ 238 0084 90E0      		ldi r25,hi8(5)
+ 239               	.LVL1:
+ 240 0086 0E94 0000 		call Kernel_Task_Sleep
+ 241 008a 00C0      		rjmp .L16
+ 242               	.LFE7:
+ 308               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 tasks.c
-C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:2      *ABS*:0000003f __SREG__
-C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:3      *ABS*:0000003e __SP_H__
-C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:4      *ABS*:0000003d __SP_L__
-C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:5      *ABS*:00000034 __CCP__
-C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:6      *ABS*:00000000 __tmp_reg__
-C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:7      *ABS*:00000001 __zero_reg__
-C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:18     .text:00000000 Tasks_Disable_Peripherals
-C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:30     .text:00000002 Tasks_Task5
-C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:66     .text:0000001c Tasks_Task4
-C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:102    .text:00000036 Tasks_Task3
-C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:138    .text:00000050 Tasks_Task2
-C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:174    .text:0000006a Tasks_Task1
+C:\Users\WALTON\AppData\Local\Temp/cc9WtidQ.s:2      *ABS*:0000003f __SREG__
+C:\Users\WALTON\AppData\Local\Temp/cc9WtidQ.s:3      *ABS*:0000003e __SP_H__
+C:\Users\WALTON\AppData\Local\Temp/cc9WtidQ.s:4      *ABS*:0000003d __SP_L__
+C:\Users\WALTON\AppData\Local\Temp/cc9WtidQ.s:5      *ABS*:00000034 __CCP__
+C:\Users\WALTON\AppData\Local\Temp/cc9WtidQ.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\WALTON\AppData\Local\Temp/cc9WtidQ.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\WALTON\AppData\Local\Temp/cc9WtidQ.s:18     .text:00000000 Tasks_Disable_Peripherals
+C:\Users\WALTON\AppData\Local\Temp/cc9WtidQ.s:30     .text:00000002 Tasks_Task5
+C:\Users\WALTON\AppData\Local\Temp/cc9WtidQ.s:66     .text:0000001c Tasks_Task4
+C:\Users\WALTON\AppData\Local\Temp/cc9WtidQ.s:102    .text:00000036 Tasks_Task3
+C:\Users\WALTON\AppData\Local\Temp/cc9WtidQ.s:138    .text:00000050 Tasks_Task2
+C:\Users\WALTON\AppData\Local\Temp/cc9WtidQ.s:174    .text:0000006a Tasks_Task1
 
 UNDEFINED SYMBOLS
 Kernel_Task_Sleep

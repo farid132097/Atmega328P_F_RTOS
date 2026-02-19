@@ -22,16 +22,18 @@ void Tasks_Disable_Peripherals(void){
 
 void Tasks_Task1(void){
   
-  DDRC |= (1<<0);
+  DDRD |= (1<<4);
   
   while(1){
     
     //atomic toggle, otherwise another task may interfare
     cli();
-    PORTC ^= (1<<0);
+    PORTD |= (1<<4);
+    _delay_us(1000);
+    PORTD &=~ (1<<4);
     sei();
 
-    Kernel_Task_Sleep(50/KER_TICK_TIME);
+    Kernel_Task_Sleep(5000/KER_TICK_TIME);
     
   }
 }
@@ -47,7 +49,7 @@ void Tasks_Task2(void){
     PORTC ^= (1<<1);
     sei();
     
-    Kernel_Task_Sleep(20/KER_TICK_TIME);
+    Kernel_Task_Sleep(10000/KER_TICK_TIME);
     
   }
 }
@@ -63,7 +65,7 @@ void Tasks_Task3(void){
     PORTC ^= (1<<2);
     sei();
 
-    Kernel_Task_Sleep(40/KER_TICK_TIME);
+    Kernel_Task_Sleep(15000/KER_TICK_TIME);
     
   }
 }
@@ -79,7 +81,7 @@ void Tasks_Task4(void){
     PORTC ^= (1<<3);
     sei();
     
-    Kernel_Task_Sleep(60/KER_TICK_TIME);
+    Kernel_Task_Sleep(20000/KER_TICK_TIME);
     
   }
 }
@@ -95,7 +97,7 @@ void Tasks_Task5(void){
     PORTC ^= (1<<4);
     sei();
     
-    Kernel_Task_Sleep(70/KER_TICK_TIME);
+    Kernel_Task_Sleep(40000/KER_TICK_TIME);
     
   }
 }

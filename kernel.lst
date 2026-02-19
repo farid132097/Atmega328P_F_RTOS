@@ -2204,15 +2204,15 @@ DEFINED SYMBOLS
             kernel.S:1229   .text:00000374 _KER_CALC_PRIO32
             kernel.S:1229   .text:00000398 _KER_SCH_NEXT32
             kernel.S:1229   .text:000003a8 _KER_SCH_EXIT32
-            kernel.S:316    .text:00000438 _KER_TC2_AUB44
-            kernel.S:316    .text:00000440 _KER_TC2_BUB44
-            kernel.S:316    .text:00000448 _KER_OC2_AUB44
-            kernel.S:316    .text:00000450 _KER_OC2_BUB44
-            kernel.S:316    .text:00000458 _KER_TC2_UB44
-            kernel.S:316    .text:00000460 _KER_TC2_TOV244
-            kernel.S:316    .text:0000046e _KER_TC2_OCF2A44
-            kernel.S:316    .text:0000047c _KER_TC2_OCF2B44
-            kernel.S:316    .text:0000048a _KER_TC2_INTEN44
+            kernel.S:310    .text:00000438 _KER_TC2_AUB44
+            kernel.S:310    .text:00000440 _KER_TC2_BUB44
+            kernel.S:310    .text:00000448 _KER_OC2_AUB44
+            kernel.S:310    .text:00000450 _KER_OC2_BUB44
+            kernel.S:310    .text:00000458 _KER_TC2_UB44
+            kernel.S:310    .text:00000460 _KER_TC2_TOV244
+            kernel.S:310    .text:0000046e _KER_TC2_OCF2A44
+            kernel.S:310    .text:0000047c _KER_TC2_OCF2B44
+            kernel.S:310    .text:0000048a _KER_TC2_INTEN44
             kernel.S:1282   .text:000004fa _IDLE_LOOP
             kernel.S:1318   .text:000005b4 _KER_SCH_LOOP57
             kernel.S:1318   .text:000005ea _VAL_NULL58

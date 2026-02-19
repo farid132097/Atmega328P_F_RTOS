@@ -38,13 +38,13 @@
 //#define  KER_WDT_TICK_1000MS
 
 //Uncomment only one
-#define  KER_TOSC_TICK_1MS
+//#define  KER_TOSC_TICK_1MS
 //#define  KER_TOSC_TICK_10MS
 //#define  KER_TOSC_TICK_50MS
 //#define  KER_TOSC_TICK_100MS
 //#define  KER_TOSC_TICK_250MS
 //#define  KER_TOSC_TICK_500MS
-//#define  KER_TOSC_TICK_1000MS
+#define  KER_TOSC_TICK_1000MS
 
 
 

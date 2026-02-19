@@ -30,7 +30,7 @@
   40               	.L4:
   41               	.LM6:
   42               	/* #APP */
-  43               	 ;  88 "tasks.c" 1
+  43               	 ;  94 "tasks.c" 1
   44 0008 F894      		cli
   45               	 ;  0 "" 2
   46               	.LM7:
@@ -40,7 +40,7 @@
   50 000e 88B9      		out 40-32,r24
   51               	.LM8:
   52               	/* #APP */
-  53               	 ;  90 "tasks.c" 1
+  53               	 ;  96 "tasks.c" 1
   54 0010 7894      		sei
   55               	 ;  0 "" 2
   56               	.LM9:
@@ -64,7 +64,7 @@
   76               	.L7:
   77               	.LM13:
   78               	/* #APP */
-  79               	 ;  72 "tasks.c" 1
+  79               	 ;  78 "tasks.c" 1
   80 0022 F894      		cli
   81               	 ;  0 "" 2
   82               	.LM14:
@@ -74,7 +74,7 @@
   86 0028 88B9      		out 40-32,r24
   87               	.LM15:
   88               	/* #APP */
-  89               	 ;  74 "tasks.c" 1
+  89               	 ;  80 "tasks.c" 1
   90 002a 7894      		sei
   91               	 ;  0 "" 2
   92               	.LM16:
@@ -98,7 +98,7 @@
  112               	.L10:
  113               	.LM20:
  114               	/* #APP */
- 115               	 ;  56 "tasks.c" 1
+ 115               	 ;  62 "tasks.c" 1
  116 003c F894      		cli
  117               	 ;  0 "" 2
  118               	.LM21:
@@ -108,7 +108,7 @@
  122 0042 88B9      		out 40-32,r24
  123               	.LM22:
  124               	/* #APP */
- 125               	 ;  58 "tasks.c" 1
+ 125               	 ;  64 "tasks.c" 1
  126 0044 7894      		sei
  127               	 ;  0 "" 2
  128               	.LM23:
@@ -132,7 +132,7 @@
  148               	.L13:
  149               	.LM27:
  150               	/* #APP */
- 151               	 ;  40 "tasks.c" 1
+ 151               	 ;  46 "tasks.c" 1
  152 0056 F894      		cli
  153               	 ;  0 "" 2
  154               	.LM28:
@@ -142,7 +142,7 @@
  158 005c 88B9      		out 40-32,r24
  159               	.LM29:
  160               	/* #APP */
- 161               	 ;  42 "tasks.c" 1
+ 161               	 ;  48 "tasks.c" 1
  162 005e 7894      		sei
  163               	 ;  0 "" 2
  164               	.LM30:
@@ -166,7 +166,7 @@
  184               	.L16:
  185               	.LM34:
  186               	/* #APP */
- 187               	 ;  24 "tasks.c" 1
+ 187               	 ;  30 "tasks.c" 1
  188 0070 F894      		cli
  189               	 ;  0 "" 2
  190               	.LM35:
@@ -176,7 +176,7 @@
  194 0076 88B9      		out 40-32,r24
  195               	.LM36:
  196               	/* #APP */
- 197               	 ;  26 "tasks.c" 1
+ 197               	 ;  32 "tasks.c" 1
  198 0078 7894      		sei
  199               	 ;  0 "" 2
  200               	.LM37:
@@ -189,18 +189,18 @@
  272               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 tasks.c
-C:\Users\WALTON\AppData\Local\Temp/ccCeCOBc.s:2      *ABS*:0000003f __SREG__
-C:\Users\WALTON\AppData\Local\Temp/ccCeCOBc.s:3      *ABS*:0000003e __SP_H__
-C:\Users\WALTON\AppData\Local\Temp/ccCeCOBc.s:4      *ABS*:0000003d __SP_L__
-C:\Users\WALTON\AppData\Local\Temp/ccCeCOBc.s:5      *ABS*:00000034 __CCP__
-C:\Users\WALTON\AppData\Local\Temp/ccCeCOBc.s:6      *ABS*:00000000 __tmp_reg__
-C:\Users\WALTON\AppData\Local\Temp/ccCeCOBc.s:7      *ABS*:00000001 __zero_reg__
-C:\Users\WALTON\AppData\Local\Temp/ccCeCOBc.s:18     .text:00000000 Tasks_Disable_Peripherals
-C:\Users\WALTON\AppData\Local\Temp/ccCeCOBc.s:30     .text:00000002 Tasks_Task5
-C:\Users\WALTON\AppData\Local\Temp/ccCeCOBc.s:66     .text:0000001c Tasks_Task4
-C:\Users\WALTON\AppData\Local\Temp/ccCeCOBc.s:102    .text:00000036 Tasks_Task3
-C:\Users\WALTON\AppData\Local\Temp/ccCeCOBc.s:138    .text:00000050 Tasks_Task2
-C:\Users\WALTON\AppData\Local\Temp/ccCeCOBc.s:174    .text:0000006a Tasks_Task1
+C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:2      *ABS*:0000003f __SREG__
+C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:3      *ABS*:0000003e __SP_H__
+C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:4      *ABS*:0000003d __SP_L__
+C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:5      *ABS*:00000034 __CCP__
+C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:18     .text:00000000 Tasks_Disable_Peripherals
+C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:30     .text:00000002 Tasks_Task5
+C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:66     .text:0000001c Tasks_Task4
+C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:102    .text:00000036 Tasks_Task3
+C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:138    .text:00000050 Tasks_Task2
+C:\Users\WALTON\AppData\Local\Temp/ccgC335l.s:174    .text:0000006a Tasks_Task1
 
 UNDEFINED SYMBOLS
 Kernel_Task_Sleep

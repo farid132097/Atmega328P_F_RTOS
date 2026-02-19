@@ -24,6 +24,8 @@ int main(void) {
 	
     while(1){
 		
+		//Nothing to do here
+		//All tasks are handled by kernel
         
     }
 }

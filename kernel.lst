@@ -761,7 +761,7 @@
  219               	
  220               	
  221               	
- 222               	;;=====================================wdt init starting=====================================;; 
+ 222               	;;=====================================wdt init starting====================================;; 
  223               	;used registers          : R18                                                                 
  224               	;arg registers           : None                                                                
  225               	;return registers        : None                                                                
@@ -1942,11 +1942,11 @@
  1400               	;return registers        : None                                                                
  1401               	;unsafe access registers : R18, R24                                                            
  1402               	Kernel_Clock_Prescale:                                    ;total 1.75uS @8MHz     ( 14 clocks) 
-1403:kernel.S      ****         LDS   R18                , SRSREG                 ;load sreg              (  2 clocks)
-1404:kernel.S      **** 		CLI                                               ;disable interrupt      (  1 clock )
+1403:kernel.S      ****         LDS   R18                , SRSREG                 ;load sreg              (  2 clocks) 
+1404:kernel.S      **** 		CLI                                               ;disable interrupt      (  1 clock ) 
 1405:kernel.S      **** 		LDI   R19                , 0x80                   ;set CLKPCE             (  1 clock ) 
 1406:kernel.S      **** 		STS   SRCLKPR            , R19                    ;store val              (  2 clocks) 
-1407:kernel.S      **** 		STS   SRCLKPR            , R24                    ;store val              (  2 clocks)
+1407:kernel.S      **** 		STS   SRCLKPR            , R24                    ;store val              (  2 clocks) 
 1408:kernel.S      ****         STS   SRSREG             , R18                    ;store val              (  2 clocks) 
 1409:kernel.S      **** 		RET                                               ;return from subroutine (  4 clocks) 
  1410               	;;==========================kernel main clock prescaler set end=============================;; 

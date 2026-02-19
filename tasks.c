@@ -29,7 +29,7 @@ void Tasks_Task1(void){
     //atomic toggle, otherwise another task may interfare
     cli();
     PORTD |= (1<<4);
-    _delay_us(1000);
+    _delay_us(500);
     PORTD &=~ (1<<4);
     sei();
 

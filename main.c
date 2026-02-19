@@ -11,8 +11,13 @@
 
 int main(void) {
     
+    
+    //Enable prescaler 2
+	//System frequency 4 MHz
+	Kernel_Clock_Prescale(1);
+    
 	Kernel_Init();
-
+    
 	Kernel_Task_Create(Tasks_Task1,  0);
 	Kernel_Task_Create(Tasks_Task2,  1);
 	Kernel_Task_Create(Tasks_Task3,  2);

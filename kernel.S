@@ -219,7 +219,7 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 
 
 
-;;=====================================wdt init starting=====================================;; 
+;;=====================================wdt init starting====================================;; 
 ;used registers          : R18                                                                 
 ;arg registers           : None                                                                
 ;return registers        : None                                                                
@@ -1400,11 +1400,11 @@ Kernel_PreSleep_Hook:                                     ;total 1.00uS @8MHz   
 ;return registers        : None                                                                
 ;unsafe access registers : R18, R24                                                            
 Kernel_Clock_Prescale:                                    ;total 1.75uS @8MHz     ( 14 clocks) 
-        LDS   R18                , SRSREG                 ;load sreg              (  2 clocks)
-		CLI                                               ;disable interrupt      (  1 clock )
+        LDS   R18                , SRSREG                 ;load sreg              (  2 clocks) 
+		CLI                                               ;disable interrupt      (  1 clock ) 
 		LDI   R19                , 0x80                   ;set CLKPCE             (  1 clock ) 
 		STS   SRCLKPR            , R19                    ;store val              (  2 clocks) 
-		STS   SRCLKPR            , R24                    ;store val              (  2 clocks)
+		STS   SRCLKPR            , R24                    ;store val              (  2 clocks) 
         STS   SRSREG             , R18                    ;store val              (  2 clocks) 
 		RET                                               ;return from subroutine (  4 clocks) 
 ;;==========================kernel main clock prescaler set end=============================;; 

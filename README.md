@@ -10,6 +10,7 @@ This kernel is built from scratch with deterministic context switching, task sch
 -Task sleep & wakeup with constant latency support</br>
 -Low memory footprint, optimized for 8-bit MCUs</br>
 -Extensible for semaphores, queues, and synchronization primitives</br>
+-Power consumption can be as low as 1.1uA with 32.768kHz at 1Hz operation</br>
 </br>
 </br>
 <h2>Target Platform</h2>

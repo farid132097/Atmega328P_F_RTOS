@@ -106,7 +106,7 @@
 
 //Timer2 Async is used as tick source
 //Balanced performance, lowest power consumption
-//Timer2 is occupied, external 32.768KHz crystal required
+//Timer2 is occupied, external 32.768kHz crystal required
 #elif defined(KER_TIMER2_ASYNC_AS_TICK_SRC)
 #define  KER_SLEEP_MODE_POWER_SAVE
 #ifdef KER_TOSC_TICK_1MS

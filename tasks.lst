@@ -225,18 +225,18 @@
  308               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 tasks.c
-C:\Users\WALTON\AppData\Local\Temp/ccUS0Wjy.s:2      *ABS*:0000003f __SREG__
-C:\Users\WALTON\AppData\Local\Temp/ccUS0Wjy.s:3      *ABS*:0000003e __SP_H__
-C:\Users\WALTON\AppData\Local\Temp/ccUS0Wjy.s:4      *ABS*:0000003d __SP_L__
-C:\Users\WALTON\AppData\Local\Temp/ccUS0Wjy.s:5      *ABS*:00000034 __CCP__
-C:\Users\WALTON\AppData\Local\Temp/ccUS0Wjy.s:6      *ABS*:00000000 __tmp_reg__
-C:\Users\WALTON\AppData\Local\Temp/ccUS0Wjy.s:7      *ABS*:00000001 __zero_reg__
-C:\Users\WALTON\AppData\Local\Temp/ccUS0Wjy.s:18     .text:00000000 Tasks_Disable_Peripherals
-C:\Users\WALTON\AppData\Local\Temp/ccUS0Wjy.s:30     .text:00000002 Tasks_Task5
-C:\Users\WALTON\AppData\Local\Temp/ccUS0Wjy.s:66     .text:0000001c Tasks_Task4
-C:\Users\WALTON\AppData\Local\Temp/ccUS0Wjy.s:102    .text:00000036 Tasks_Task3
-C:\Users\WALTON\AppData\Local\Temp/ccUS0Wjy.s:138    .text:00000050 Tasks_Task2
-C:\Users\WALTON\AppData\Local\Temp/ccUS0Wjy.s:174    .text:0000006a Tasks_Task1
+C:\Users\farid\AppData\Local\Temp/cc18vLfM.s:2      *ABS*:0000003f __SREG__
+C:\Users\farid\AppData\Local\Temp/cc18vLfM.s:3      *ABS*:0000003e __SP_H__
+C:\Users\farid\AppData\Local\Temp/cc18vLfM.s:4      *ABS*:0000003d __SP_L__
+C:\Users\farid\AppData\Local\Temp/cc18vLfM.s:5      *ABS*:00000034 __CCP__
+C:\Users\farid\AppData\Local\Temp/cc18vLfM.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\farid\AppData\Local\Temp/cc18vLfM.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\farid\AppData\Local\Temp/cc18vLfM.s:18     .text:00000000 Tasks_Disable_Peripherals
+C:\Users\farid\AppData\Local\Temp/cc18vLfM.s:30     .text:00000002 Tasks_Task5
+C:\Users\farid\AppData\Local\Temp/cc18vLfM.s:66     .text:0000001c Tasks_Task4
+C:\Users\farid\AppData\Local\Temp/cc18vLfM.s:102    .text:00000036 Tasks_Task3
+C:\Users\farid\AppData\Local\Temp/cc18vLfM.s:138    .text:00000050 Tasks_Task2
+C:\Users\farid\AppData\Local\Temp/cc18vLfM.s:174    .text:0000006a Tasks_Task1
 
 UNDEFINED SYMBOLS
 Kernel_Task_Sleep

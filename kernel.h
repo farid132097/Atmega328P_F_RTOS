@@ -15,7 +15,7 @@
 
 
 //Enable or disable kernel debug via gpio
-//#define  KER_DBG_ENABLE
+#define  KER_DBG_ENABLE
 
 //Enable or disable kernel tick counter
 //#define  KER_TICK_CNTR_ENABLE
@@ -67,7 +67,7 @@
 #ifdef   KER_DBG_ENABLE
 #define  KER_DBG_DDR     0x0A   //DDRD IO address
 #define  KER_DBG_PORT    0x0B   //PORTD IO address
-#define  KER_DBG_PIN     0x00   //PORTD0 pin
+#define  KER_DBG_PIN     0x04   //PORTD4 pin
 #endif
 
 

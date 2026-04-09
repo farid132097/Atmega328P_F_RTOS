@@ -1,7 +1,3 @@
-main.o: main.c kernel.h debug.h tasks.h
+main.o: main.c kernel.h
 
 kernel.h:
-
-debug.h:
-
-tasks.h:

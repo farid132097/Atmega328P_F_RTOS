@@ -33,7 +33,7 @@ void Tasks_Task1(void){
     PORTD &=~ (1<<4);
     sei();
 
-    Kernel_Task_Sleep(5000/KER_TICK_TIME);
+    //Kernel_Task_Sleep(5000/KER_TICK_TIME);
     
   }
 }
@@ -49,7 +49,7 @@ void Tasks_Task2(void){
     PORTC ^= (1<<1);
     sei();
     
-    Kernel_Task_Sleep(10000/KER_TICK_TIME);
+    //Kernel_Task_Sleep(10000/KER_TICK_TIME);
     
   }
 }
@@ -65,7 +65,7 @@ void Tasks_Task3(void){
     PORTC ^= (1<<2);
     sei();
 
-    Kernel_Task_Sleep(15000/KER_TICK_TIME);
+    //Kernel_Task_Sleep(15000/KER_TICK_TIME);
     
   }
 }
@@ -81,7 +81,7 @@ void Tasks_Task4(void){
     PORTC ^= (1<<3);
     sei();
     
-    Kernel_Task_Sleep(20000/KER_TICK_TIME);
+    //Kernel_Task_Sleep(20000/KER_TICK_TIME);
     
   }
 }
@@ -97,7 +97,7 @@ void Tasks_Task5(void){
     PORTC ^= (1<<4);
     sei();
     
-    Kernel_Task_Sleep(40000/KER_TICK_TIME);
+    //Kernel_Task_Sleep(40000/KER_TICK_TIME);
     
   }
 }

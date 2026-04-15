@@ -13,20 +13,52 @@
   21               	/* prologue: function */
   22               	/* frame size = 0 */
   23               	.LM2:
-  24 0000 0E94 0000 		call Kernel_Init
-  25               	.L2:
-  26 0004 00C0      		rjmp .L2
-  27               	.LFE6:
-  53               	.Letext0:
+  24 0000 81E0      		ldi r24,lo8(1)
+  25 0002 0E94 0000 		call Kernel_Clock_Prescale
+  26               	.LM3:
+  27 0006 0E94 0000 		call Kernel_Init
+  28               	.LM4:
+  29 000a 80E0      		ldi r24,lo8(gs(Tasks_Task1))
+  30 000c 90E0      		ldi r25,hi8(gs(Tasks_Task1))
+  31 000e 60E0      		ldi r22,lo8(0)
+  32 0010 0E94 0000 		call Kernel_Task_Create
+  33               	.LM5:
+  34 0014 80E0      		ldi r24,lo8(gs(Tasks_Task2))
+  35 0016 90E0      		ldi r25,hi8(gs(Tasks_Task2))
+  36 0018 61E0      		ldi r22,lo8(1)
+  37 001a 0E94 0000 		call Kernel_Task_Create
+  38               	.LM6:
+  39 001e 80E0      		ldi r24,lo8(gs(Tasks_Task3))
+  40 0020 90E0      		ldi r25,hi8(gs(Tasks_Task3))
+  41 0022 62E0      		ldi r22,lo8(2)
+  42 0024 0E94 0000 		call Kernel_Task_Create
+  43               	.LM7:
+  44 0028 80E0      		ldi r24,lo8(gs(Tasks_Disable_Peripherals))
+  45 002a 90E0      		ldi r25,hi8(gs(Tasks_Disable_Peripherals))
+  46 002c 0E94 0000 		call Kernel_PreSleep_Hook
+  47               	.LM8:
+  48 0030 0E94 0000 		call Kernel_Start_Tasks
+  49               	.L2:
+  50 0034 00C0      		rjmp .L2
+  51               	.LFE6:
+  77               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\WALTON\AppData\Local\Temp/cc7OEadq.s:2      *ABS*:0000003f __SREG__
-C:\Users\WALTON\AppData\Local\Temp/cc7OEadq.s:3      *ABS*:0000003e __SP_H__
-C:\Users\WALTON\AppData\Local\Temp/cc7OEadq.s:4      *ABS*:0000003d __SP_L__
-C:\Users\WALTON\AppData\Local\Temp/cc7OEadq.s:5      *ABS*:00000034 __CCP__
-C:\Users\WALTON\AppData\Local\Temp/cc7OEadq.s:6      *ABS*:00000000 __tmp_reg__
-C:\Users\WALTON\AppData\Local\Temp/cc7OEadq.s:7      *ABS*:00000001 __zero_reg__
-C:\Users\WALTON\AppData\Local\Temp/cc7OEadq.s:18     .text:00000000 main
+C:\Users\WALTON\AppData\Local\Temp/ccrzuZEd.s:2      *ABS*:0000003f __SREG__
+C:\Users\WALTON\AppData\Local\Temp/ccrzuZEd.s:3      *ABS*:0000003e __SP_H__
+C:\Users\WALTON\AppData\Local\Temp/ccrzuZEd.s:4      *ABS*:0000003d __SP_L__
+C:\Users\WALTON\AppData\Local\Temp/ccrzuZEd.s:5      *ABS*:00000034 __CCP__
+C:\Users\WALTON\AppData\Local\Temp/ccrzuZEd.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\WALTON\AppData\Local\Temp/ccrzuZEd.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\WALTON\AppData\Local\Temp/ccrzuZEd.s:18     .text:00000000 main
 
 UNDEFINED SYMBOLS
+Kernel_Clock_Prescale
 Kernel_Init
+Tasks_Task1
+Kernel_Task_Create
+Tasks_Task2
+Tasks_Task3
+Tasks_Disable_Peripherals
+Kernel_PreSleep_Hook
+Kernel_Start_Tasks

@@ -320,33 +320,75 @@ KerTCB:    .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 ;;====================================restore r0~r31 end====================================;; 
 
 
-;;=====================================save psp starting====================================;; 
+;;==================================save context starting===================================;; 
 ;used registers          : R0~R31                                                              
 ;arg registers           : None                                                                
 ;return registers        : None                                                                
 ;unsafe access registers : None                                                                
-.macro  KER_SAVE_PSP                                      ;total 7.88uS @8MHz     ( 63 clocks) 
-        
-	    LDI   R30                , lo8(KerTCB+OFB_PSP)    ;fetch task_id          (  2 clocks) 
-		LDI   R31                , hi8(KerTCB+OFB_PSP)    ;fetch task_id          (  2 clocks) 
-		
-        SEI                                               ;enable interrupt       (  1 clock ) 
+.macro  KER_SAVE_CONTEXT                                  ;total 7.88uS @8MHz     ( 63 clocks) 
+        KER_SAVE_R0_R31                                   ;push R0                (  2 clocks) 
+		LDS   R18                , KerBase+OFB_CTSK       ;load current task      (  2 clocks) 
+		LDI   R19                , KER_STK_SZ             ;load stack size        (  1 clock ) 
+		MUL   R18                , R19                    ;multiply               (  2 clocks) 
+		LDI   R18                , lo8(KerTCB)            ;load base low addr     (  1 clock ) 
+		LDI   R19                , hi8(KerTCB)            ;load base low addr     (  1 clock ) 
+		ADD   R18                , R0                     ;add low bytes          (  1 clock ) 
+		ADC   R19                , R1                     ;add high bytes         (  1 clock ) 
+		CLR   R1                                          ;gcc expects cleared    (  1 clock ) 
+		LDI   R30                , OFT_PSP                ;load offset            (  1 clock ) 
+		LDI   R31                , 0x00                   ;clear                  (  1 clock ) 
+		ADD   R30                , R18                    ;add low bytes          (  1 clock ) 
+		ADC   R31                , R19                    ;add high bytes         (  1 clock ) 
+		IN    R18                , IOSPL                  ;fetch SPL              (  1 clock ) 
+        IN    R19                , IOSPH                  ;fetch SPH              (  1 clock ) 
+		STD   Z+0                , R18                    ;store SPL              (  2 clocks) 
+		STD   Z+1                , R19                    ;store SPH              (  2 clocks) 
 .endm                                                                                          
-;;======================================save r0~r31 end=====================================;; 
+;;====================================save context end======================================;; 
+
+
+;;=================================restore context starting=================================;; 
+;used registers          : R0~R31                                                              
+;arg registers           : None                                                                
+;return registers        : None                                                                
+;unsafe access registers : None                                                                
+.macro  KER_RESTORE_CONTEXT                               ;total 7.88uS @8MHz     ( 63 clocks) 
+		LDS   R18                , KerBase+OFB_NTSK       ;load next task         (  2 clocks) 
+		LDI   R19                , KER_STK_SZ             ;load stack size        (  1 clock ) 
+		MUL   R18                , R19                    ;multiply               (  2 clocks) 
+		LDI   R18                , lo8(KerTCB)            ;load base low addr     (  1 clock ) 
+		LDI   R19                , hi8(KerTCB)            ;load base low addr     (  1 clock ) 
+		ADD   R18                , R0                     ;add low bytes          (  1 clock ) 
+		ADC   R19                , R1                     ;add high bytes         (  1 clock ) 
+		CLR   R1                                          ;gcc expects cleared    (  1 clock ) 
+		LDI   R30                , OFT_PSP                ;load offset            (  1 clock ) 
+		LDI   R31                , 0x00                   ;clear                  (  1 clock ) 
+		ADD   R30                , R18                    ;add low bytes          (  1 clock ) 
+		ADC   R31                , R19                    ;add high bytes         (  1 clock ) 
+		LDD   R18                , Z+0                    ;load SPL               (  2 clocks) 
+		LDD   R19                , Z+1                    ;load SPH               (  2 clocks) 
+		OUT   IOSPL              , R18                    ;store SPL              (  1 clock ) 
+		OUT   IOSPH              , R19                    ;store SPH              (  1 clock ) 
+		LDS   R18                , KerBase+OFB_NTSK       ;load current task      (  2 clocks) 
+		STS   KerBase+OFB_CTSK   , R18                    ;store next tsk as curr (  2 clocks) 
+		KER_RESTORE_R0_R31                                ;restore cpu regs       ( 62 clocks) 
+.endm                                                                                          
+;;====================================restore context end===================================;; 
+
 
 
 
 .global  __vector_9                                                                            
     __vector_9:                                           ;total 40.00uS @8MHz    (344 clocks) 
 	    KER_DEBUG_PIN_SET                                 ;debug pin set          (  2 clocks) 
-		KER_SAVE_R0_R31
+		KER_SAVE_CONTEXT
 
 
 		LDI   R18                , 0xFF                   ;clear reg              (  1 clock ) 
 		STS   SRTCNT2            , R18                    ;clear TCNT2            (  2 clocks) 
 
 
-		KER_RESTORE_R0_R31
+		KER_RESTORE_CONTEXT
 	    KER_DEBUG_PIN_CLEAR                               ;debug pin clear        (  2 clocks) 
 		RETI                                              ;return from interrupt  (  4 clocks) 
 

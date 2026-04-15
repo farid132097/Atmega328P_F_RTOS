@@ -852,52 +852,94 @@
  320               	;;====================================restore r0~r31 end====================================;; 
  321               	
  322               	
- 323               	;;=====================================save psp starting====================================;; 
+ 323               	;;==================================save context starting===================================;; 
  324               	;used registers          : R0~R31                                                              
  325               	;arg registers           : None                                                                
  326               	;return registers        : None                                                                
  327               	;unsafe access registers : None                                                                
- 328               	.macro  KER_SAVE_PSP                                      ;total 7.88uS @8MHz     ( 63 clocks) 
- 329               	        
- 330               		    LDI   R30                , lo8(KerTCB+OFB_PSP)    ;fetch task_id          (  2 clocks) 
- 331               			LDI   R31                , hi8(KerTCB+OFB_PSP)    ;fetch task_id          (  2 clocks) 
- 332               			
- 333               	        SEI                                               ;enable interrupt       (  1 clock ) 
- 334               	.endm                                                                                          
- 335               	;;======================================save r0~r31 end=====================================;; 
- 336               	
- 337               	
- 338               	
- 339               	.global  __vector_9                                                                            
- 340               	    __vector_9:                                           ;total 40.00uS @8MHz    (344 clocks) 
- 341:kernel.S      **** 	    KER_DEBUG_PIN_SET                                 ;debug pin set          (  2 clocks) 
- 342:kernel.S      **** 		KER_SAVE_R0_R31
- 343               	
- 344               	
- 345:kernel.S      **** 		LDI   R18                , 0xFF                   ;clear reg              (  1 clock ) 
- 346:kernel.S      **** 		STS   SRTCNT2            , R18                    ;clear TCNT2            (  2 clocks) 
- 347               	
+ 328               	.macro  KER_SAVE_CONTEXT                                  ;total 7.88uS @8MHz     ( 63 clocks) 
+ 329               	        KER_SAVE_R0_R31                                   ;push R0                (  2 clocks) 
+ 330               			LDS   R18                , KerBase+OFB_CTSK       ;load current task      (  2 clocks) 
+ 331               			LDI   R19                , KER_STK_SZ             ;load stack size        (  1 clock ) 
+ 332               			MUL   R18                , R19                    ;multiply               (  2 clocks) 
+ 333               			LDI   R18                , lo8(KerTCB)            ;load base low addr     (  1 clock ) 
+ 334               			LDI   R19                , hi8(KerTCB)            ;load base low addr     (  1 clock ) 
+ 335               			ADD   R18                , R0                     ;add low bytes          (  1 clock ) 
+ 336               			ADC   R19                , R1                     ;add high bytes         (  1 clock ) 
+ 337               			CLR   R1                                          ;gcc expects cleared    (  1 clock ) 
+ 338               			LDI   R30                , OFT_PSP                ;load offset            (  1 clock ) 
+ 339               			LDI   R31                , 0x00                   ;clear                  (  1 clock ) 
+ 340               			ADD   R30                , R18                    ;add low bytes          (  1 clock ) 
+ 341               			ADC   R31                , R19                    ;add high bytes         (  1 clock ) 
+ 342               			IN    R18                , IOSPL                  ;fetch SPL              (  1 clock ) 
+ 343               	        IN    R19                , IOSPH                  ;fetch SPH              (  1 clock ) 
+ 344               			STD   Z+0                , R18                    ;store SPL              (  2 clocks) 
+ 345               			STD   Z+1                , R19                    ;store SPH              (  2 clocks) 
+ 346               	.endm                                                                                          
+ 347               	;;====================================save context end======================================;; 
  348               	
- 349:kernel.S      **** 		KER_RESTORE_R0_R31
- 350:kernel.S      **** 	    KER_DEBUG_PIN_CLEAR                               ;debug pin clear        (  2 clocks) 
- 351:kernel.S      **** 		RETI                                              ;return from interrupt  (  4 clocks) 
- 352               	
- 353               	
- 354               	
- 355               	
- 356               	
- 357               	;;===================================kernel init starting===================================;; 
- 358               	;used registers          : R1, R18, R19, R22, R24, R25, R26(XL), R27(XH), R30(ZL), R31(ZH)     
- 359               	;arg registers           : None                                                                
- 360               	;return registers        : None                                                                
- 361               	;unsafe access registers : R1, R18, R19, R22, R24, R25, R26(XL), R27(XH), R30(ZL), R31(ZH)     
- 362               	Kernel_Init:                                              ;total 39.75uS @8MHz    (318 clocks) 
- 363:kernel.S      **** 		CLR   R1                                          ;gcc expects            (  1 clock ) 
- 364:kernel.S      ****         KER_DEBUG_PIN_INIT
- 365:kernel.S      **** 		KER_TIMER2_ASYNC_INIT
- 366:kernel.S      **** 		SEI
- 367:kernel.S      **** 		RET                                               ;return from subroutine (  4 clocks) 
- 368               	;;======================================kernel init end=====================================;; 
+ 349               	
+ 350               	;;=================================restore context starting=================================;; 
+ 351               	;used registers          : R0~R31                                                              
+ 352               	;arg registers           : None                                                                
+ 353               	;return registers        : None                                                                
+ 354               	;unsafe access registers : None                                                                
+ 355               	.macro  KER_RESTORE_CONTEXT                               ;total 7.88uS @8MHz     ( 63 clocks) 
+ 356               			LDS   R18                , KerBase+OFB_NTSK       ;load next task         (  2 clocks) 
+ 357               			LDI   R19                , KER_STK_SZ             ;load stack size        (  1 clock ) 
+ 358               			MUL   R18                , R19                    ;multiply               (  2 clocks) 
+ 359               			LDI   R18                , lo8(KerTCB)            ;load base low addr     (  1 clock ) 
+ 360               			LDI   R19                , hi8(KerTCB)            ;load base low addr     (  1 clock ) 
+ 361               			ADD   R18                , R0                     ;add low bytes          (  1 clock ) 
+ 362               			ADC   R19                , R1                     ;add high bytes         (  1 clock ) 
+ 363               			CLR   R1                                          ;gcc expects cleared    (  1 clock ) 
+ 364               			LDI   R30                , OFT_PSP                ;load offset            (  1 clock ) 
+ 365               			LDI   R31                , 0x00                   ;clear                  (  1 clock ) 
+ 366               			ADD   R30                , R18                    ;add low bytes          (  1 clock ) 
+ 367               			ADC   R31                , R19                    ;add high bytes         (  1 clock ) 
+ 368               			LDD   R18                , Z+0                    ;load SPL               (  2 clocks) 
+ 369               			LDD   R19                , Z+1                    ;load SPH               (  2 clocks) 
+ 370               			OUT   IOSPL              , R18                    ;store SPL              (  1 clock ) 
+ 371               			OUT   IOSPH              , R19                    ;store SPH              (  1 clock ) 
+ 372               			LDS   R18                , KerBase+OFB_NTSK       ;load current task      (  2 clocks) 
+ 373               			STS   KerBase+OFB_CTSK   , R18                    ;store next tsk as curr (  2 clocks) 
+ 374               			KER_RESTORE_R0_R31                                ;restore cpu regs       ( 62 clocks) 
+ 375               	.endm                                                                                          
+ 376               	;;====================================restore context end===================================;; 
+ 377               	
+ 378               	
+ 379               	
+ 380               	
+ 381               	.global  __vector_9                                                                            
+ 382               	    __vector_9:                                           ;total 40.00uS @8MHz    (344 clocks) 
+ 383:kernel.S      **** 	    KER_DEBUG_PIN_SET                                 ;debug pin set          (  2 clocks) 
+ 384:kernel.S      **** 		KER_SAVE_CONTEXT
+ 385               	
+ 386               	
+ 387:kernel.S      **** 		LDI   R18                , 0xFF                   ;clear reg              (  1 clock ) 
+ 388:kernel.S      **** 		STS   SRTCNT2            , R18                    ;clear TCNT2            (  2 clocks) 
+ 389               	
+ 390               	
+ 391:kernel.S      **** 		KER_RESTORE_CONTEXT
+ 392:kernel.S      **** 	    KER_DEBUG_PIN_CLEAR                               ;debug pin clear        (  2 clocks) 
+ 393:kernel.S      **** 		RETI                                              ;return from interrupt  (  4 clocks) 
+ 394               	
+ 395               	
+ 396               	
+ 397               	
+ 398               	
+ 399               	;;===================================kernel init starting===================================;; 
+ 400               	;used registers          : R1, R18, R19, R22, R24, R25, R26(XL), R27(XH), R30(ZL), R31(ZH)     
+ 401               	;arg registers           : None                                                                
+ 402               	;return registers        : None                                                                
+ 403               	;unsafe access registers : R1, R18, R19, R22, R24, R25, R26(XL), R27(XH), R30(ZL), R31(ZH)     
+ 404               	Kernel_Init:                                              ;total 39.75uS @8MHz    (318 clocks) 
+ 405:kernel.S      **** 		CLR   R1                                          ;gcc expects            (  1 clock ) 
+ 406:kernel.S      ****         KER_DEBUG_PIN_INIT
+ 407:kernel.S      **** 		KER_TIMER2_ASYNC_INIT
+ 408:kernel.S      **** 		SEI
+ 409:kernel.S      **** 		RET                                               ;return from subroutine (  4 clocks) 
+ 410               	;;======================================kernel init end=====================================;; 
 DEFINED SYMBOLS
             kernel.S:18     *ABS*:00000000 KER_RLD
             kernel.S:19     *ABS*:00000080 KER_STK_SZ
@@ -937,16 +979,16 @@ DEFINED SYMBOLS
             kernel.S:64     *ABS*:00000017 IOTIFR2
             kernel.S:74     .bss:00000000 KerBase
             kernel.S:76     .bss:0000000a KerTCB
-            kernel.S:362    .text:0000009a Kernel_Init
-            kernel.S:340    .text:00000000 __vector_9
-            kernel.S:365    .text:000000ca _KER_TC2_AUB5
-            kernel.S:365    .text:000000d2 _KER_TC2_BUB5
-            kernel.S:365    .text:000000da _KER_OC2_AUB5
-            kernel.S:365    .text:000000e2 _KER_OC2_BUB5
-            kernel.S:365    .text:000000ea _KER_TC2_UB5
-            kernel.S:365    .text:000000f2 _KER_TC2_TOV25
-            kernel.S:365    .text:00000100 _KER_TC2_OCF2A5
-            kernel.S:365    .text:0000010e _KER_TC2_OCF2B5
-            kernel.S:365    .text:0000011c _KER_TC2_INTEN5
+            kernel.S:404    .text:000000e6 Kernel_Init
+            kernel.S:382    .text:00000000 __vector_9
+            kernel.S:407    .text:00000116 _KER_TC2_AUB7
+            kernel.S:407    .text:0000011e _KER_TC2_BUB7
+            kernel.S:407    .text:00000126 _KER_OC2_AUB7
+            kernel.S:407    .text:0000012e _KER_OC2_BUB7
+            kernel.S:407    .text:00000136 _KER_TC2_UB7
+            kernel.S:407    .text:0000013e _KER_TC2_TOV27
+            kernel.S:407    .text:0000014c _KER_TC2_OCF2A7
+            kernel.S:407    .text:0000015a _KER_TC2_OCF2B7
+            kernel.S:407    .text:00000168 _KER_TC2_INTEN7
 
 NO UNDEFINED SYMBOLS

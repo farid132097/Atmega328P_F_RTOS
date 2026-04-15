@@ -603,6 +603,8 @@ clean_list :
 	$(REMOVEDIR) .dep
 
 
+cbflash: all program
+
 # Create object files directory
 $(shell mkdir $(OBJDIR) 2>/dev/null)
 

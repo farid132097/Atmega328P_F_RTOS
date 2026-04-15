@@ -22,12 +22,15 @@
 
 
 ;;===============================define data offsets starting===============================;; 
-.equ     OFB_TID  ,       0x00                            ;offset from KerBase task id         
-.equ     OFB_PSP  ,       0x01                            ;offset from KerBase task id         
-.equ     OFB_STS  ,       0x03                            ;offset from KerBase task status     
-.equ     OFB_SLP  ,       0x04                            ;offset from KerBase sleep duration  
-.equ     OFB_PRIO ,       0x05                            ;offset from KerBase task priority   
+.equ     OFT_STS  ,       0x00                            ;offset from KerTCB task status      
+.equ     OFT_SLP  ,       0x01                            ;offset from KerTCB sleep duration   
+.equ     OFT_PRIO ,       0x02                            ;offset from KerTCB task priority    
+.equ     OFT_PSP  ,       0x03                            ;offset from KerTCB task PSP         
+.equ     OFB_CTSK ,       0x00                            ;offset from KerBase curr task       
+.equ     OFB_NTSK ,       0x01                            ;offset from KerBase next task       
+.equ     OFB_TTSK ,       0x02                            ;offset from KerBase total tasks     
 ;;==================================define data offsets end=================================;; 
+
 
 
 ;;===========================define hardware reg address starting===========================;; 
@@ -341,7 +344,6 @@ KerTCB:    .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 
 		LDI   R18                , 0xFF                   ;clear reg              (  1 clock ) 
 		STS   SRTCNT2            , R18                    ;clear TCNT2            (  2 clocks) 
-        KER_TIMER2_TCNT2_UB
 
 
 		KER_RESTORE_R0_R31

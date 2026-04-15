@@ -65,9 +65,9 @@
 
 //Define IO address of the DDR & PORT for debug
 #ifdef   KER_DBG_ENABLE
-#define  KER_DBG_DDR     0x0A   //DDRD IO address
-#define  KER_DBG_PORT    0x0B   //PORTD IO address
-#define  KER_DBG_PIN     0x04   //PORTD4 pin
+#define  KER_DBG_DDR     0x07   //DDRD IO address
+#define  KER_DBG_PORT    0x08   //PORTD IO address
+#define  KER_DBG_PIN     0x00   //PORTD4 pin
 #endif
 
 

@@ -33,7 +33,7 @@ void Tasks_Task1(void){
     PORTD &=~ (1<<4);
     sei();
 
-    Kernel_Task_Sleep(50);
+    //Kernel_Task_Sleep(50);
     
   }
 }
@@ -49,7 +49,7 @@ void Tasks_Task2(void){
     PORTC ^= (1<<1);
     sei();
     
-    Kernel_Task_Sleep(100);
+    //Kernel_Task_Sleep(100);
     
   }
 }
@@ -65,7 +65,7 @@ void Tasks_Task3(void){
     PORTC ^= (1<<2);
     sei();
 
-    Kernel_Task_Sleep(150);
+    //Kernel_Task_Sleep(150);
     
   }
 }

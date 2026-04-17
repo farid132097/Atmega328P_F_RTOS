@@ -25,7 +25,7 @@
 
 ;;===============================define data offsets starting===============================;; 
 .equ     OFB_TID  ,       0x00                            ;offset from KerBase task id         
-.equ     OFB_PSP  ,       0x01                            ;offset from KerBase task id         
+.equ     OFB_LST  ,       0x01                            ;offset from KerBase lowest sleep    
 .equ     OFB_STS  ,       0x03                            ;offset from KerBase task status     
 .equ     OFB_SLP  ,       0x04                            ;offset from KerBase sleep duration  
 .equ     OFB_PRIO ,       0x05                            ;offset from KerBase task priority   
@@ -71,12 +71,16 @@
 ;;=============================define global variables starting=============================;; 
 .section   .bss                                                                                
                                                                                                
-.global    KerBase                                        ;declare global space for kernel     
+.global    KerBase                                        ;declare space for kernel            
 KerBase:   .skip 16                                       ;see offset section                  
 .global    KerSleep                                       ;declare space for sleep             
-KerBase:   .skip KER_MX_NTSK*1                            ;see offset section                  
-.global    KerTCB                                         ;declare global space for TCB        
-KerBase:   .skip KER_STK_SZ*KER_MX_NTSK                   ;see offset section                  
+KerSleep:  .skip KER_MX_NTSK*1                            ;see offset section                  
+.global    KerPrio                                        ;declare space for priority          
+KerPrio:   .skip KER_MX_NTSK*1                            ;see offset section                  
+.global    KerPSP                                         ;declare space for stack pointer     
+KerPSP:    .skip KER_MX_NTSK*2                            ;see offset section                  
+.global    KerStack                                       ;declare global space for stack      
+KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;see offset section                  
                                                                                                
 ;;==============================define global variables end=================================;; 
 
@@ -191,19 +195,9 @@ KerBase:   .skip KER_STK_SZ*KER_MX_NTSK                   ;see offset section
 ;arg registers           : None                                                                
 ;return registers        : None                                                                
 ;unsafe access registers : R18, R19                                                            
-.macro  KER_TIMER_RELOAD                                  ;~9.13uS max @8MHz      (~73 clocks) 
-        LDS   R18                , KerBase+OFB_TID        ;fetch task id          (  2 clocks) 
-		LDI   R30                , lo8(KerSleep)          ;load LSByte            (  1 clock ) 
-		LDI   R31                , hi8(KerSleep)          ;load MSByte            (  1 clock ) 
-		ADD   R30                , R18                    ;add LSByte             (  1 clock ) 
-		ADC   R31                , R1                     ;add 
-
-		LDI   R19                , KER_STK_SZ             ;load stack size        (  1 clock ) 
-		MUL   R19                , R18                    ;multiply               (  1 clock ) 
-		
-        ADD   R30                , R0                     ;add LSBytes            (  1 clock ) 
-		ADC   R31                , R1                     ;add MSBytes            (  1 clock ) 
-		CLR   R1                                          ;gcc expects            (  1 clock ) 
+.macro  KER_TIMER_RELOAD                                  ;0.5uS @8MHz            (  4 clocks) 
+        LDS   R18                , KerBase+OFB_LST        ;fetch lowst sleep time (  2 clocks) 
+		STS   SRTCNT2            , R18                    ;set val                (  2 clocks) 
 .endm                                                                                          
 ;;===================================timer reload end=======================================;; 
 
@@ -217,6 +211,7 @@ KerBase:   .skip KER_STK_SZ*KER_MX_NTSK                   ;see offset section
 ;return registers        : None                                                                
 ;unsafe access registers : R18, R19                                                            
 .macro  KER_TIMER_INIT                                    ;~9.13uS max @8MHz      (~73 clocks) 
+        KER_TIMER2_DISABLE                                ;1.75uS @8MHz           ( 14 clocks) 
 		KER_TIMER2_ASYNC_INIT                             ;total 1.5uS @8MHz      (~73 clocks) 
 .endm                                                                                          
 ;;======================================timer init end======================================;; 
@@ -280,7 +275,7 @@ KerBase:   .skip KER_STK_SZ*KER_MX_NTSK                   ;see offset section
 ;arg registers           : None                                                                
 ;return registers        : None                                                                
 ;unsafe access registers : None                                                                
-.macro  KER_CONTEXT_SAVE                                  ;total 7.88uS @8MHz     ( 63 clocks) 
+.macro  KER_CONTEXT_SAVE                                  ;total 7.88uS @8MHz     ( 83 clocks) 
         PUSH  R0                                          ;push R0                (  2 clocks) 
 		IN    R0                 , IOSREG                 ;save SREG              (  1 clock ) 
 		CLI                                               ;clear interrupt        (  1 clock ) 
@@ -317,6 +312,17 @@ KerBase:   .skip KER_STK_SZ*KER_MX_NTSK                   ;see offset section
 		PUSH  R29                                         ;save R29               (  2 clocks) 
 		PUSH  R30                                         ;save R30               (  2 clocks) 
 		PUSH  R31                                         ;save R31               (  2 clocks) 
+		LDI   R30                , lo8(KerPSP)            ;fetch base pos low     (  1 clock ) 
+		LDI   R31                , hi8(KerPSP)            ;fetch base pos high    (  1 clock ) 
+		LDS   R18                , KerBase+OFB_TID        ;fetch task_id          (  2 clocks) 
+		LSL   R18                                         ;left shift to multiply (  1 clock ) 
+		ADD   R30                , R18                    ;add offset to array    (  1 clock ) 
+		LDI   R18                , 0x00                   ;clear for carry prop   (  1 clock ) 
+		ADC   R31                , R18                    ;add carry if any       (  1 clock ) 
+		IN    R18                , IOSPL                  ;fetch SPL0             (  1 clock ) 
+		IN    R19                , IOSPH                  ;fetch SPH0             (  1 clock ) 
+		STD   Z+0                , R18                    ;store SPL at ZP+0      (  2 clocks) 
+		STD   Z+1                , R19                    ;store SPH at ZP+1      (  2 clocks) 
 .endm                                                                                          
 ;;=====================================context save end=====================================;; 
 
@@ -325,12 +331,23 @@ KerBase:   .skip KER_STK_SZ*KER_MX_NTSK                   ;see offset section
 
 
 
-;;=================================restore r1~r31 starting==================================;; 
-;used registers          : R1~R31                                                              
+;;=================================context restore starting=================================;; 
+;used registers          : R0~R31                                                              
 ;arg registers           : None                                                                
 ;return registers        : None                                                                
 ;unsafe access registers : None                                                                
-.macro  KER_CONTEXT_RESTORE                               ;total 8.38uS @8MHz     ( 62 clocks) 
+.macro  KER_CONTEXT_RESTORE                               ;total 8.38uS @8MHz     ( 81 clocks) 
+        LDI   R30                , lo8(KerPSP)            ;fetch base pos low     (  1 clock ) 
+		LDI   R31                , hi8(KerPSP)            ;fetch base pos high    (  1 clock ) 
+		LDS   R18                , KerBase+OFB_TID        ;fetch task_id          (  2 clocks) 
+		LSL   R18                                         ;left shift to multiply (  1 clock ) 
+		ADD   R30                , R18                    ;add offset to array    (  1 clock ) 
+		LDI   R18                , 0x00                   ;clear for carry prop   (  1 clock ) 
+		ADC   R31                , R18                    ;add carry if any       (  1 clock ) 
+		LDD   R18                , Z+0                    ;load SPL at ZP         (  2 clocks) 
+		LDD   R19                , Z+1                    ;load SPH at ZP         (  2 clocks) 
+		OUT   IOSPL              , R18                    ;load SPL0              (  1 clock ) 
+		OUT   IOSPH              , R19                    ;load SPH0              (  1 clock ) 
 		POP   R31                                         ;restore R31            (  2 clocks) 
 		POP   R30                                         ;restore R30            (  2 clocks) 
 		POP   R29                                         ;restore R29            (  2 clocks) 
@@ -366,7 +383,7 @@ KerBase:   .skip KER_STK_SZ*KER_MX_NTSK                   ;see offset section
 		OUT   IOSREG             , R0                     ;load SREG              (  1 clock ) 
 		POP   R0                                          ;restore R0             (  2 clocks) 
 .endm                                                                                          
-;;====================================restore r1~r31 end====================================;; 
+;;===================================context restore end====================================;; 
 
 
 
@@ -377,8 +394,8 @@ KerBase:   .skip KER_STK_SZ*KER_MX_NTSK                   ;see offset section
 ;arg registers           : None                                                                
 ;return registers        : None                                                                
 ;unsafe access registers : None                                                                
-.macro  KER_SET_RELOAD_VAL                                ;total 8.38uS @8MHz     ( 62 clocks) 
-		POP   R31                                         ;restore R31            (  2 clocks) 
+.macro  KER_SET_RELOAD_VAL                                ;total 0.25uS @8MHz     (  2 clocks) 
+		STS   KerBase+OFB_LST    , R24                    ;fetch lowst sleep time (  2 clocks) 
 .endm                                                                                          
 ;;===================================set reload val end=====================================;; 
 
@@ -391,7 +408,7 @@ KerBase:   .skip KER_STK_SZ*KER_MX_NTSK                   ;see offset section
     __vector_9:                                           ;total 40.00uS @8MHz    (344 clocks) 
 	    KER_DEBUG_PIN_SET                                 ;debug pin set          (  2 clocks) 
 		KER_CONTEXT_SAVE                                  ;save context           (          ) 
-
+        KER_TIMER_RELOAD                                  ;reload timer           (  4 clocks) 
 		KER_CONTEXT_RESTORE                               ;restore context        (          ) 
 	    KER_DEBUG_PIN_CLEAR                               ;debug pin clear        (  2 clocks) 
 		RETI                                              ;return from interrupt  (  4 clocks) 
@@ -409,7 +426,6 @@ KerBase:   .skip KER_STK_SZ*KER_MX_NTSK                   ;see offset section
 Kernel_Timer_Init:                                        ;total 11.50uS @8MHz    ( 92 clocks) 
         CLI                                               ;disable global int     (  1 clock ) 
 		KER_DEBUG_PIN_INIT                                ;debug pin init         (  4 clocks) 
-        KER_TIMER2_DISABLE                                ;disable timer          (          ) 
 		KER_TIMER_INIT                                    ;disable timer          (          ) 
 		RET                                               ;return from subroutine (  4 clocks) 
 ;;===================================SysTick reg init end===================================;; 
@@ -425,6 +441,10 @@ Kernel_Timer_Init:                                        ;total 11.50uS @8MHz  
 Kernel_Init:                                              ;total 39.75uS @8MHz    (318 clocks) 
 		CLR   R1                                          ;gcc expects            (  1 clock ) 
 		CALL  Kernel_Timer_Init                           ;init timer             ( 92 clocks) 
+		LDI   R24                , 0xFF
+		KER_SET_RELOAD_VAL
+		LDI   R18                , 0x00
+		STS   KerBase+OFB_TID    , R18
 		SEI                                               ;enable interrupt       (  1 clock ) 
 		RET                                               ;return from subroutine (  4 clocks) 
 ;;======================================kernel init end=====================================;; 

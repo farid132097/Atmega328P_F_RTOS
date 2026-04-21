@@ -73,6 +73,8 @@
                                                                                                
 .global    KerBase                                        ;declare space for kernel            
 KerBase:   .skip 16                                       ;see offset section                  
+.global    KerMSPZP                                       ;declare space for kernel            
+KerMSPZP:  .skip 4                                        ;see offset section                  
 .global    KerSleep                                       ;declare space for sleep             
 KerSleep:  .skip KER_MX_NTSK*1                            ;see offset section                  
 .global    KerPrio                                        ;declare space for priority          
@@ -389,6 +391,44 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;see offset section
 
 
 
+;;===================================msp zp save starting===================================;; 
+;used registers          : R18, R19, R30, R31                                                  
+;arg registers           : None                                                                
+;return registers        : None                                                                
+;unsafe access registers : None                                                                
+.macro  KER_MSP_ZP_SAVE                                   ;total 1.25uS @8MHz     ( 10 clocks) 
+        IN    R18                , IOSPL                  ;load SPL               (  1 clock ) 
+		IN    R19                , IOSPH                  ;load SPH               (  1 clock ) 
+		STS   KerMSPZP+0         , R18                    ;store SPL              (  2 clocks) 
+		STS   KerMSPZP+1         , R19                    ;store SPH              (  2 clocks) 
+		STS   KerMSPZP+2         , R30                    ;store ZL               (  2 clocks) 
+		STS   KerMSPZP+3         , R31                    ;store ZH               (  2 clocks) 
+.endm                                                                                          
+;;======================================msp zp save end=====================================;; 
+
+
+
+
+
+;;==================================msp zp restore starting=================================;; 
+;used registers          : R18, R19, R30, R31                                                  
+;arg registers           : None                                                                
+;return registers        : None                                                                
+;unsafe access registers : None                                                                
+.macro  KER_MSP_ZP_RESTORE                                ;total 1.25uS @8MHz     ( 10 clocks) 
+		LDS   R31                , KerMSPZP+3             ;fetch ZH               (  2 clocks) 
+		LDS   R30                , KerMSPZP+2             ;fetch ZL               (  2 clocks) 
+		LDS   R19                , KerMSPZP+1             ;fetch SPH              (  2 clocks) 
+		LDS   R18                , KerMSPZP+0             ;fetch SPL              (  2 clocks) 
+		OUT   IOSPL              , R18                    ;load SPL               (  1 clock ) 
+		OUT   IOSPH              , R19                    ;load SPH               (  1 clock ) 
+.endm                                                                                          
+;;====================================msp zp restore end====================================;; 
+
+
+
+
+
 ;;=================================set reload val starting==================================;; 
 ;used registers          : R1~R31                                                              
 ;arg registers           : None                                                                
@@ -448,5 +488,80 @@ Kernel_Init:                                              ;total 39.75uS @8MHz  
 		SEI                                               ;enable interrupt       (  1 clock ) 
 		RET                                               ;return from subroutine (  4 clocks) 
 ;;======================================kernel init end=====================================;; 
+
+
+
+
+
+;;===============================kernel task create starting================================;; 
+;used registers          : R18, R19, R20, R22, R24, R25, R26(XL), R27(XH), R30(ZL), R31(ZH)    
+;arg registers           : R25:R24(FuncPtr), R22(TaskPriority)                                 
+;return registers        : None                                                                
+;unsafe access registers : R18, R19, R20, R22, R24, R25, R26(XL), R27(XH), R30(ZL), R31(ZH)    
+Kernel_Task_Create:                                       ;total 21.50uS @8MHz    (172 clocks) 
+        KER_MSP_ZP_SAVE                                   ;push MSP and ZP        ( 10 clocks) 
+		;set priority to KerSchPr+task_id                                                      
+		LDI   R30                , lo8(KerPrio)           ;load low byte          (  1 clock ) 
+		LDI   R31                , hi8(KerPrio)           ;load high byte         (  1 clock ) 
+		LDS   R18                , KerBase+OFB_TID        ;fetch task_id          (  2 clocks) 
+		LSL   R18                                         ;left shift to multiply (  1 clock ) 
+		ADD   R30                , R18                    ;add offset to array    (  1 clock ) 
+		LDI   R18                , 0x00                   ;clear for carry prop   (  1 clock ) 
+		ADC   R31                , R18                    ;add carry if any       (  1 clock ) 
+		ST    Z                  , R22                    ;save priority          (  2 clocks) 
+		;set task status to KerSleep+task_id                                                  
+		LDI   R30                , lo8(KerSleep)          ;load low byte          (  1 clock ) 
+		LDI   R31                , hi8(KerSleep)          ;load high byte         (  1 clock ) 
+		LDS   R18                , KerBase+OFB_TID        ;fetch task_id          (  2 clocks) 
+		LSL   R18                                         ;left shift to multiply (  1 clock ) 
+		ADD   R30                , R18                    ;add offset to array    (  1 clock ) 
+		LDI   R18                , 0x00                   ;clear for carry prop   (  1 clock ) 
+		ADC   R31                , R18                    ;add carry if any       (  1 clock ) 
+		LDI   R18                , TASK_READY             ;set status as ready    (  1 clock ) 
+		ST    Z                  , R18                    ;save status            (  2 clocks) 
+		;stack pointer for current task (KerStack + KER_STK_SZ*(task_id+1) - 1) ->stack top    
+		LDS   R18                , KerBase+OFB_TID        ;load task_id           (  2 clocks) 
+		INC   R18                                         ;increment task_id      (  1 clock ) 
+		LDI   R19                , KER_STK_SZ             ;load stack size        (  1 clock ) 
+		MUL   R18                , R19                    ;multiply to get offset (  2 clocks) 
+		MOV   R30                , R0                     ;load multiplied low    (  1 clocks) 
+		MOV   R31                , R1                     ;load multiplied high   (  1 clocks) 
+		SBIW  R30                , 0x01                   ;dec multiplied val-1   (  2 clocks) 
+		CLR   R1                                          ;gcc expects cleared    (  1 clock ) 
+		LDI   R18                , lo8(KerStack)          ;load base addr low     (  1 clock ) 
+		LDI   R19                , hi8(KerStack)          ;load base addr high    (  1 clock ) 
+		ADD   R30                , R18                    ;add low bytes          (  1 clock ) 
+		ADC   R31                , R19                    ;add high bytes+carry   (  1 clock ) 
+		OUT   IOSPL              , R30                    ;load SPL               (  1 clock ) 
+        OUT   IOSPH              , R31                    ;load SPH               (  1 clock ) 
+		;function argument directly returns word address                                       
+	    PUSH  R24                                         ;push word addr low     (  2 clocks) 
+		PUSH  R25                                         ;push word addr high    (  2 clocks) 
+		;push context to stack of this task                                                    
+		KER_CONTEXT_SAVE_HANDLER                          ;save context           ( 68 clocks) 
+		;read stack pointer of current task (necessary when restore)                           
+		IN    R18                , IOSPL                  ;read SPL               (  1 clock ) 
+        IN    R19                , IOSPH                  ;read SPH               (  1 clock ) 
+		;calculate the address where current task's SP will be stored and store SP             
+		LDS   R20                , KerBase+OFB_TID        ;load task_id           (  2 clocks) 
+		LSL   R20                                         ;left shift to multiply (  1 clock ) 
+		LDI   R30                , lo8(KerPSP)            ;fetch base pos low     (  1 clock ) 
+		LDI   R31                , hi8(KerPSP)            ;fetch base pos high    (  1 clock ) 
+		ADD   R30                , R20                    ;add offset to array    (  1 clock ) 
+		LDI   R20                , 0x00                   ;clear reg              (  1 clock ) 
+		ADC   R31                , R20                    ;add carry if any       (  1 clock ) 
+		ST    Z+                 , R18                    ;SPL at KerPSp+offset   (  2 clocks) 
+		ST    Z                  , R19                    ;SPH at KerPSp+offset   (  2 clocks) 
+		;increment task_id                                                                     
+		LDS   R18                , KerBase+OFB_TID        ;load task_id           (  2 clocks) 
+		INC   R18                                         ;increment task_id      (  1 clock ) 
+		STS   KerBase+OFB_TID    , R18                    ;store task_id          (  2 clocks) 
+		;increment ntask                                                                       
+		LDS   R18                , KerBase+OFB_NTSK       ;load ntask             (  2 clocks) 
+		INC   R18                                         ;increment ntask        (  1 clock ) 
+		STS   KerBase+OFB_NTSK   , R18                    ;store ntask            (  2 clocks) 
+		KER_MSP_ZP_RESTORE                                ;pop MSP and ZP         ( 10 clocks) 
+		RET                                               ;return from subroutine (  4 clocks) 
+;;==================================kernel task create end==================================;; 
 
 

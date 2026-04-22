@@ -5,7 +5,7 @@ Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
   0 .text         0000031e  00000000  00000000  00000074  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .bss          00000328  00800100  00800100  00000392  2**0
+  1 .bss          0000031e  00800100  00800100  00000392  2**0
                   ALLOC
   2 .stab         00000450  00000000  00000000  00000394  2**2
                   CONTENTS, READONLY, DEBUGGING
@@ -23,9 +23,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   9 .debug_frame  00000090  00000000  00000000  00000ee0  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    0000014e  00000000  00000000  00000f70  2**0
+ 10 .debug_str    0000018a  00000000  00000000  00000f70  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000078  00000000  00000000  000010be  2**0
+ 11 .debug_ranges 00000078  00000000  00000000  000010fa  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -72,6 +72,12 @@ Disassembly of section .text:
   7c:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
 
 00000080 <main>:
+
+
+int main(void) {
+    
+    
+	Kernel_Init();
   80:	0e 94 24 01 	call	0x248	; 0x248 <Kernel_Init>
   84:	ff cf       	rjmp	.-2      	; 0x84 <main+0x4>
 
@@ -182,9 +188,9 @@ _delay_loop_2(uint16_t __count)
  122:	df 93       	push	r29
  124:	ef 93       	push	r30
  126:	ff 93       	push	r31
- 128:	ec e1       	ldi	r30, 0x1C	; 28
+ 128:	e2 e1       	ldi	r30, 0x12	; 18
  12a:	f1 e0       	ldi	r31, 0x01	; 1
- 12c:	20 91 00 01 	lds	r18, 0x0100
+ 12c:	20 91 04 01 	lds	r18, 0x0104
  130:	22 0f       	add	r18, r18
  132:	e2 0f       	add	r30, r18
  134:	20 e0       	ldi	r18, 0x00	; 0
@@ -194,12 +200,12 @@ _delay_loop_2(uint16_t __count)
  13c:	20 83       	st	Z, r18
  13e:	31 83       	std	Z+1, r19	; 0x01
         KER_TIMER_RELOAD                                  ;reload timer           (  4 clocks) 
- 140:	20 91 01 01 	lds	r18, 0x0101
+ 140:	20 91 05 01 	lds	r18, 0x0105
  144:	20 93 b2 00 	sts	0x00B2, r18
 		KER_CONTEXT_RESTORE                               ;restore context        (          ) 
- 148:	ec e1       	ldi	r30, 0x1C	; 28
+ 148:	e2 e1       	ldi	r30, 0x12	; 18
  14a:	f1 e0       	ldi	r31, 0x01	; 1
- 14c:	20 91 00 01 	lds	r18, 0x0100
+ 14c:	20 91 04 01 	lds	r18, 0x0104
  150:	22 0f       	add	r18, r18
  152:	e2 0f       	add	r30, r18
  154:	20 e0       	ldi	r18, 0x00	; 0
@@ -344,11 +350,11 @@ Kernel_Init:                                              ;total 39.75uS @8MHz  
 		LDI   R24                , 0xFF
  24e:	8f ef       	ldi	r24, 0xFF	; 255
 		KER_SET_RELOAD_VAL
- 250:	80 93 01 01 	sts	0x0101, r24
+ 250:	80 93 05 01 	sts	0x0105, r24
 		LDI   R18                , 0x00
  254:	20 e0       	ldi	r18, 0x00	; 0
-		STS   KerBase+OFB_TID    , R18
- 256:	20 93 00 01 	sts	0x0100, r18
+		STS   KerTID             , R18
+ 256:	20 93 04 01 	sts	0x0104, r18
 		SEI                                               ;enable interrupt       (  1 clock ) 
  25a:	78 94       	sei
 		RET                                               ;return from subroutine (  4 clocks) 

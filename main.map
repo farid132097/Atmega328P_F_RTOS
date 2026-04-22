@@ -264,32 +264,34 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
                 0x00800100                _edata = .
                 0x00800100                PROVIDE (__data_end, .)
 
-.bss            0x00800100      0x328
+.bss            0x00800100      0x31e
                 0x00800100                PROVIDE (__bss_start, .)
  *(.bss)
  .bss           0x00800100        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm328p.o
  .bss           0x00800100        0x0 main.o
  .bss           0x00800100        0x0 tasks.o
- .bss           0x00800100      0x328 kernel.o
-                0x00800116                KerPrio
-                0x00800128                KerStack
-                0x0080011c                KerPSP
-                0x00800100                KerBase
-                0x00800110                KerSleep
- .bss           0x00800428        0x0 debug.o
- .bss           0x00800428        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .bss           0x00800100      0x31e kernel.o
+                0x00800112                KerTSP
+                0x0080010c                KerPrio
+                0x0080011e                KerStack
+                0x00800104                KerTID
+                0x00800100                KerMSPZP
+                0x00800105                KerLST
+                0x00800106                KerSleep
+ .bss           0x0080041e        0x0 debug.o
+ .bss           0x0080041e        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
  *(.bss*)
  *(COMMON)
-                0x00800428                PROVIDE (__bss_end, .)
+                0x0080041e                PROVIDE (__bss_end, .)
                 0x0000031e                __data_load_start = LOADADDR (.data)
                 0x0000031e                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x00800428        0x0
-                0x00800428                PROVIDE (__noinit_start, .)
+.noinit         0x0080041e        0x0
+                0x0080041e                PROVIDE (__noinit_start, .)
  *(.noinit*)
-                0x00800428                PROVIDE (__noinit_end, .)
-                0x00800428                _end = .
-                0x00800428                PROVIDE (__heap_start, .)
+                0x0080041e                PROVIDE (__noinit_end, .)
+                0x0080041e                _end = .
+                0x0080041e                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
  *(.eeprom*)
@@ -380,11 +382,11 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  .debug_frame   0x00000000       0x20 main.o
  .debug_frame   0x00000020       0x70 tasks.o
 
-.debug_str      0x00000000      0x14e
+.debug_str      0x00000000      0x18a
  *(.debug_str)
- .debug_str     0x00000000       0x88 main.o
-                                 0xbc (size before relaxing)
- .debug_str     0x00000088       0xc6 tasks.o
+ .debug_str     0x00000000       0x87 main.o
+                                 0xbb (size before relaxing)
+ .debug_str     0x00000087      0x103 tasks.o
                                 0x176 (size before relaxing)
 
 .debug_loc
@@ -409,11 +411,13 @@ Debug_Tx_From_RAM                                 debug.o
 Debug_Tx_RAM_Area                                 debug.o
 Debug_Tx_Word                                     debug.o
 Debug_Tx_Word_Conf                                debug.o
-KerBase                                           kernel.o
-KerPSP                                            kernel.o
+KerLST                                            kernel.o
+KerMSPZP                                          kernel.o
 KerPrio                                           kernel.o
 KerSleep                                          kernel.o
 KerStack                                          kernel.o
+KerTID                                            kernel.o
+KerTSP                                            kernel.o
 Kernel_Init                                       kernel.o
                                                   main.o
 Kernel_Timer_Init                                 kernel.o

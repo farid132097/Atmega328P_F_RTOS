@@ -7,7 +7,7 @@
    4               	 ; Author        : MD. Faridul Islam (faridmdislam@gmail.com)
    5               	 ; Description   : AVR kernel for bare-metal RTOS
    6               	 ; Created       : Jul 27, 2025, 09:30 PM
-   7               	 ; Last Modified : Apr 16, 2026, 12:31 PM
+   7               	 ; Last Modified : Apr 22, 2026, 10:49 PM
    8               	
    9               	
   10               	
@@ -489,529 +489,696 @@
   59               	;;=============================define global variables starting=============================;; 
   60               	.section   .bss                                                                                
   61               	                                                                                               
-  62               	.global    KerMSPZP                                       ;declare space for kernel            
-  63 0000 0000 0000 	KerMSPZP:  .skip 4                                        ;see offset section                  
+  62               	.global    KerMSPZP                                       ;declare space for storing MSP, ZP   
+  63 0000 0000 0000 	KerMSPZP:  .skip 4                                        ;2 bytes for MSP, 2 bytes for ZP     
   64               	.global    KerTID                                         ;declare space for task id           
   65 0004 00        	KerTID:    .skip 1                                        ;single byte, max 0xff tasks         
-  66               	.global    KerLST                                         ;declare space for lowest sleep      
-  67 0005 00        	KerLST:    .skip 1                                        ;single byte, max 0xff unit sleep    
-  68               	.global    KerSleep                                       ;declare space for task sleep        
-  69 0006 0000 0000 	KerSleep:  .skip KER_MX_NTSK*1                            ;singel byte for each task           
-  69      0000 
-  70               	.global    KerPrio                                        ;declare space for task priority     
-  71 000c 0000 0000 	KerPrio:   .skip KER_MX_NTSK*1                            ;singel byte for each task           
+  66               	.global    KerNTSK                                        ;declare space for number of tasks   
+  67 0005 00        	KerNTSK:   .skip 1                                        ;single byte, max 0xff tasks         
+  68               	.global    KerLST                                         ;declare space for lowest sleep time 
+  69 0006 00        	KerLST:    .skip 1                                        ;single byte, max 0xff unit sleep    
+  70               	.global    KerSleep                                       ;declare space for task sleep time   
+  71 0007 0000 0000 	KerSleep:  .skip KER_MX_NTSK*1                            ;singel byte for each task           
   71      0000 
-  72               	.global    KerTSP                                         ;declare space for stack pointer     
-  73 0012 0000 0000 	KerTSP:    .skip KER_MX_NTSK*2                            ;2 bytes for each task               
-  73      0000 0000 
-  73      0000 0000 
-  74               	.global    KerStack                                       ;declare global space for stack      
-  75 001e 0000 0000 	KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for each task      
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  75      0000 0000 
-  76               	                                                                                               
-  77               	;;==============================define global variables end=================================;; 
-  78               	
-  79               	
+  72               	.global    KerPrio                                        ;declare space for task priority     
+  73 000d 0000 0000 	KerPrio:   .skip KER_MX_NTSK*1                            ;singel byte for each task           
+  73      0000 
+  74               	.global    KerTSP                                         ;declare space for stack pointer     
+  75 0013 0000 0000 	KerTSP:    .skip KER_MX_NTSK*2                            ;2 bytes for each task               
+  75      0000 0000 
+  75      0000 0000 
+  76               	.global    KerStack                                       ;declare global space for stack      
+  77 001f 0000 0000 	KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for each task      
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  77      0000 0000 
+  78               	                                                                                               
+  79               	;;==============================define global variables end=================================;; 
   80               	
   81               	
   82               	
-  83               	;;===============================define text section starting===============================;; 
-  84               	.section .text                                                                                 
-  85               	;;==================================define text section end=================================;; 
-  86               	
-  87               	
+  83               	
+  84               	
+  85               	;;===============================define text section starting===============================;; 
+  86               	.section .text                                                                                 
+  87               	;;==================================define text section end=================================;; 
   88               	
   89               	
   90               	
-  91               	;;==============================define global functions starting============================;; 
-  92               	.global  Kernel_Timer_Init                                                                     
-  93               	.global  Kernel_Init                                                                           
-  94               	;;================================define global functions end===============================;; 
-  95               	
-  96               	
+  91               	
+  92               	
+  93               	;;==============================define global functions starting============================;; 
+  94               	.global  Kernel_Timer_Init                                                                     
+  95               	.global  Kernel_Init                                                                           
+  96               	;;================================define global functions end===============================;; 
   97               	
   98               	
   99               	
- 100               	;;=================================timer2 disable starting==================================;; 
- 101               	;used registers          : R18                                                                 
- 102               	;arg registers           : None                                                                
- 103               	;return registers        : None                                                                
- 104               	;unsafe access registers : R18                                                                 
- 105               	.macro  KER_TIMER2_DISABLE                                ;1.75uS @8MHz           ( 14 clocks) 
- 106               			LDI   R18                , 0x00                   ;clear interrupt enbits (  1 clock ) 
- 107               			STS   SRTIMSK2           , R18                    ;set val to TIMSK2      (  2 clocks) 
- 108               			STS   SRTCCR2B           , R18                    ;set val to TCCR2B      (  2 clocks) 
- 109               			STS   SRASSR             , R18                    ;set val to ASSR        (  2 clocks) 
- 110               			STS   SROCR2B            , R18                    ;clear OCR2B            (  2 clocks) 
- 111               			STS   SRTCNT2            , R18                    ;clear TCNT2            (  2 clocks) 
- 112               	.endm                                                                                          
- 113               	;;==================================timer2 disable end======================================;; 
- 114               	
- 115               	
+ 100               	
+ 101               	
+ 102               	;;=================================timer2 disable starting==================================;; 
+ 103               	;used registers          : R18                                                                 
+ 104               	;arg registers           : None                                                                
+ 105               	;return registers        : None                                                                
+ 106               	;unsafe access registers : R18                                                                 
+ 107               	.macro  KER_TIMER2_DISABLE                                ;1.75uS @8MHz           ( 14 clocks) 
+ 108               			LDI   R18                , 0x00                   ;clear interrupt enbits (  1 clock ) 
+ 109               			STS   SRTIMSK2           , R18                    ;set val to TIMSK2      (  2 clocks) 
+ 110               			STS   SRTCCR2B           , R18                    ;set val to TCCR2B      (  2 clocks) 
+ 111               			STS   SRASSR             , R18                    ;set val to ASSR        (  2 clocks) 
+ 112               			STS   SROCR2B            , R18                    ;clear OCR2B            (  2 clocks) 
+ 113               			STS   SRTCNT2            , R18                    ;clear TCNT2            (  2 clocks) 
+ 114               	.endm                                                                                          
+ 115               	;;==================================timer2 disable end======================================;; 
  116               	
  117               	
- 118               	;;===============================timer2 async init starting=================================;; 
- 119               	;used registers          : R18, R19                                                            
- 120               	;arg registers           : None                                                                
- 121               	;return registers        : None                                                                
- 122               	;unsafe access registers : R18, R19                                                            
- 123               	.macro  KER_TIMER2_ASYNC_INIT                             ;~9.13uS @8MHz          (~73 clocks) 
- 124               			LDI   R18                , 0x00                   ;clear interrupts       (  1 clock ) 
- 125               			STS   SRTCCR2B           , R18                    ;stop timer             (  2 clocks) 
- 126               			STS   SRTIMSK2           , R18                    ;clear TIMSK2           (  2 clocks) 
- 127               			LDI   R18                , 0x20                   ;set AS2 bit            (  1 clock ) 
- 128               			STS   SRASSR             , R18                    ;set val to ASSR        (  2 clocks) 
- 129               			LDI   R18                , 0x00                   ;clear interrupts       (  1 clock ) 
- 130               			STS   SROCR2A            , R18                    ;clear compare reg      (  2 clocks) 
- 131               			STS   SROCR2B            , R18                    ;clear compare reg      (  2 clocks) 
- 132               			STS   SRTCCR2A           , R18                    ;clear controlA reg     (  2 clocks) 
- 133               			LDI   R18                , 0x03                   ;prescaler 3            (  1 clock ) 
- 134               			STS   SRTCCR2B           , R18                    ;set prescaler          (  2 clocks) 
- 135               			LDI   R18                , 0x00                   ;clear reg              (  1 clock ) 
- 136               			STS   SRTCNT2            , R18                    ;clear TCNT2            (  2 clocks) 
- 137               		_KER_TC2_AUB\@:                                                                            
- 138               		    LDS   R18                , SRASSR                 ;load ASSR              (  2 clocks) 
- 139               	        ANDI  R18                , 0x02                   ;check bit TCR2AUB      (  1 clock ) 
- 140               			BRNE  _KER_TC2_AUB\@                              ;wait until AUB cleared (  2 clocks) 
- 141               		_KER_TC2_BUB\@:                                                                            
- 142               		    LDS   R18                , SRASSR                 ;load ASSR              (  2 clocks) 
- 143               	        ANDI  R18                , 0x01                   ;check bit TCR2BUB      (  1 clock ) 
- 144               			BRNE  _KER_TC2_BUB\@                              ;wait until BUB cleared (  2 clocks) 
- 145               		_KER_OC2_AUB\@:                                                                            
- 146               		    LDS   R18                , SRASSR                 ;load ASSR              (  2 clocks) 
- 147               	        ANDI  R18                , 0x08                   ;check bit OR2AUB       (  1 clock ) 
- 148               			BRNE  _KER_OC2_AUB\@                              ;wait until AUB cleared (  2 clocks) 
- 149               		_KER_OC2_BUB\@:                                                                            
- 150               		    LDS   R18                , SRASSR                 ;load ASSR              (  2 clocks) 
- 151               	        ANDI  R18                , 0x04                   ;check bit OCR2BUB      (  1 clock ) 
- 152               			BRNE  _KER_OC2_BUB\@                              ;wait until BUB cleared (  2 clocks) 
- 153               		_KER_TC2_UB\@:                                                                             
- 154               		    LDS   R18                , SRASSR                 ;load ASSR              (  2 clocks) 
- 155               	        ANDI  R18                , 0x10                   ;check bit TCNT2UB      (  1 clock ) 
- 156               			BRNE  _KER_TC2_UB\@                               ;wait until UB cleared  (  2 clocks) 
- 157               		_KER_TC2_TOV2\@:                                                                           
- 158               		    LDS   R18                , SRTIFR2                ;load TIFR2             (  2 clocks) 
- 159               	        ANDI  R18                , 0x01                   ;check bit TOV2         (  1 clock ) 
- 160               	        BREQ  _KER_TC2_OCF2A\@                            ;bit cleared, jump next (  2 clocks) 
- 161               			LDI   R18                , 0x01                   ;set bit                (  1 clock ) 
- 162               			STS   SRTIFR2            , R18                    ;set val                (  2 clocks) 
- 163               	    _KER_TC2_OCF2A\@:                                                                          
- 164               		    LDS   R18                , SRTIFR2                ;load TIFR2             (  2 clocks) 
- 165               	        ANDI  R18                , 0x02                   ;check bit OCF2A        (  1 clock ) 
- 166               	        BREQ  _KER_TC2_OCF2B\@                            ;bit cleared, jump next (  2 clocks) 
- 167               			LDI   R18                , 0x02                   ;set bit                (  1 clock ) 
- 168               			STS   SRTIFR2            , R18                    ;set val                (  2 clocks) 
- 169               		_KER_TC2_OCF2B\@:                                                                          
- 170               		    LDS   R18                , SRTIFR2                ;load TIFR2             (  2 clocks) 
- 171               	        ANDI  R18                , 0x04                   ;check bit OCF2B        (  1 clock ) 
- 172               	        BREQ  _KER_TC2_INTEN\@                            ;bit cleared, jump next (  2 clocks) 
- 173               			LDI   R18                , 0x04                   ;set bit                (  1 clock ) 
- 174               			STS   SRTIFR2            , R18                    ;set val                (  2 clocks) 
- 175               	    _KER_TC2_INTEN\@:                                                                          
- 176               			LDI   R18                , 0x01                   ;set TOIE2 bit          (  1 clock ) 
- 177               			STS   SRTIMSK2           , R18                    ;set val to TIMSK2      (  2 clocks) 
- 178               	.endm                                                                                          
- 179               	;;=================================timer2 async init end====================================;; 
- 180               	
- 181               	
+ 118               	
+ 119               	
+ 120               	;;===============================timer2 async init starting=================================;; 
+ 121               	;used registers          : R18, R19                                                            
+ 122               	;arg registers           : None                                                                
+ 123               	;return registers        : None                                                                
+ 124               	;unsafe access registers : R18, R19                                                            
+ 125               	.macro  KER_TIMER2_ASYNC_INIT                             ;~9.13uS @8MHz          (~73 clocks) 
+ 126               			LDI   R18                , 0x00                   ;clear interrupts       (  1 clock ) 
+ 127               			STS   SRTCCR2B           , R18                    ;stop timer             (  2 clocks) 
+ 128               			STS   SRTIMSK2           , R18                    ;clear TIMSK2           (  2 clocks) 
+ 129               			LDI   R18                , 0x20                   ;set AS2 bit            (  1 clock ) 
+ 130               			STS   SRASSR             , R18                    ;set val to ASSR        (  2 clocks) 
+ 131               			LDI   R18                , 0x00                   ;clear interrupts       (  1 clock ) 
+ 132               			STS   SROCR2A            , R18                    ;clear compare reg      (  2 clocks) 
+ 133               			STS   SROCR2B            , R18                    ;clear compare reg      (  2 clocks) 
+ 134               			STS   SRTCCR2A           , R18                    ;clear controlA reg     (  2 clocks) 
+ 135               			LDI   R18                , 0x03                   ;prescaler 3            (  1 clock ) 
+ 136               			STS   SRTCCR2B           , R18                    ;set prescaler          (  2 clocks) 
+ 137               			LDI   R18                , 0x00                   ;clear reg              (  1 clock ) 
+ 138               			STS   SRTCNT2            , R18                    ;clear TCNT2            (  2 clocks) 
+ 139               		_KER_TC2_AUB\@:                                                                            
+ 140               		    LDS   R18                , SRASSR                 ;load ASSR              (  2 clocks) 
+ 141               	        ANDI  R18                , 0x02                   ;check bit TCR2AUB      (  1 clock ) 
+ 142               			BRNE  _KER_TC2_AUB\@                              ;wait until AUB cleared (  2 clocks) 
+ 143               		_KER_TC2_BUB\@:                                                                            
+ 144               		    LDS   R18                , SRASSR                 ;load ASSR              (  2 clocks) 
+ 145               	        ANDI  R18                , 0x01                   ;check bit TCR2BUB      (  1 clock ) 
+ 146               			BRNE  _KER_TC2_BUB\@                              ;wait until BUB cleared (  2 clocks) 
+ 147               		_KER_OC2_AUB\@:                                                                            
+ 148               		    LDS   R18                , SRASSR                 ;load ASSR              (  2 clocks) 
+ 149               	        ANDI  R18                , 0x08                   ;check bit OR2AUB       (  1 clock ) 
+ 150               			BRNE  _KER_OC2_AUB\@                              ;wait until AUB cleared (  2 clocks) 
+ 151               		_KER_OC2_BUB\@:                                                                            
+ 152               		    LDS   R18                , SRASSR                 ;load ASSR              (  2 clocks) 
+ 153               	        ANDI  R18                , 0x04                   ;check bit OCR2BUB      (  1 clock ) 
+ 154               			BRNE  _KER_OC2_BUB\@                              ;wait until BUB cleared (  2 clocks) 
+ 155               		_KER_TC2_UB\@:                                                                             
+ 156               		    LDS   R18                , SRASSR                 ;load ASSR              (  2 clocks) 
+ 157               	        ANDI  R18                , 0x10                   ;check bit TCNT2UB      (  1 clock ) 
+ 158               			BRNE  _KER_TC2_UB\@                               ;wait until UB cleared  (  2 clocks) 
+ 159               		_KER_TC2_TOV2\@:                                                                           
+ 160               		    LDS   R18                , SRTIFR2                ;load TIFR2             (  2 clocks) 
+ 161               	        ANDI  R18                , 0x01                   ;check bit TOV2         (  1 clock ) 
+ 162               	        BREQ  _KER_TC2_OCF2A\@                            ;bit cleared, jump next (  2 clocks) 
+ 163               			LDI   R18                , 0x01                   ;set bit                (  1 clock ) 
+ 164               			STS   SRTIFR2            , R18                    ;set val                (  2 clocks) 
+ 165               	    _KER_TC2_OCF2A\@:                                                                          
+ 166               		    LDS   R18                , SRTIFR2                ;load TIFR2             (  2 clocks) 
+ 167               	        ANDI  R18                , 0x02                   ;check bit OCF2A        (  1 clock ) 
+ 168               	        BREQ  _KER_TC2_OCF2B\@                            ;bit cleared, jump next (  2 clocks) 
+ 169               			LDI   R18                , 0x02                   ;set bit                (  1 clock ) 
+ 170               			STS   SRTIFR2            , R18                    ;set val                (  2 clocks) 
+ 171               		_KER_TC2_OCF2B\@:                                                                          
+ 172               		    LDS   R18                , SRTIFR2                ;load TIFR2             (  2 clocks) 
+ 173               	        ANDI  R18                , 0x04                   ;check bit OCF2B        (  1 clock ) 
+ 174               	        BREQ  _KER_TC2_INTEN\@                            ;bit cleared, jump next (  2 clocks) 
+ 175               			LDI   R18                , 0x04                   ;set bit                (  1 clock ) 
+ 176               			STS   SRTIFR2            , R18                    ;set val                (  2 clocks) 
+ 177               	    _KER_TC2_INTEN\@:                                                                          
+ 178               			LDI   R18                , 0x01                   ;set TOIE2 bit          (  1 clock ) 
+ 179               			STS   SRTIMSK2           , R18                    ;set val to TIMSK2      (  2 clocks) 
+ 180               	.endm                                                                                          
+ 181               	;;=================================timer2 async init end====================================;; 
  182               	
  183               	
  184               	
- 185               	;;=================================timer reload starting====================================;; 
- 186               	;used registers          : R18, R19                                                            
- 187               	;arg registers           : None                                                                
- 188               	;return registers        : None                                                                
- 189               	;unsafe access registers : R18, R19                                                            
- 190               	.macro  KER_TIMER_RELOAD                                  ;0.5uS @8MHz            (  4 clocks) 
- 191               	        LDS   R18                , KerLST                 ;fetch lowst sleep time (  2 clocks) 
- 192               			STS   SRTCNT2            , R18                    ;set val                (  2 clocks) 
- 193               	.endm                                                                                          
- 194               	;;===================================timer reload end=======================================;; 
- 195               	
- 196               	
+ 185               	
+ 186               	
+ 187               	;;=================================timer reload starting====================================;; 
+ 188               	;used registers          : R18                                                                 
+ 189               	;arg registers           : None                                                                
+ 190               	;return registers        : None                                                                
+ 191               	;unsafe access registers : R18                                                                 
+ 192               	.macro  KER_TIMER_RELOAD                                  ;0.5uS @8MHz            (  4 clocks) 
+ 193               	        LDS   R18                , KerLST                 ;fetch lowst sleep time (  2 clocks) 
+ 194               			STS   SRTCNT2            , R18                    ;set val                (  2 clocks) 
+ 195               	.endm                                                                                          
+ 196               	;;===================================timer reload end=======================================;; 
  197               	
  198               	
  199               	
- 200               	;;====================================timer init starting===================================;; 
- 201               	;used registers          : R18, R19                                                            
- 202               	;arg registers           : None                                                                
- 203               	;return registers        : None                                                                
- 204               	;unsafe access registers : R18, R19                                                            
- 205               	.macro  KER_TIMER_INIT                                    ;~9.13uS max @8MHz      (~73 clocks) 
- 206               	        KER_TIMER2_DISABLE                                ;1.75uS @8MHz           ( 14 clocks) 
- 207               			KER_TIMER2_ASYNC_INIT                             ;total 1.5uS @8MHz      (~73 clocks) 
- 208               	.endm                                                                                          
- 209               	;;======================================timer init end======================================;; 
- 210               	
- 211               	
+ 200               	
+ 201               	
+ 202               	;;====================================timer init starting===================================;; 
+ 203               	;used registers          : R18, R19                                                            
+ 204               	;arg registers           : None                                                                
+ 205               	;return registers        : None                                                                
+ 206               	;unsafe access registers : R18, R19                                                            
+ 207               	.macro  KER_TIMER_INIT                                    ;~9.13uS max @8MHz      (~73 clocks) 
+ 208               	        KER_TIMER2_DISABLE                                ;1.75uS @8MHz           ( 14 clocks) 
+ 209               			KER_TIMER2_ASYNC_INIT                             ;total 1.5uS @8MHz      (~73 clocks) 
+ 210               	.endm                                                                                          
+ 211               	;;======================================timer init end======================================;; 
  212               	
  213               	
  214               	
- 215               	;;============================debug pin operation init starting=============================;; 
- 216               	;used registers          : None                                                                
- 217               	;arg registers           : None                                                                
- 218               	;return registers        : None                                                                
- 219               	;unsafe access registers : None                                                                
- 220               	.macro  KER_DEBUG_PIN_INIT                                ;total 0.5uS @8MHz      (  4 clocks) 
- 221               	        #ifdef KER_DBG_ENABLE                                                                  
- 222               			CBI   KER_DBG_PORT       , KER_DBG_PIN            ;clear port bit         (  2 clocks) 
- 223               			SBI   KER_DBG_DDR        , KER_DBG_PIN            ;set bit in DDR         (  2 clocks) 
- 224               			#endif                                                                                 
- 225               	.endm                                                                                          
- 226               	;;==============================debug pin operation init end================================;; 
- 227               	
- 228               	
+ 215               	
+ 216               	
+ 217               	;;============================debug pin operation init starting=============================;; 
+ 218               	;used registers          : None                                                                
+ 219               	;arg registers           : None                                                                
+ 220               	;return registers        : None                                                                
+ 221               	;unsafe access registers : None                                                                
+ 222               	.macro  KER_DEBUG_PIN_INIT                                ;total 0.5uS @8MHz      (  4 clocks) 
+ 223               	        #ifdef KER_DBG_ENABLE                                                                  
+ 224               			CBI   KER_DBG_PORT       , KER_DBG_PIN            ;clear port bit         (  2 clocks) 
+ 225               			SBI   KER_DBG_DDR        , KER_DBG_PIN            ;set bit in DDR         (  2 clocks) 
+ 226               			#endif                                                                                 
+ 227               	.endm                                                                                          
+ 228               	;;==============================debug pin operation init end================================;; 
  229               	
  230               	
  231               	
- 232               	;;===========================debug pin operation set starting===============================;; 
- 233               	;used registers          : None                                                                
- 234               	;arg registers           : None                                                                
- 235               	;return registers        : None                                                                
- 236               	;unsafe access registers : None                                                                
- 237               	.macro  KER_DEBUG_PIN_SET                                 ;total 0.25uS @8MHz     (  2 clocks) 
- 238               	        #ifdef KER_DBG_ENABLE                                                                  
- 239               	        SBI   KER_DBG_PORT       , KER_DBG_PIN            ;set gpio               (  2 clocks) 
- 240               			#endif                                                                                 
- 241               	.endm                                                                                          
- 242               	;;==============================debug pin operation set end=================================;; 
- 243               	
- 244               	
+ 232               	
+ 233               	
+ 234               	;;===========================debug pin operation set starting===============================;; 
+ 235               	;used registers          : None                                                                
+ 236               	;arg registers           : None                                                                
+ 237               	;return registers        : None                                                                
+ 238               	;unsafe access registers : None                                                                
+ 239               	.macro  KER_DEBUG_PIN_SET                                 ;total 0.25uS @8MHz     (  2 clocks) 
+ 240               	        #ifdef KER_DBG_ENABLE                                                                  
+ 241               	        SBI   KER_DBG_PORT       , KER_DBG_PIN            ;set gpio               (  2 clocks) 
+ 242               			#endif                                                                                 
+ 243               	.endm                                                                                          
+ 244               	;;==============================debug pin operation set end=================================;; 
  245               	
  246               	
  247               	
- 248               	;;===========================debug pin operation clear starting=============================;; 
- 249               	;used registers          : None                                                                
- 250               	;arg registers           : None                                                                
- 251               	;return registers        : None                                                                
- 252               	;unsafe access registers : None                                                                
- 253               	.macro  KER_DEBUG_PIN_CLEAR                               ;total 0.25uS @8MHz     (  2 clocks) 
- 254               	        #ifdef KER_DBG_ENABLE                                                                  
- 255               			CBI   KER_DBG_PORT       , KER_DBG_PIN            ;clear gpio             (  2 clocks) 
- 256               			#endif                                                                                 
- 257               	.endm                                                                                          
- 258               	;;==============================debug pin operation clear end===============================;; 
- 259               	
- 260               	
+ 248               	
+ 249               	
+ 250               	;;===========================debug pin operation clear starting=============================;; 
+ 251               	;used registers          : None                                                                
+ 252               	;arg registers           : None                                                                
+ 253               	;return registers        : None                                                                
+ 254               	;unsafe access registers : None                                                                
+ 255               	.macro  KER_DEBUG_PIN_CLEAR                               ;total 0.25uS @8MHz     (  2 clocks) 
+ 256               	        #ifdef KER_DBG_ENABLE                                                                  
+ 257               			CBI   KER_DBG_PORT       , KER_DBG_PIN            ;clear gpio             (  2 clocks) 
+ 258               			#endif                                                                                 
+ 259               	.endm                                                                                          
+ 260               	;;==============================debug pin operation clear end===============================;; 
  261               	
  262               	
  263               	
  264               	
- 265               	;;==================================context save starting===================================;; 
- 266               	;used registers          : R0~R31                                                              
- 267               	;arg registers           : None                                                                
- 268               	;return registers        : None                                                                
- 269               	;unsafe access registers : None                                                                
- 270               	.macro  KER_CONTEXT_SAVE                                  ;total 7.88uS @8MHz     ( 83 clocks) 
- 271               	        PUSH  R0                                          ;push R0                (  2 clocks) 
- 272               			IN    R0                 , IOSREG                 ;save SREG              (  1 clock ) 
- 273               			CLI                                               ;clear interrupt        (  1 clock ) 
- 274               			PUSH  R0                                          ;save SREG              (  2 clocks) 
- 275               			PUSH  R1                                          ;save R1                (  2 clocks) 
- 276               			CLR   R1                                          ;clear R1               (  1 clock ) 
- 277               			PUSH  R2                                          ;save R2                (  2 clocks) 
- 278               			PUSH  R3                                          ;save R3                (  2 clocks) 
- 279               			PUSH  R4                                          ;save R4                (  2 clocks) 
- 280               			PUSH  R5                                          ;save R5                (  2 clocks) 
- 281               			PUSH  R6                                          ;save R6                (  2 clocks) 
- 282               			PUSH  R7                                          ;save R7                (  2 clocks) 
- 283               			PUSH  R8                                          ;save R8                (  2 clocks) 
- 284               			PUSH  R9                                          ;save R9                (  2 clocks) 
- 285               			PUSH  R10                                         ;save R10               (  2 clocks) 
- 286               			PUSH  R11                                         ;save R11               (  2 clocks) 
- 287               			PUSH  R12                                         ;save R12               (  2 clocks) 
- 288               			PUSH  R13                                         ;save R13               (  2 clocks) 
- 289               			PUSH  R14                                         ;save R14               (  2 clocks) 
- 290               			PUSH  R15                                         ;save R15               (  2 clocks) 
- 291               			PUSH  R16                                         ;save R16               (  2 clocks) 
- 292               			PUSH  R17                                         ;save R17               (  2 clocks) 
- 293               			PUSH  R18                                         ;save R18               (  2 clocks) 
- 294               			PUSH  R19                                         ;save R19               (  2 clocks) 
- 295               			PUSH  R20                                         ;save R20               (  2 clocks) 
- 296               			PUSH  R21                                         ;save R21               (  2 clocks) 
- 297               			PUSH  R22                                         ;save R22               (  2 clocks) 
- 298               			PUSH  R23                                         ;save R23               (  2 clocks) 
- 299               			PUSH  R24                                         ;save R24               (  2 clocks) 
- 300               			PUSH  R25                                         ;save R25               (  2 clocks) 
- 301               			PUSH  R26                                         ;save R26               (  2 clocks) 
- 302               			PUSH  R27                                         ;save R27               (  2 clocks) 
- 303               			PUSH  R28                                         ;save R28               (  2 clocks) 
- 304               			PUSH  R29                                         ;save R29               (  2 clocks) 
- 305               			PUSH  R30                                         ;save R30               (  2 clocks) 
- 306               			PUSH  R31                                         ;save R31               (  2 clocks) 
- 307               			LDI   R30                , lo8(KerTSP)            ;fetch base pos low     (  1 clock ) 
- 308               			LDI   R31                , hi8(KerTSP)            ;fetch base pos high    (  1 clock ) 
- 309               			LDS   R18                , KerTID                 ;fetch task_id          (  2 clocks) 
- 310               			LSL   R18                                         ;left shift to multiply (  1 clock ) 
- 311               			ADD   R30                , R18                    ;add offset to array    (  1 clock ) 
- 312               			LDI   R18                , 0x00                   ;clear for carry prop   (  1 clock ) 
- 313               			ADC   R31                , R18                    ;add carry if any       (  1 clock ) 
- 314               			IN    R18                , IOSPL                  ;fetch SPL0             (  1 clock ) 
- 315               			IN    R19                , IOSPH                  ;fetch SPH0             (  1 clock ) 
- 316               			STD   Z+0                , R18                    ;store SPL at ZP+0      (  2 clocks) 
- 317               			STD   Z+1                , R19                    ;store SPH at ZP+1      (  2 clocks) 
- 318               	.endm                                                                                          
- 319               	;;=====================================context save end=====================================;; 
- 320               	
- 321               	
+ 265               	
+ 266               	
+ 267               	;;==================================context save starting===================================;; 
+ 268               	;used registers          : R0~R31                                                              
+ 269               	;arg registers           : None                                                                
+ 270               	;return registers        : None                                                                
+ 271               	;unsafe access registers : None                                                                
+ 272               	.macro  KER_CONTEXT_SAVE                                  ;total 7.88uS @8MHz     ( 83 clocks) 
+ 273               	        PUSH  R0                                          ;push R0                (  2 clocks) 
+ 274               			IN    R0                 , IOSREG                 ;save SREG              (  1 clock ) 
+ 275               			CLI                                               ;clear interrupt        (  1 clock ) 
+ 276               			PUSH  R0                                          ;save SREG              (  2 clocks) 
+ 277               			PUSH  R1                                          ;save R1                (  2 clocks) 
+ 278               			CLR   R1                                          ;clear R1               (  1 clock ) 
+ 279               			PUSH  R2                                          ;save R2                (  2 clocks) 
+ 280               			PUSH  R3                                          ;save R3                (  2 clocks) 
+ 281               			PUSH  R4                                          ;save R4                (  2 clocks) 
+ 282               			PUSH  R5                                          ;save R5                (  2 clocks) 
+ 283               			PUSH  R6                                          ;save R6                (  2 clocks) 
+ 284               			PUSH  R7                                          ;save R7                (  2 clocks) 
+ 285               			PUSH  R8                                          ;save R8                (  2 clocks) 
+ 286               			PUSH  R9                                          ;save R9                (  2 clocks) 
+ 287               			PUSH  R10                                         ;save R10               (  2 clocks) 
+ 288               			PUSH  R11                                         ;save R11               (  2 clocks) 
+ 289               			PUSH  R12                                         ;save R12               (  2 clocks) 
+ 290               			PUSH  R13                                         ;save R13               (  2 clocks) 
+ 291               			PUSH  R14                                         ;save R14               (  2 clocks) 
+ 292               			PUSH  R15                                         ;save R15               (  2 clocks) 
+ 293               			PUSH  R16                                         ;save R16               (  2 clocks) 
+ 294               			PUSH  R17                                         ;save R17               (  2 clocks) 
+ 295               			PUSH  R18                                         ;save R18               (  2 clocks) 
+ 296               			PUSH  R19                                         ;save R19               (  2 clocks) 
+ 297               			PUSH  R20                                         ;save R20               (  2 clocks) 
+ 298               			PUSH  R21                                         ;save R21               (  2 clocks) 
+ 299               			PUSH  R22                                         ;save R22               (  2 clocks) 
+ 300               			PUSH  R23                                         ;save R23               (  2 clocks) 
+ 301               			PUSH  R24                                         ;save R24               (  2 clocks) 
+ 302               			PUSH  R25                                         ;save R25               (  2 clocks) 
+ 303               			PUSH  R26                                         ;save R26               (  2 clocks) 
+ 304               			PUSH  R27                                         ;save R27               (  2 clocks) 
+ 305               			PUSH  R28                                         ;save R28               (  2 clocks) 
+ 306               			PUSH  R29                                         ;save R29               (  2 clocks) 
+ 307               			PUSH  R30                                         ;save R30               (  2 clocks) 
+ 308               			PUSH  R31                                         ;save R31               (  2 clocks) 
+ 309               			LDI   R30                , lo8(KerTSP)            ;fetch base pos low     (  1 clock ) 
+ 310               			LDI   R31                , hi8(KerTSP)            ;fetch base pos high    (  1 clock ) 
+ 311               			LDS   R18                , KerTID                 ;fetch task id          (  2 clocks) 
+ 312               			LSL   R18                                         ;left shift to multiply (  1 clock ) 
+ 313               			ADD   R30                , R18                    ;add offset to array    (  1 clock ) 
+ 314               			LDI   R18                , 0x00                   ;clear for carry prop   (  1 clock ) 
+ 315               			ADC   R31                , R18                    ;add carry if any       (  1 clock ) 
+ 316               			IN    R18                , IOSPL                  ;fetch SPL0             (  1 clock ) 
+ 317               			IN    R19                , IOSPH                  ;fetch SPH0             (  1 clock ) 
+ 318               			STD   Z+0                , R18                    ;store SPL at ZP+0      (  2 clocks) 
+ 319               			STD   Z+1                , R19                    ;store SPH at ZP+1      (  2 clocks) 
+ 320               	.endm                                                                                          
+ 321               	;;=====================================context save end=====================================;; 
  322               	
  323               	
  324               	
  325               	
- 326               	;;=================================context restore starting=================================;; 
- 327               	;used registers          : R0~R31                                                              
- 328               	;arg registers           : None                                                                
- 329               	;return registers        : None                                                                
- 330               	;unsafe access registers : None                                                                
- 331               	.macro  KER_CONTEXT_RESTORE                               ;total 8.38uS @8MHz     ( 81 clocks) 
- 332               	        LDI   R30                , lo8(KerTSP)            ;fetch base pos low     (  1 clock ) 
- 333               			LDI   R31                , hi8(KerTSP)            ;fetch base pos high    (  1 clock ) 
- 334               			LDS   R18                , KerTID                 ;fetch task_id          (  2 clocks) 
- 335               			LSL   R18                                         ;left shift to multiply (  1 clock ) 
- 336               			ADD   R30                , R18                    ;add offset to array    (  1 clock ) 
- 337               			LDI   R18                , 0x00                   ;clear for carry prop   (  1 clock ) 
- 338               			ADC   R31                , R18                    ;add carry if any       (  1 clock ) 
- 339               			LDD   R18                , Z+0                    ;load SPL at ZP         (  2 clocks) 
- 340               			LDD   R19                , Z+1                    ;load SPH at ZP         (  2 clocks) 
- 341               			OUT   IOSPL              , R18                    ;load SPL0              (  1 clock ) 
- 342               			OUT   IOSPH              , R19                    ;load SPH0              (  1 clock ) 
- 343               			POP   R31                                         ;restore R31            (  2 clocks) 
- 344               			POP   R30                                         ;restore R30            (  2 clocks) 
- 345               			POP   R29                                         ;restore R29            (  2 clocks) 
- 346               			POP   R28                                         ;restore R28            (  2 clocks) 
- 347               			POP   R27                                         ;restore R27            (  2 clocks) 
- 348               			POP   R26                                         ;restore R26            (  2 clocks) 
- 349               			POP   R25                                         ;restore R25            (  2 clocks) 
- 350               			POP   R24                                         ;restore R24            (  2 clocks) 
- 351               			POP   R23                                         ;restore R23            (  2 clocks) 
- 352               			POP   R22                                         ;restore R22            (  2 clocks) 
- 353               			POP   R21                                         ;restore R21            (  2 clocks) 
- 354               			POP   R20                                         ;restore R20            (  2 clocks) 
- 355               			POP   R19                                         ;restore R19            (  2 clocks) 
- 356               			POP   R18                                         ;restore R18            (  2 clocks) 
- 357               			POP   R17                                         ;restore R17            (  2 clocks) 
- 358               			POP   R16                                         ;restore R16            (  2 clocks) 
- 359               			POP   R15                                         ;restore R15            (  2 clocks) 
- 360               			POP   R14                                         ;restore R14            (  2 clocks) 
- 361               			POP   R13                                         ;restore R13            (  2 clocks) 
- 362               			POP   R12                                         ;restore R12            (  2 clocks) 
- 363               			POP   R11                                         ;restore R11            (  2 clocks) 
- 364               			POP   R10                                         ;restore R10            (  2 clocks) 
- 365               			POP   R9                                          ;restore R9             (  2 clocks) 
- 366               			POP   R8                                          ;restore R8             (  2 clocks) 
- 367               			POP   R7                                          ;restore R7             (  2 clocks) 
- 368               			POP   R6                                          ;restore R6             (  2 clocks) 
- 369               			POP   R5                                          ;restore R5             (  2 clocks) 
- 370               			POP   R4                                          ;restore R4             (  2 clocks) 
- 371               			POP   R3                                          ;restore R3             (  2 clocks) 
- 372               			POP   R2                                          ;restore R2             (  2 clocks) 
- 373               			POP   R1                                          ;restore R1             (  2 clocks) 
- 374               			POP   R0                                          ;fetch SREG             (  2 clocks) 
- 375               			OUT   IOSREG             , R0                     ;load SREG              (  1 clock ) 
- 376               			POP   R0                                          ;restore R0             (  2 clocks) 
- 377               	.endm                                                                                          
- 378               	;;===================================context restore end====================================;; 
- 379               	
- 380               	
+ 326               	
+ 327               	
+ 328               	;;=================================context restore starting=================================;; 
+ 329               	;used registers          : R0~R31                                                              
+ 330               	;arg registers           : None                                                                
+ 331               	;return registers        : None                                                                
+ 332               	;unsafe access registers : None                                                                
+ 333               	.macro  KER_CONTEXT_RESTORE                               ;total 8.38uS @8MHz     ( 81 clocks) 
+ 334               	        LDI   R30                , lo8(KerTSP)            ;fetch base pos low     (  1 clock ) 
+ 335               			LDI   R31                , hi8(KerTSP)            ;fetch base pos high    (  1 clock ) 
+ 336               			LDS   R18                , KerTID                 ;fetch task_id          (  2 clocks) 
+ 337               			LSL   R18                                         ;left shift to multiply (  1 clock ) 
+ 338               			ADD   R30                , R18                    ;add offset to array    (  1 clock ) 
+ 339               			LDI   R18                , 0x00                   ;clear for carry prop   (  1 clock ) 
+ 340               			ADC   R31                , R18                    ;add carry if any       (  1 clock ) 
+ 341               			LDD   R18                , Z+0                    ;load SPL at ZP         (  2 clocks) 
+ 342               			LDD   R19                , Z+1                    ;load SPH at ZP         (  2 clocks) 
+ 343               			OUT   IOSPL              , R18                    ;load SPL0              (  1 clock ) 
+ 344               			OUT   IOSPH              , R19                    ;load SPH0              (  1 clock ) 
+ 345               			POP   R31                                         ;restore R31            (  2 clocks) 
+ 346               			POP   R30                                         ;restore R30            (  2 clocks) 
+ 347               			POP   R29                                         ;restore R29            (  2 clocks) 
+ 348               			POP   R28                                         ;restore R28            (  2 clocks) 
+ 349               			POP   R27                                         ;restore R27            (  2 clocks) 
+ 350               			POP   R26                                         ;restore R26            (  2 clocks) 
+ 351               			POP   R25                                         ;restore R25            (  2 clocks) 
+ 352               			POP   R24                                         ;restore R24            (  2 clocks) 
+ 353               			POP   R23                                         ;restore R23            (  2 clocks) 
+ 354               			POP   R22                                         ;restore R22            (  2 clocks) 
+ 355               			POP   R21                                         ;restore R21            (  2 clocks) 
+ 356               			POP   R20                                         ;restore R20            (  2 clocks) 
+ 357               			POP   R19                                         ;restore R19            (  2 clocks) 
+ 358               			POP   R18                                         ;restore R18            (  2 clocks) 
+ 359               			POP   R17                                         ;restore R17            (  2 clocks) 
+ 360               			POP   R16                                         ;restore R16            (  2 clocks) 
+ 361               			POP   R15                                         ;restore R15            (  2 clocks) 
+ 362               			POP   R14                                         ;restore R14            (  2 clocks) 
+ 363               			POP   R13                                         ;restore R13            (  2 clocks) 
+ 364               			POP   R12                                         ;restore R12            (  2 clocks) 
+ 365               			POP   R11                                         ;restore R11            (  2 clocks) 
+ 366               			POP   R10                                         ;restore R10            (  2 clocks) 
+ 367               			POP   R9                                          ;restore R9             (  2 clocks) 
+ 368               			POP   R8                                          ;restore R8             (  2 clocks) 
+ 369               			POP   R7                                          ;restore R7             (  2 clocks) 
+ 370               			POP   R6                                          ;restore R6             (  2 clocks) 
+ 371               			POP   R5                                          ;restore R5             (  2 clocks) 
+ 372               			POP   R4                                          ;restore R4             (  2 clocks) 
+ 373               			POP   R3                                          ;restore R3             (  2 clocks) 
+ 374               			POP   R2                                          ;restore R2             (  2 clocks) 
+ 375               			POP   R1                                          ;restore R1             (  2 clocks) 
+ 376               			POP   R0                                          ;fetch SREG             (  2 clocks) 
+ 377               			OUT   IOSREG             , R0                     ;load SREG              (  1 clock ) 
+ 378               			POP   R0                                          ;restore R0             (  2 clocks) 
+ 379               	.endm                                                                                          
+ 380               	;;===================================context restore end====================================;; 
  381               	
  382               	
  383               	
- 384               	;;===================================msp zp save starting===================================;; 
- 385               	;used registers          : R18, R19, R30, R31                                                  
- 386               	;arg registers           : None                                                                
- 387               	;return registers        : None                                                                
- 388               	;unsafe access registers : None                                                                
- 389               	.macro  KER_MSP_ZP_SAVE                                   ;total 1.25uS @8MHz     ( 10 clocks) 
- 390               	        IN    R18                , IOSPL                  ;load SPL               (  1 clock ) 
- 391               			IN    R19                , IOSPH                  ;load SPH               (  1 clock ) 
- 392               			STS   KerMSPZP+0         , R18                    ;store SPL              (  2 clocks) 
- 393               			STS   KerMSPZP+1         , R19                    ;store SPH              (  2 clocks) 
- 394               			STS   KerMSPZP+2         , R30                    ;store ZL               (  2 clocks) 
- 395               			STS   KerMSPZP+3         , R31                    ;store ZH               (  2 clocks) 
- 396               	.endm                                                                                          
- 397               	;;======================================msp zp save end=====================================;; 
- 398               	
- 399               	
+ 384               	
+ 385               	
+ 386               	;;===================================msp zp save starting===================================;; 
+ 387               	;used registers          : R18, R19, R30, R31                                                  
+ 388               	;arg registers           : None                                                                
+ 389               	;return registers        : None                                                                
+ 390               	;unsafe access registers : None                                                                
+ 391               	.macro  KER_MSP_ZP_SAVE                                   ;total 1.25uS @8MHz     ( 10 clocks) 
+ 392               	        IN    R18                , IOSPL                  ;load SPL               (  1 clock ) 
+ 393               			IN    R19                , IOSPH                  ;load SPH               (  1 clock ) 
+ 394               			STS   KerMSPZP+0         , R18                    ;store SPL              (  2 clocks) 
+ 395               			STS   KerMSPZP+1         , R19                    ;store SPH              (  2 clocks) 
+ 396               			STS   KerMSPZP+2         , R30                    ;store ZL               (  2 clocks) 
+ 397               			STS   KerMSPZP+3         , R31                    ;store ZH               (  2 clocks) 
+ 398               	.endm                                                                                          
+ 399               	;;======================================msp zp save end=====================================;; 
  400               	
  401               	
  402               	
- 403               	;;==================================msp zp restore starting=================================;; 
- 404               	;used registers          : R18, R19, R30, R31                                                  
- 405               	;arg registers           : None                                                                
- 406               	;return registers        : None                                                                
- 407               	;unsafe access registers : None                                                                
- 408               	.macro  KER_MSP_ZP_RESTORE                                ;total 1.25uS @8MHz     ( 10 clocks) 
- 409               			LDS   R31                , KerMSPZP+3             ;fetch ZH               (  2 clocks) 
- 410               			LDS   R30                , KerMSPZP+2             ;fetch ZL               (  2 clocks) 
- 411               			LDS   R19                , KerMSPZP+1             ;fetch SPH              (  2 clocks) 
- 412               			LDS   R18                , KerMSPZP+0             ;fetch SPL              (  2 clocks) 
- 413               			OUT   IOSPL              , R18                    ;load SPL               (  1 clock ) 
- 414               			OUT   IOSPH              , R19                    ;load SPH               (  1 clock ) 
- 415               	.endm                                                                                          
- 416               	;;====================================msp zp restore end====================================;; 
- 417               	
- 418               	
+ 403               	
+ 404               	
+ 405               	;;==================================msp zp restore starting=================================;; 
+ 406               	;used registers          : R18, R19, R30, R31                                                  
+ 407               	;arg registers           : None                                                                
+ 408               	;return registers        : None                                                                
+ 409               	;unsafe access registers : None                                                                
+ 410               	.macro  KER_MSP_ZP_RESTORE                                ;total 1.25uS @8MHz     ( 10 clocks) 
+ 411               			LDS   R31                , KerMSPZP+3             ;fetch ZH               (  2 clocks) 
+ 412               			LDS   R30                , KerMSPZP+2             ;fetch ZL               (  2 clocks) 
+ 413               			LDS   R19                , KerMSPZP+1             ;fetch SPH              (  2 clocks) 
+ 414               			LDS   R18                , KerMSPZP+0             ;fetch SPL              (  2 clocks) 
+ 415               			OUT   IOSPL              , R18                    ;load SPL               (  1 clock ) 
+ 416               			OUT   IOSPH              , R19                    ;load SPH               (  1 clock ) 
+ 417               	.endm                                                                                          
+ 418               	;;====================================msp zp restore end====================================;; 
  419               	
  420               	
  421               	
- 422               	;;=================================set reload val starting==================================;; 
- 423               	;used registers          : R1~R31                                                              
- 424               	;arg registers           : None                                                                
- 425               	;return registers        : None                                                                
- 426               	;unsafe access registers : None                                                                
- 427               	.macro  KER_SET_RELOAD_VAL                                ;total 0.25uS @8MHz     (  2 clocks) 
- 428               			STS   KerLST             , R24                    ;fetch lowst sleep time (  2 clocks) 
- 429               	.endm                                                                                          
- 430               	;;===================================set reload val end=====================================;; 
- 431               	
- 432               	
+ 422               	
+ 423               	
+ 424               	;;=================================set reload val starting==================================;; 
+ 425               	;used registers          : R1~R31                                                              
+ 426               	;arg registers           : None                                                                
+ 427               	;return registers        : None                                                                
+ 428               	;unsafe access registers : None                                                                
+ 429               	.macro  KER_SET_RELOAD_VAL                                ;total 0.25uS @8MHz     (  2 clocks) 
+ 430               			STS   KerLST             , R24                    ;fetch lowst sleep time (  2 clocks) 
+ 431               	.endm                                                                                          
+ 432               	;;===================================set reload val end=====================================;; 
  433               	
  434               	
  435               	
- 436               	;;=================================ISR execution starting===================================;; 
- 437               	.global  __vector_9                                                                            
- 438               	    __vector_9:                                           ;total 40.00uS @8MHz    (344 clocks) 
- 439:kernel.S      **** 	    KER_DEBUG_PIN_SET                                 ;debug pin set          (  2 clocks) 
- 440:kernel.S      **** 		KER_CONTEXT_SAVE                                  ;save context           (          ) 
- 441:kernel.S      ****         KER_TIMER_RELOAD                                  ;reload timer           (  4 clocks) 
- 442:kernel.S      **** 		KER_CONTEXT_RESTORE                               ;restore context        (          ) 
- 443:kernel.S      **** 	    KER_DEBUG_PIN_CLEAR                               ;debug pin clear        (  2 clocks) 
- 444:kernel.S      **** 		RETI                                              ;return from interrupt  (  4 clocks) 
- 445               	;;====================================ISR execution end=====================================;; 
- 446               	
- 447               	
- 448               	
- 449               	
- 450               	
- 451               	;;================================SysTick reg init starting=================================;; 
- 452               	;used registers          : R18, R19, R22, R24, R26(XL), R27(XH), R30(ZL), R31(ZH)              
- 453               	;arg registers           : R24(Prescaler), R22(ReloadVal)                                      
- 454               	;return registers        : None                                                                
- 455               	;unsafe access registers : R18, R19, R22, R24, R26(XL), R27(XH), R30(ZL), R31(ZH)              
- 456               	Kernel_Timer_Init:                                        ;total 11.50uS @8MHz    ( 92 clocks) 
- 457:kernel.S      ****         CLI                                               ;disable global int     (  1 clock ) 
- 458:kernel.S      **** 		KER_DEBUG_PIN_INIT                                ;debug pin init         (  4 clocks) 
- 459:kernel.S      **** 		KER_TIMER_INIT                                    ;disable timer          (          ) 
- 460:kernel.S      **** 		RET                                               ;return from subroutine (  4 clocks) 
- 461               	;;===================================SysTick reg init end===================================;; 
- 462               	
- 463               	
- 464               	
- 465               	
- 466               	;;===================================kernel init starting===================================;; 
- 467               	;used registers          : R1, R18, R19, R22, R24, R25, R26(XL), R27(XH), R30(ZL), R31(ZH)     
- 468               	;arg registers           : None                                                                
- 469               	;return registers        : None                                                                
- 470               	;unsafe access registers : R1, R18, R19, R22, R24, R25, R26(XL), R27(XH), R30(ZL), R31(ZH)     
- 471               	Kernel_Init:                                              ;total 39.75uS @8MHz    (318 clocks) 
- 472:kernel.S      **** 		CLR   R1                                          ;gcc expects            (  1 clock ) 
- 473:kernel.S      **** 		CALL  Kernel_Timer_Init                           ;init timer             ( 92 clocks) 
- 474:kernel.S      **** 		LDI   R24                , 0xFF
- 475:kernel.S      **** 		KER_SET_RELOAD_VAL
- 476:kernel.S      **** 		LDI   R18                , 0x00
- 477:kernel.S      **** 		STS   KerTID             , R18
- 478:kernel.S      **** 		SEI                                               ;enable interrupt       (  1 clock ) 
- 479:kernel.S      **** 		RET                                               ;return from subroutine (  4 clocks) 
- 480               	;;======================================kernel init end=====================================;; 
+ 436               	
+ 437               	
+ 438               	;;=================================set reload val starting==================================;; 
+ 439               	;used registers          : R1~R31                                                              
+ 440               	;arg registers           : None                                                                
+ 441               	;return registers        : None                                                                
+ 442               	;unsafe access registers : None                                                                
+ 443               	.macro  KER_RUN_SCHEDULER                                 ;total 0.25uS @8MHz     (  2 clocks) 
+ 444               			LDI   R18                , 0x00                   ;start from tid 0       (  1 clock ) 
+ 445               			LDS   R19                , KerNTSK                ;load val               (  2 clocks) 
+ 446               			LDI   R20                , 0xFF                   ;local lowest time      (  1 clock ) 
+ 447               			LDS   R21                , KerLST                 ;load lowest time       (  2 clocks) 
+ 448               			LDI   R30                , lo8(KerSleep)          ;load sleep reg low     (  1 clock ) 
+ 449               			LDI   R31                , hi8(KerSleep)          ;load sleep reg high    (  1 clock ) 
+ 450               	    _KER_SCH_LOOP1\@:
+ 451               		    LD    R22                , Z                      ;load sleep val         (  2 clocks) 
+ 452               			TST   R22                                         ;check val              (  1 clock ) 
+ 453               			BREQ  _KER_SCH_SKIP1\@                            ;skip subtract          (  2 clocks) 
+ 454               			SUB   R22                , R21                    ;subtract LST           (  1 clock ) 
+ 455               			ST    Z                  , R22                    ;store new val          (  2 clocks) 
+ 456               		_KER_SCH_SKIP1\@:
+ 457               		    CP    R22                , R20                    ;compare                (  1 clock ) 
+ 458               			BRSH  _KER_SCH_LCI1\@                             ;
+ 459               			MOV   R20                , R22                    ;copy lowest val        
+ 460               	    _KER_SCH_LCI1\@:                                      ;loop counter increment              
+ 461               			INC   R18                                         ;increment              (  1 clock ) 
+ 462               		    CP    R18                , R19                    ;compare with ntask     (  2 clocks) 
+ 463               			BRLO  _KER_SCH_LOOP1\@                            ;if task id<ntask       (  2 clocks) 
+ 464               	.endm                                                                                          
+ 465               	;;===================================set reload val end=====================================;; 
+ 466               	
+ 467               	
+ 468               	
+ 469               	
+ 470               	
+ 471               	;;=================================ISR execution starting===================================;; 
+ 472               	.global  __vector_9                                                                            
+ 473               	    __vector_9:                                           ;total 40.00uS @8MHz    (344 clocks) 
+ 474:kernel.S      **** 	    KER_DEBUG_PIN_SET                                 ;debug pin set          (  2 clocks) 
+ 475:kernel.S      **** 		KER_CONTEXT_SAVE                                  ;save context           (          ) 
+ 476:kernel.S      ****         KER_TIMER_RELOAD                                  ;reload timer           (  4 clocks) 
+ 477:kernel.S      **** 		KER_CONTEXT_RESTORE                               ;restore context        (          ) 
+ 478:kernel.S      **** 	    KER_DEBUG_PIN_CLEAR                               ;debug pin clear        (  2 clocks) 
+ 479:kernel.S      **** 		RETI                                              ;return from interrupt  (  4 clocks) 
+ 480               	;;====================================ISR execution end=====================================;; 
+ 481               	
+ 482               	
+ 483               	
+ 484               	
+ 485               	
+ 486               	;;================================SysTick reg init starting=================================;; 
+ 487               	;used registers          : R18, R19, R22, R24, R26(XL), R27(XH), R30(ZL), R31(ZH)              
+ 488               	;arg registers           : R24(Prescaler), R22(ReloadVal)                                      
+ 489               	;return registers        : None                                                                
+ 490               	;unsafe access registers : R18, R19, R22, R24, R26(XL), R27(XH), R30(ZL), R31(ZH)              
+ 491               	Kernel_Timer_Init:                                        ;total 11.50uS @8MHz    ( 92 clocks) 
+ 492:kernel.S      ****         CLI                                               ;disable global int     (  1 clock ) 
+ 493:kernel.S      **** 		KER_DEBUG_PIN_INIT                                ;debug pin init         (  4 clocks) 
+ 494:kernel.S      **** 		KER_TIMER_INIT                                    ;init timer             (          ) 
+ 495:kernel.S      **** 		LDI   R24                , 0x00                   ;set reload val         (  1 clock ) 
+ 496:kernel.S      **** 		KER_SET_RELOAD_VAL                                ;assign reload val      (  2 clocks) 
+ 497:kernel.S      **** 		RET                                               ;return from subroutine (  4 clocks) 
+ 498               	;;===================================SysTick reg init end===================================;; 
+ 499               	
+ 500               	
+ 501               	
+ 502               	
+ 503               	
+ 504               	;;===============================kernel task create starting================================;; 
+ 505               	;used registers          : R18, R19, R20, R22, R24, R25, R26(XL), R27(XH), R30(ZL), R31(ZH)    
+ 506               	;arg registers           : R25:R24(FuncPtr), R22(TaskPriority)                                 
+ 507               	;return registers        : None                                                                
+ 508               	;unsafe access registers : R18, R19, R20, R22, R24, R25, R26(XL), R27(XH), R30(ZL), R31(ZH)    
+ 509               	Kernel_Task_Create:                                       ;total 21.50uS @8MHz    (172 clocks) 
+ 510:kernel.S      ****         KER_MSP_ZP_SAVE                                   ;push MSP and ZP        ( 10 clocks) 
+ 511               			;set priority to KerPrio                                                               
+ 512:kernel.S      **** 		LDI   R30                , lo8(KerPrio)           ;load low byte          (  1 clock ) 
+ 513:kernel.S      **** 		LDI   R31                , hi8(KerPrio)           ;load high byte         (  1 clock ) 
+ 514:kernel.S      **** 		LDS   R18                , KerTID                 ;fetch task id          (  2 clocks) 
+ 515:kernel.S      **** 		ADD   R30                , R18                    ;add offset to array    (  1 clock ) 
+ 516:kernel.S      **** 		LDI   R18                , 0x00                   ;clear for carry prop   (  1 clock ) 
+ 517:kernel.S      **** 		ADC   R31                , R18                    ;add carry if any       (  1 clock ) 
+ 518:kernel.S      **** 		ST    Z                  , R22                    ;save priority          (  2 clocks) 
+ 519               			;set sleep time to 0 in KerSleep to make the task ready                                
+ 520:kernel.S      **** 		LDI   R30                , lo8(KerSleep)          ;load low byte          (  1 clock ) 
+ 521:kernel.S      **** 		LDI   R31                , hi8(KerSleep)          ;load high byte         (  1 clock ) 
+ 522:kernel.S      **** 		LDS   R18                , KerTID                 ;fetch task id          (  2 clocks) 
+ 523:kernel.S      **** 		ADD   R30                , R18                    ;add offset to array    (  1 clock ) 
+ 524:kernel.S      **** 		LDI   R18                , 0x00                   ;clear for carry prop   (  1 clock ) 
+ 525:kernel.S      **** 		ADC   R31                , R18                    ;add carry if any       (  1 clock ) 
+ 526:kernel.S      **** 		LDI   R18                , 0x00                   ;set sleep val to 0     (  1 clock ) 
+ 527:kernel.S      **** 		ST    Z                  , R18                    ;save status            (  2 clocks) 
+ 528               			;calculate stack top for current task (KerStack + KER_STK_SZ*(task id+1) - 1)          
+ 529:kernel.S      **** 		LDS   R18                , KerTID                 ;load task id           (  2 clocks) 
+ 530:kernel.S      **** 		INC   R18                                         ;increment task id      (  1 clock ) 
+ 531:kernel.S      **** 		LDI   R19                , KER_STK_SZ             ;load stack size        (  1 clock ) 
+ 532:kernel.S      **** 		MUL   R18                , R19                    ;multiply to get offset (  2 clocks) 
+ 533:kernel.S      **** 		MOV   R30                , R0                     ;load multiplied low    (  1 clocks) 
+ 534:kernel.S      **** 		MOV   R31                , R1                     ;load multiplied high   (  1 clocks) 
+ 535:kernel.S      **** 		CLR   R1                                          ;gcc expects cleared    (  1 clock ) 
+ 536:kernel.S      **** 		SBIW  R30                , 0x01                   ;dec multiplied val-1   (  2 clocks) 
+ 537:kernel.S      **** 		LDI   R18                , lo8(KerStack)          ;load base addr low     (  1 clock ) 
+ 538:kernel.S      **** 		LDI   R19                , hi8(KerStack)          ;load base addr high    (  1 clock ) 
+ 539:kernel.S      **** 		ADD   R30                , R18                    ;add low bytes          (  1 clock ) 
+ 540:kernel.S      **** 		ADC   R31                , R19                    ;add high bytes+carry   (  1 clock ) 
+ 541               			;set stack pointer                                                                     
+ 542:kernel.S      **** 		OUT   IOSPL              , R30                    ;load SPL               (  1 clock ) 
+ 543:kernel.S      ****         OUT   IOSPH              , R31                    ;load SPH               (  1 clock ) 
+ 544               			;function argument directly returns word address                                       
+ 545:kernel.S      **** 	    PUSH  R24                                         ;push word addr low     (  2 clocks) 
+ 546:kernel.S      **** 		PUSH  R25                                         ;push word addr high    (  2 clocks) 
+ 547               			;push context to stack of this task                                                    
+ 548:kernel.S      **** 		KER_CONTEXT_SAVE                                  ;save context           ( 68 clocks) 
+ 549               			;increment task_id                                                                     
+ 550:kernel.S      **** 		LDS   R18                , KerTID                 ;load task_id           (  2 clocks) 
+ 551:kernel.S      **** 		INC   R18                                         ;increment task_id      (  1 clock ) 
+ 552:kernel.S      **** 		STS   KerTID             , R18                    ;store task_id          (  2 clocks) 
+ 553               			;increment ntask                                                                       
+ 554:kernel.S      **** 		LDS   R18                , KerNTSK                ;load ntask             (  2 clocks) 
+ 555:kernel.S      **** 		INC   R18                                         ;increment ntask        (  1 clock ) 
+ 556:kernel.S      **** 		STS   KerNTSK            , R18                    ;store ntask            (  2 clocks) 
+ 557:kernel.S      **** 		KER_MSP_ZP_RESTORE                                ;pop MSP and ZP         ( 10 clocks) 
+ 558:kernel.S      **** 		RET                                               ;return from subroutine (  4 clocks) 
+ 559               	;;==================================kernel task create end==================================;; 
+ 560               	
+ 561               	
+ 562               	
+ 563               	
+ 564               	
+ 565               	;;=================================kernel idle task starting================================;; 
+ 566               	;used registers          : None                                                                
+ 567               	;arg registers           : None                                                                
+ 568               	;return registers        : None                                                                
+ 569               	;unsafe access registers : None                                                                
+ 570               	Kernel_Task_Idle:                                                                              
+ 571               		    ;KER_SLEEP_INIT                                    ;sleep init             (  5 clocks) 
+ 572               	    _IDLE_LOOP:                                           ;forever loop                        
+ 573               		    ;KER_DISABLE_ANALOG_DOMAIN                         ;disable adc, ac        ( 10 clocks) 
+ 574               			;#ifdef KER_CALL_FUNC_BEFORE_SLEEP                                                      
+ 575               			;CALL  Kernel_PreSleep_Hook                        ;call func before sleep (  8 clocks) 
+ 576               			;#endif                                                                                 
+ 577               		    ;KER_ENTER_SLEEP                                   ;enter sleep mode       (  6 clocks) 
+ 578:kernel.S      **** 		JMP   _IDLE_LOOP                                  ;jump to loop start     (  2 clocks) 
+ 579               	;;==================================kernel idle task end====================================;; 
+ 580               	
+ 581               	
+ 582               	
+ 583               	
+ 584               	
+ 585               	;;===================================kernel init starting===================================;; 
+ 586               	;used registers          : R1, R18, R19, R22, R24, R25, R26(XL), R27(XH), R30(ZL), R31(ZH)     
+ 587               	;arg registers           : None                                                                
+ 588               	;return registers        : None                                                                
+ 589               	;unsafe access registers : R1, R18, R19, R22, R24, R25, R26(XL), R27(XH), R30(ZL), R31(ZH)     
+ 590               	Kernel_Init:                                              ;total 39.75uS @8MHz    (318 clocks) 
+ 591:kernel.S      **** 		CLR   R1                                          ;gcc expects            (  1 clock ) 
+ 592:kernel.S      **** 		CALL  Kernel_Timer_Init                           ;init timer             ( 92 clocks) 
+ 593:kernel.S      **** 		LDI   R24                , 0x00                   ;set reload val         (  1 clock ) 
+ 594:kernel.S      **** 		KER_SET_RELOAD_VAL                                ;assign reload val      (          ) 
+ 595               			;create idle task at task did 0, priority 0xFF (lowest)                                
+ 596:kernel.S      **** 		LDI   R24                , lo8(Kernel_Task_Idle)  ;load func addr low     (  1 clock ) 
+ 597:kernel.S      **** 		LDI   R25                , hi8(Kernel_Task_Idle)  ;load func addr high    (  1 clock ) 
+ 598:kernel.S      **** 		LSR   R25                                         ;right shift to divide  (  1 clock ) 
+ 599:kernel.S      **** 		ROR   R24                                         ;rotate right th carry  (  1 clock ) 
+ 600:kernel.S      **** 		LDI   R22                , 0xFF                   ;set max val            (  1 clock ) 
+ 601:kernel.S      **** 		CALL  Kernel_Task_Create                          ;init idle task         (172 clocks) 
+ 602:kernel.S      **** 		RET                                               ;return from subroutine (  4 clocks) 
+ 603               	;;======================================kernel init end=====================================;; 
+ 604               	
+ 605               	
+ 606               	
+ 607               	
+ 608               	
+ 609               	;;=================================kernel start tasks starting==============================;; 
+ 610               	;used registers          : R0~R31                                                              
+ 611               	;arg registers           : None                                                                
+ 612               	;return registers        : None                                                                
+ 613               	;unsafe access registers : R18, R19, R20, R24, R25, R30(ZL), R31(ZH)                           
+ 614               	Kernel_Start_Tasks:                                       ;total 25.63uS @8MHz    (205 clocks) 
+ 615               			;KER_RUN_SCHEDULER                                 ;run scheduler          (106 clocks) 
+ 616               			;KER_CONTEXT_RESTORE_THREAD                        ;restore context        ( 68 clocks) 
+ 617               			;config timer for system tick                                                          
+ 618               			;KER_TIMER_INIT                                    ;init timer, int enable ( 12 clocks) 
+ 619               			;execute return to jump to highest priority task                                       
+ 620:kernel.S      **** 		RET                                               ;return from subroutine (  4 clocks) 
+ 621               	;;==================================kernel start tasks end==================================;; 
+ 622               	
+ 623               	
+ 624               	
+ 625               	
+ 626               	
+ 627               	;;================================kernel task sleep starting================================;; 
+ 628               	;used registers          : R0~R31                                                              
+ 629               	;arg registers           : R24(SleepTime)                                                      
+ 630               	;return registers        : None                                                                
+ 631               	;unsafe access registers : R18, R19, R20, R24, R25, R30(ZL), R31(ZH)                           
+ 632               	Kernel_Task_Sleep:                                        ;total 37.25uS @8MHz    (298 clocks) 
+ 633               	        ;save current context                                                                  
+ 634:kernel.S      ****         KER_CONTEXT_SAVE                                  ;save context           ( 69 clocks) 
+ 635               			;create next task wakeup time (arg R24)                                                
+ 636:kernel.S      **** 		LDI   R30                , lo8(KerSleep)          ;load low byte          (  1 clock ) 
+ 637:kernel.S      **** 		LDI   R31                , hi8(KerSleep)          ;load high byte         (  1 clock ) 
+ 638:kernel.S      **** 		LDS   R18                , KerTID                 ;fetch task id          (  2 clocks) 
+ 639:kernel.S      **** 		ADD   R30                , R18                    ;add offset to array    (  1 clock ) 
+ 640:kernel.S      **** 		LDI   R18                , 0x00                   ;clear for carry prop   (  1 clock ) 
+ 641:kernel.S      **** 		ADC   R31                , R18                    ;add carry if any       (  1 clock ) 
+ 642:kernel.S      **** 		STD   Z+0                , R24                    ;save sleep time low    (  2 clocks) 
+ 643               			;run scheduler, load next task sp, restore context                                     
+ 644               			;KER_RUN_SCHEDULER                                 ;run scheduler          (106 clocks) 
+ 645:kernel.S      **** 		KER_CONTEXT_RESTORE                               ;restore context        ( 68 clocks) 
+ 646:kernel.S      **** 		RET                                               ;return from subroutine (  4 clocks) 
+ 647               	;;=================================kernel task sleep end====================================;; 
 DEFINED SYMBOLS
             kernel.S:17     *ABS*:00000000 KER_RLD
             kernel.S:18     *ABS*:00000080 KER_STK_SZ
@@ -1042,22 +1209,28 @@ DEFINED SYMBOLS
             kernel.S:52     *ABS*:00000017 IOTIFR2
             kernel.S:63     .bss:00000000 KerMSPZP
             kernel.S:65     .bss:00000004 KerTID
-            kernel.S:67     .bss:00000005 KerLST
-            kernel.S:69     .bss:00000006 KerSleep
-            kernel.S:71     .bss:0000000c KerPrio
-            kernel.S:73     .bss:00000012 KerTSP
-            kernel.S:75     .bss:0000001e KerStack
-            kernel.S:456    .text:000000ca Kernel_Timer_Init
-            kernel.S:471    .text:0000016a Kernel_Init
-            kernel.S:438    .text:00000000 __vector_9
-            kernel.S:459    .text:00000110 _KER_TC2_AUB8
-            kernel.S:459    .text:00000118 _KER_TC2_BUB8
-            kernel.S:459    .text:00000120 _KER_OC2_AUB8
-            kernel.S:459    .text:00000128 _KER_OC2_BUB8
-            kernel.S:459    .text:00000130 _KER_TC2_UB8
-            kernel.S:459    .text:00000138 _KER_TC2_TOV28
-            kernel.S:459    .text:00000146 _KER_TC2_OCF2A8
-            kernel.S:459    .text:00000154 _KER_TC2_OCF2B8
-            kernel.S:459    .text:00000162 _KER_TC2_INTEN8
+            kernel.S:67     .bss:00000005 KerNTSK
+            kernel.S:69     .bss:00000006 KerLST
+            kernel.S:71     .bss:00000007 KerSleep
+            kernel.S:73     .bss:0000000d KerPrio
+            kernel.S:75     .bss:00000013 KerTSP
+            kernel.S:77     .bss:0000001f KerStack
+            kernel.S:491    .text:000000ca Kernel_Timer_Init
+            kernel.S:590    .text:00000256 Kernel_Init
+            kernel.S:473    .text:00000000 __vector_9
+            kernel.S:494    .text:00000110 _KER_TC2_AUB8
+            kernel.S:494    .text:00000118 _KER_TC2_BUB8
+            kernel.S:494    .text:00000120 _KER_OC2_AUB8
+            kernel.S:494    .text:00000128 _KER_OC2_BUB8
+            kernel.S:494    .text:00000130 _KER_TC2_UB8
+            kernel.S:494    .text:00000138 _KER_TC2_TOV28
+            kernel.S:494    .text:00000146 _KER_TC2_OCF2A8
+            kernel.S:494    .text:00000154 _KER_TC2_OCF2B8
+            kernel.S:494    .text:00000162 _KER_TC2_INTEN8
+            kernel.S:509    .text:00000170 Kernel_Task_Create
+            kernel.S:570    .text:00000252 Kernel_Task_Idle
+            kernel.S:572    .text:00000252 _IDLE_LOOP
+            kernel.S:614    .text:00000272 Kernel_Start_Tasks
+            kernel.S:632    .text:00000274 Kernel_Task_Sleep
 
 NO UNDEFINED SYMBOLS

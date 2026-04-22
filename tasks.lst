@@ -172,43 +172,97 @@
  190               	.LM29:
  191               	/* prologue: function */
  192               	/* frame size = 0 */
- 193               	.LM30:
- 194 0048 3C9A      		sbi 39-32,4
- 195               	.LM31:
- 196 004a 90E1      		ldi r25,lo8(16)
- 197               	.L16:
- 198               	.LM32:
- 199               	/* #APP */
- 200               	 ;  96 "tasks.c" 1
- 201 004c F894      		cli
- 202               	 ;  0 "" 2
- 203               	.LM33:
- 204               	/* #NOAPP */
- 205 004e 88B1      		in r24,40-32
- 206 0050 8927      		eor r24,r25
- 207 0052 88B9      		out 40-32,r24
- 208               	.LM34:
- 209               	/* #APP */
- 210               	 ;  98 "tasks.c" 1
- 211 0054 7894      		sei
- 212               	 ;  0 "" 2
- 213               	/* #NOAPP */
- 214 0056 00C0      		rjmp .L16
- 215               	.LFE11:
- 281               	.Letext0:
+ 193               	.LBB36:
+ 194               	.LM30:
+ 195 0048 5091 0000 		lds r21,ntask
+ 196               	.LM31:
+ 197 004c 4091 0000 		lds r20,lst
+ 198 0050 A0E0      		ldi r26,lo8(prio)
+ 199 0052 B0E0      		ldi r27,hi8(prio)
+ 200 0054 E0E0      		ldi r30,lo8(sleep)
+ 201 0056 F0E0      		ldi r31,hi8(sleep)
+ 202 0058 20E0      		ldi r18,lo8(0)
+ 203               	.LVL1:
+ 204 005a 30E0      		ldi r19,lo8(0)
+ 205               	.LVL2:
+ 206 005c 9FEF      		ldi r25,lo8(-1)
+ 207 005e 00C0      		rjmp .L16
+ 208               	.LVL3:
+ 209               	.L21:
+ 210               	.LM32:
+ 211 0060 8081      		ld r24,Z
+ 212 0062 8823      		tst r24
+ 213 0064 01F0      		breq .L17
+ 214               	.LM33:
+ 215 0066 841B      		sub r24,r20
+ 216 0068 8083      		st Z,r24
+ 217               	.LM34:
+ 218 006a 8823      		tst r24
+ 219 006c 01F4      		brne .L18
+ 220               	.L17:
+ 221               	.LM35:
+ 222 006e 8C91      		ld r24,X
+ 223 0070 8917      		cp r24,r25
+ 224 0072 00F0      		brlo .L19
+ 225               	.L18:
+ 226 0074 892F      		mov r24,r25
+ 227 0076 00C0      		rjmp .L20
+ 228               	.L19:
+ 229 0078 322F      		mov r19,r18
+ 230               	.LVL4:
+ 231               	.L20:
+ 232               	.LM36:
+ 233 007a 2F5F      		subi r18,lo8(-(1))
+ 234               	.LVL5:
+ 235 007c 1196      		adiw r26,1
+ 236 007e 3196      		adiw r30,1
+ 237 0080 982F      		mov r25,r24
+ 238               	.LVL6:
+ 239               	.L16:
+ 240 0082 2517      		cp r18,r21
+ 241 0084 00F0      		brlo .L21
+ 242 0086 3093 0000 		sts hiprtid,r19
+ 243 008a 9093 0000 		sts hiprio,r25
+ 244               	.LVL7:
+ 245               	.L22:
+ 246 008e 00C0      		rjmp .L22
+ 247               	.LBE36:
+ 248               	.LFE11:
+ 250               	.global	lst
+ 251               		.data
+ 254               	lst:
+ 255 0000 05        		.byte	5
+ 256               	.global	ntask
+ 259               	ntask:
+ 260 0001 05        		.byte	5
+ 261               		.comm tid,1,1
+ 262               		.comm hiprtid,1,1
+ 263               		.comm prio,5,1
+ 264               		.comm hiprio,1,1
+ 265               		.comm sleep,5,1
+ 330               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 tasks.c
-C:\Users\farid\AppData\Local\Temp/ccLKUvqu.s:2      *ABS*:0000003f __SREG__
-C:\Users\farid\AppData\Local\Temp/ccLKUvqu.s:3      *ABS*:0000003e __SP_H__
-C:\Users\farid\AppData\Local\Temp/ccLKUvqu.s:4      *ABS*:0000003d __SP_L__
-C:\Users\farid\AppData\Local\Temp/ccLKUvqu.s:5      *ABS*:00000034 __CCP__
-C:\Users\farid\AppData\Local\Temp/ccLKUvqu.s:6      *ABS*:00000000 __tmp_reg__
-C:\Users\farid\AppData\Local\Temp/ccLKUvqu.s:7      *ABS*:00000001 __zero_reg__
-C:\Users\farid\AppData\Local\Temp/ccLKUvqu.s:18     .text:00000000 Tasks_Disable_Peripherals
-C:\Users\farid\AppData\Local\Temp/ccLKUvqu.s:30     .text:00000002 Tasks_Task1
-C:\Users\farid\AppData\Local\Temp/ccLKUvqu.s:95     .text:00000018 Tasks_Task2
-C:\Users\farid\AppData\Local\Temp/ccLKUvqu.s:126    .text:00000028 Tasks_Task3
-C:\Users\farid\AppData\Local\Temp/ccLKUvqu.s:157    .text:00000038 Tasks_Task4
-C:\Users\farid\AppData\Local\Temp/ccLKUvqu.s:188    .text:00000048 Tasks_Task5
+C:\Users\FARIDU~1\AppData\Local\Temp/ccwQHOzf.s:2      *ABS*:0000003f __SREG__
+C:\Users\FARIDU~1\AppData\Local\Temp/ccwQHOzf.s:3      *ABS*:0000003e __SP_H__
+C:\Users\FARIDU~1\AppData\Local\Temp/ccwQHOzf.s:4      *ABS*:0000003d __SP_L__
+C:\Users\FARIDU~1\AppData\Local\Temp/ccwQHOzf.s:5      *ABS*:00000034 __CCP__
+C:\Users\FARIDU~1\AppData\Local\Temp/ccwQHOzf.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\FARIDU~1\AppData\Local\Temp/ccwQHOzf.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\FARIDU~1\AppData\Local\Temp/ccwQHOzf.s:18     .text:00000000 Tasks_Disable_Peripherals
+C:\Users\FARIDU~1\AppData\Local\Temp/ccwQHOzf.s:30     .text:00000002 Tasks_Task1
+C:\Users\FARIDU~1\AppData\Local\Temp/ccwQHOzf.s:95     .text:00000018 Tasks_Task2
+C:\Users\FARIDU~1\AppData\Local\Temp/ccwQHOzf.s:126    .text:00000028 Tasks_Task3
+C:\Users\FARIDU~1\AppData\Local\Temp/ccwQHOzf.s:157    .text:00000038 Tasks_Task4
+C:\Users\FARIDU~1\AppData\Local\Temp/ccwQHOzf.s:188    .text:00000048 Tasks_Task5
+C:\Users\FARIDU~1\AppData\Local\Temp/ccwQHOzf.s:259    .data:00000001 ntask
+C:\Users\FARIDU~1\AppData\Local\Temp/ccwQHOzf.s:254    .data:00000000 lst
+                            *COM*:00000005 prio
+                            *COM*:00000005 sleep
+                            *COM*:00000001 hiprtid
+                            *COM*:00000001 hiprio
+                            *COM*:00000001 tid
 
-NO UNDEFINED SYMBOLS
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss

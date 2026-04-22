@@ -86,19 +86,31 @@ void Tasks_Task4(void){
   }
 }
 
+
+uint8_t tid, hiprtid, prio[5], hiprio, sleep[5], lst=5, ntask=5;
+
 void Tasks_Task5(void){
+  hiprio = 0xff;
+  hiprtid = 0;
+  for(uint8_t i=0; i<ntask; i++){
+    if(sleep[i]){
+      sleep[i]-=lst;
+      if((sleep[i] == 0) && (prio[i] < hiprio)){
+        hiprio = prio[i];
+        hiprtid = i;
+      }
+    }
+    else{
+      if(prio[i] < hiprio){
+        hiprio = prio[i];
+        hiprtid = i;
+      }
+    }
+  }
   
-  DDRC |= (1<<4);
-  
+
   while(1){
-    
-    //atomic toggle, otherwise another task may interfare
-    cli();
-    PORTC ^= (1<<4);
-    sei();
-    
-    //Kernel_Task_Sleep(40000/KER_TICK_TIME);
-    
+
   }
 }
 

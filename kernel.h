@@ -33,9 +33,9 @@
 
 //Define IO address of the DDR & PORT for debug
 #ifdef   KER_DBG_ENABLE
-#define  KER_DBG_DDR     0x07   //DDRD IO address
-#define  KER_DBG_PORT    0x08   //PORTD IO address
-#define  KER_DBG_PIN     0x00   //PORTD4 pin
+#define  KER_DBG_DDR     0x07   //DDRC IO address
+#define  KER_DBG_PORT    0x08   //PORTC IO address
+#define  KER_DBG_PIN     0x00   //PORTC0 pin
 #endif
 
 
@@ -50,6 +50,7 @@ extern void      Kernel_Task_Create(void (*func)(void), uint8_t priority);
 extern void      Kernel_Start_Tasks(void);
 extern void      Kernel_Task_Idle(void);
 extern void      Kernel_Task_Sleep(uint8_t val);
+extern void      Kernel_Manual_Sleep(uint8_t val);
 
 #endif
 

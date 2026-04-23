@@ -93,6 +93,7 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 ;;==============================define global functions starting============================;; 
 .global  Kernel_Timer_Init                                                                     
 .global  Kernel_Init                                                                           
+.global  Kernel_Manual_Sleep
 ;;================================define global functions end===============================;; 
 
 
@@ -599,6 +600,7 @@ Kernel_Init:                                              ;total 39.75uS @8MHz  
 		ROR   R24                                         ;rotate right th carry  (  1 clock ) 
 		LDI   R22                , 0xFF                   ;set max val            (  1 clock ) 
 		CALL  Kernel_Task_Create                          ;init idle task         (172 clocks) 
+		SEI                                               ;enable interrupt       (  1 clock ) 
 		RET                                               ;return from subroutine (  4 clocks) 
 ;;======================================kernel init end=====================================;; 
 
@@ -649,4 +651,10 @@ Kernel_Task_Sleep:                                        ;total 37.25uS @8MHz  
 
 
 
+
+Kernel_Manual_Sleep:                                      ;total 37.25uS @8MHz    (298 clocks) 
+        LDI   R18                , 0xFF                   ;set top val            (  1 clock ) 
+		SUB   R18                , R24                    ;subtract               (  1 clock ) 
+        STS   KerLST             , R18                    ;fetch lowst sleep time (  2 clocks)
+		RET                                               ;return from subroutine (  4 clocks) 
 

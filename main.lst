@@ -6,27 +6,69 @@
    6               	__tmp_reg__ = 0
    7               	__zero_reg__ = 1
   15               	.Ltext0:
-  16               	.global	main
-  18               	main:
+  16               	.global	Delay
+  18               	Delay:
   19               	.LFB6:
   20               	.LM1:
-  21               	/* prologue: function */
-  22               	/* frame size = 0 */
-  23               	.LM2:
-  24 0000 0E94 0000 		call Kernel_Init
-  25               	.L2:
-  26 0004 00C0      		rjmp .L2
-  27               	.LFE6:
-  53               	.Letext0:
+  21               	.LVL0:
+  22               	/* prologue: function */
+  23               	/* frame size = 0 */
+  24               	.LM2:
+  25 0000 2AE0      		ldi r18,10
+  26 0002 660F      	1:	lsl r22
+  27 0004 771F      		rol r23
+  28 0006 881F      		rol r24
+  29 0008 991F      		rol r25
+  30 000a 2A95      		dec r18
+  31 000c 01F4      		brne 1b
+  32               	.LVL1:
+  33               	.LM3:
+  34 000e 28EE      		ldi r18,lo8(1000)
+  35 0010 33E0      		ldi r19,hi8(1000)
+  36 0012 40E0      		ldi r20,hlo8(1000)
+  37 0014 50E0      		ldi r21,hhi8(1000)
+  38 0016 0E94 0000 		call __udivmodsi4
+  39               	.LVL2:
+  40 001a 822F      		mov r24,r18
+  41 001c 0E94 0000 		call Kernel_Manual_Sleep
+  42               	/* epilogue start */
+  43               	.LM4:
+  44 0020 0895      		ret
+  45               	.LFE6:
+  47               	.global	main
+  49               	main:
+  50               	.LFB7:
+  51               	.LM5:
+  52               	/* prologue: function */
+  53               	/* frame size = 0 */
+  54               	.LM6:
+  55 0022 0E94 0000 		call Kernel_Init
+  56               	.LM7:
+  57 0026 399A      		sbi 39-32,1
+  58               	.LM8:
+  59 0028 4198      		cbi 40-32,1
+  60               	.L4:
+  61               	.LM9:
+  62 002a 61E0      		ldi r22,lo8(1)
+  63 002c 70E0      		ldi r23,hi8(1)
+  64 002e 80E0      		ldi r24,hlo8(1)
+  65 0030 90E0      		ldi r25,hhi8(1)
+  66 0032 0E94 0000 		call Delay
+  67 0036 00C0      		rjmp .L4
+  68               	.LFE7:
+ 102               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\FARIDU~1\AppData\Local\Temp/cc4v7jri.s:2      *ABS*:0000003f __SREG__
-C:\Users\FARIDU~1\AppData\Local\Temp/cc4v7jri.s:3      *ABS*:0000003e __SP_H__
-C:\Users\FARIDU~1\AppData\Local\Temp/cc4v7jri.s:4      *ABS*:0000003d __SP_L__
-C:\Users\FARIDU~1\AppData\Local\Temp/cc4v7jri.s:5      *ABS*:00000034 __CCP__
-C:\Users\FARIDU~1\AppData\Local\Temp/cc4v7jri.s:6      *ABS*:00000000 __tmp_reg__
-C:\Users\FARIDU~1\AppData\Local\Temp/cc4v7jri.s:7      *ABS*:00000001 __zero_reg__
-C:\Users\FARIDU~1\AppData\Local\Temp/cc4v7jri.s:18     .text:00000000 main
+C:\Users\WALTON\AppData\Local\Temp/ccJ4ZtUg.s:2      *ABS*:0000003f __SREG__
+C:\Users\WALTON\AppData\Local\Temp/ccJ4ZtUg.s:3      *ABS*:0000003e __SP_H__
+C:\Users\WALTON\AppData\Local\Temp/ccJ4ZtUg.s:4      *ABS*:0000003d __SP_L__
+C:\Users\WALTON\AppData\Local\Temp/ccJ4ZtUg.s:5      *ABS*:00000034 __CCP__
+C:\Users\WALTON\AppData\Local\Temp/ccJ4ZtUg.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\WALTON\AppData\Local\Temp/ccJ4ZtUg.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\WALTON\AppData\Local\Temp/ccJ4ZtUg.s:18     .text:00000000 Delay
+C:\Users\WALTON\AppData\Local\Temp/ccJ4ZtUg.s:49     .text:00000022 main
 
 UNDEFINED SYMBOLS
+__udivmodsi4
+Kernel_Manual_Sleep
 Kernel_Init

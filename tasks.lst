@@ -23,7 +23,7 @@
   33               	/* prologue: function */
   34               	/* frame size = 0 */
   35               	.LM4:
-  36 0002 549A      		sbi 42-32,4
+  36 0002 399A      		sbi 39-32,1
   37               	.LBB24:
   38               	.LBB25:
   39               	.LBB26:
@@ -47,7 +47,7 @@
   57               	 ;  0 "" 2
   58               	.LM7:
   59               	/* #NOAPP */
-  60 000a 5C9A      		sbi 43-32,4
+  60 000a 419A      		sbi 40-32,1
   61               	.LBB35:
   62               	.LBB34:
   63               	.LBB33:
@@ -70,7 +70,7 @@
   80               	.LBE34:
   81               	.LBE35:
   82               	.LM9:
-  83 0012 5C98      		cbi 43-32,4
+  83 0012 4198      		cbi 40-32,1
   84               	.LM10:
   85               	/* #APP */
   86               	 ;  34 "tasks.c" 1
@@ -86,9 +86,9 @@
   98               	/* prologue: function */
   99               	/* frame size = 0 */
  100               	.LM12:
- 101 0018 399A      		sbi 39-32,1
+ 101 0018 3A9A      		sbi 39-32,2
  102               	.LM13:
- 103 001a 92E0      		ldi r25,lo8(2)
+ 103 001a 94E0      		ldi r25,lo8(4)
  104               	.L7:
  105               	.LM14:
  106               	/* #APP */
@@ -115,9 +115,9 @@
  129               	/* prologue: function */
  130               	/* frame size = 0 */
  131               	.LM18:
- 132 0028 3A9A      		sbi 39-32,2
+ 132 0028 3B9A      		sbi 39-32,3
  133               	.LM19:
- 134 002a 94E0      		ldi r25,lo8(4)
+ 134 002a 98E0      		ldi r25,lo8(8)
  135               	.L10:
  136               	.LM20:
  137               	/* #APP */
@@ -243,20 +243,20 @@
  330               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 tasks.c
-C:\Users\WALTON\AppData\Local\Temp/cc6xP24L.s:2      *ABS*:0000003f __SREG__
-C:\Users\WALTON\AppData\Local\Temp/cc6xP24L.s:3      *ABS*:0000003e __SP_H__
-C:\Users\WALTON\AppData\Local\Temp/cc6xP24L.s:4      *ABS*:0000003d __SP_L__
-C:\Users\WALTON\AppData\Local\Temp/cc6xP24L.s:5      *ABS*:00000034 __CCP__
-C:\Users\WALTON\AppData\Local\Temp/cc6xP24L.s:6      *ABS*:00000000 __tmp_reg__
-C:\Users\WALTON\AppData\Local\Temp/cc6xP24L.s:7      *ABS*:00000001 __zero_reg__
-C:\Users\WALTON\AppData\Local\Temp/cc6xP24L.s:18     .text:00000000 Tasks_Disable_Peripherals
-C:\Users\WALTON\AppData\Local\Temp/cc6xP24L.s:30     .text:00000002 Tasks_Task1
-C:\Users\WALTON\AppData\Local\Temp/cc6xP24L.s:95     .text:00000018 Tasks_Task2
-C:\Users\WALTON\AppData\Local\Temp/cc6xP24L.s:126    .text:00000028 Tasks_Task3
-C:\Users\WALTON\AppData\Local\Temp/cc6xP24L.s:157    .text:00000038 Tasks_Task4
-C:\Users\WALTON\AppData\Local\Temp/cc6xP24L.s:188    .text:00000048 Tasks_Task5
-C:\Users\WALTON\AppData\Local\Temp/cc6xP24L.s:259    .data:00000001 ntask
-C:\Users\WALTON\AppData\Local\Temp/cc6xP24L.s:254    .data:00000000 lst
+C:\Users\WALTON\AppData\Local\Temp/ccVGHHr9.s:2      *ABS*:0000003f __SREG__
+C:\Users\WALTON\AppData\Local\Temp/ccVGHHr9.s:3      *ABS*:0000003e __SP_H__
+C:\Users\WALTON\AppData\Local\Temp/ccVGHHr9.s:4      *ABS*:0000003d __SP_L__
+C:\Users\WALTON\AppData\Local\Temp/ccVGHHr9.s:5      *ABS*:00000034 __CCP__
+C:\Users\WALTON\AppData\Local\Temp/ccVGHHr9.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\WALTON\AppData\Local\Temp/ccVGHHr9.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\WALTON\AppData\Local\Temp/ccVGHHr9.s:18     .text:00000000 Tasks_Disable_Peripherals
+C:\Users\WALTON\AppData\Local\Temp/ccVGHHr9.s:30     .text:00000002 Tasks_Task1
+C:\Users\WALTON\AppData\Local\Temp/ccVGHHr9.s:95     .text:00000018 Tasks_Task2
+C:\Users\WALTON\AppData\Local\Temp/ccVGHHr9.s:126    .text:00000028 Tasks_Task3
+C:\Users\WALTON\AppData\Local\Temp/ccVGHHr9.s:157    .text:00000038 Tasks_Task4
+C:\Users\WALTON\AppData\Local\Temp/ccVGHHr9.s:188    .text:00000048 Tasks_Task5
+C:\Users\WALTON\AppData\Local\Temp/ccVGHHr9.s:259    .data:00000001 ntask
+C:\Users\WALTON\AppData\Local\Temp/ccVGHHr9.s:254    .data:00000000 lst
                             *COM*:00000005 prio
                             *COM*:00000005 sleep
                             *COM*:00000001 hiprtid

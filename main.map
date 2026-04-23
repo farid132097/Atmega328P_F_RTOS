@@ -132,7 +132,7 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x5c0
+.text           0x00000000      0x69a
  *(.vectors)
  .vectors       0x00000000       0x68 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm328p.o
                 0x00000000                __vectors
@@ -213,46 +213,48 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
                 0x000000a2                __vector_16
                 0x000000a2                __vector_18
                 0x000000a2                __vector_20
- .text          0x000000a6       0x38 main.o
-                0x000000c8                main
-                0x000000a6                Delay
- .text          0x000000de       0x90 tasks.o
-                0x000000f6                Tasks_Task2
-                0x00000116                Tasks_Task4
-                0x00000106                Tasks_Task3
-                0x00000126                Tasks_Task5
-                0x000000de                Tasks_Disable_Peripherals
-                0x000000e0                Tasks_Task1
- .text          0x0000016e      0x34e kernel.o
-                0x00000238                Kernel_Timer_Init
-                0x000003c4                Kernel_Init
-                0x0000016e                __vector_9
-                0x000004b2                Kernel_Manual_Sleep
- .text          0x000004bc       0xbc debug.o
-                0x000004dc                Debug_Tx_Byte
-                0x0000051a                Debug_Tx_Word_Conf
-                0x0000056a                Debug_Tx_RAM_Area
-                0x000004bc                Debug_Init
-                0x0000052a                Debug_Tx_DWord_Conf
-                0x00000552                Debug_Tx_From_RAM
-                0x000004ee                Debug_Tx_Word
-                0x000004fe                Debug_Tx_Byte_Conf
- .text          0x00000578        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodsi4.o)
- .text          0x00000578        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
- .text          0x00000578        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
- .text          0x00000578        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
-                0x00000578                . = ALIGN (0x2)
+ .text          0x000000a6       0x8c main.o
+                0x000000a6                main
+                0x0000010e                Delay
+ .text          0x00000132       0x90 tasks.o
+                0x0000014a                Tasks_Task2
+                0x0000016a                Tasks_Task4
+                0x0000015a                Tasks_Task3
+                0x0000017a                Tasks_Task5
+                0x00000132                Tasks_Disable_Peripherals
+                0x00000134                Tasks_Task1
+ .text          0x000001c2      0x3d4 kernel.o
+                0x000002e6                Kernel_Timer_Init
+                0x000004b0                Kernel_Start_Tasks
+                0x0000049e                Kernel_Init
+                0x000001c2                __vector_9
+                0x0000058c                Kernel_Manual_Sleep
+                0x0000038c                Kernel_Task_Create
+ .text          0x00000596       0xbc debug.o
+                0x000005b6                Debug_Tx_Byte
+                0x000005f4                Debug_Tx_Word_Conf
+                0x00000644                Debug_Tx_RAM_Area
+                0x00000596                Debug_Init
+                0x00000604                Debug_Tx_DWord_Conf
+                0x0000062c                Debug_Tx_From_RAM
+                0x000005c8                Debug_Tx_Word
+                0x000005d8                Debug_Tx_Byte_Conf
+ .text          0x00000652        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodsi4.o)
+ .text          0x00000652        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .text          0x00000652        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
+ .text          0x00000652        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+                0x00000652                . = ALIGN (0x2)
  *(.text.*)
- .text.libgcc   0x00000578       0x44 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodsi4.o)
-                0x00000578                __udivmodsi4
- .text.libgcc   0x000005bc        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
- .text.libgcc   0x000005bc        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
- .text.libgcc   0x000005bc        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
-                0x000005bc                . = ALIGN (0x2)
+ .text.libgcc   0x00000652       0x44 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodsi4.o)
+                0x00000652                __udivmodsi4
+ .text.libgcc   0x00000696        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .text.libgcc   0x00000696        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
+ .text.libgcc   0x00000696        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+                0x00000696                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x000005bc        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
-                0x000005bc                exit
-                0x000005bc                _exit
+ .fini9         0x00000696        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+                0x00000696                exit
+                0x00000696                _exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -271,11 +273,11 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x000005bc        0x4 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .fini0         0x00000696        0x4 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
  *(.fini0)
-                0x000005c0                _etext = .
+                0x0000069a                _etext = .
 
-.data           0x00800100        0x2 load address 0x000005c0
+.data           0x00800100        0x2 load address 0x0000069a
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  .data          0x00800100        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm328p.o
@@ -326,8 +328,8 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
                 0x0080042c                hiprio
                 0x0080042d                tid
                 0x0080042e                PROVIDE (__bss_end, .)
-                0x000005c0                __data_load_start = LOADADDR (.data)
-                0x000005c2                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x0000069a                __data_load_start = LOADADDR (.data)
+                0x0000069c                __data_load_end = (__data_load_start + SIZEOF (.data))
 
 .noinit         0x0080042e        0x0
                 0x0080042e                PROVIDE (__noinit_start, .)
@@ -352,10 +354,10 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
 .signature
  *(.signature*)
 
-.stab           0x00000000      0x744
+.stab           0x00000000      0x798
  *(.stab)
- .stab          0x00000000      0x3f0 kernel.o
- .stab          0x000003f0      0x354 debug.o
+ .stab          0x00000000      0x444 kernel.o
+ .stab          0x00000444      0x354 debug.o
                                 0x360 (size before relaxing)
 
 .stabstr        0x00000000       0x6e
@@ -404,21 +406,21 @@ LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
  .debug_pubnames
                 0x00000025       0xc4 tasks.o
 
-.debug_info     0x00000000      0x336
+.debug_info     0x00000000      0x332
  *(.debug_info)
- .debug_info    0x00000000       0xa9 main.o
- .debug_info    0x000000a9      0x28d tasks.o
+ .debug_info    0x00000000       0xa5 main.o
+ .debug_info    0x000000a5      0x28d tasks.o
  *(.gnu.linkonce.wi.*)
 
-.debug_abbrev   0x00000000      0x193
+.debug_abbrev   0x00000000      0x191
  *(.debug_abbrev)
- .debug_abbrev  0x00000000       0x74 main.o
- .debug_abbrev  0x00000074      0x11f tasks.o
+ .debug_abbrev  0x00000000       0x72 main.o
+ .debug_abbrev  0x00000072      0x11f tasks.o
 
-.debug_line     0x00000000      0x2d1
+.debug_line     0x00000000      0x313
  *(.debug_line)
- .debug_line    0x00000000       0xc9 main.o
- .debug_line    0x000000c9      0x208 tasks.o
+ .debug_line    0x00000000      0x10b main.o
+ .debug_line    0x0000010b      0x208 tasks.o
 
 .debug_frame    0x00000000       0xa0
  *(.debug_frame)
@@ -469,11 +471,19 @@ Kernel_Init                                       kernel.o
                                                   main.o
 Kernel_Manual_Sleep                               kernel.o
                                                   main.o
+Kernel_Start_Tasks                                kernel.o
+                                                  main.o
+Kernel_Task_Create                                kernel.o
+                                                  main.o
 Kernel_Timer_Init                                 kernel.o
+                                                  main.o
 Tasks_Disable_Peripherals                         tasks.o
 Tasks_Task1                                       tasks.o
+                                                  main.o
 Tasks_Task2                                       tasks.o
+                                                  main.o
 Tasks_Task3                                       tasks.o
+                                                  main.o
 Tasks_Task4                                       tasks.o
 Tasks_Task5                                       tasks.o
 __bad_interrupt                                   c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm328p.o

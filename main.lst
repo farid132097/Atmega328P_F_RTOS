@@ -6,69 +6,115 @@
    6               	__tmp_reg__ = 0
    7               	__zero_reg__ = 1
   15               	.Ltext0:
-  16               	.global	Delay
-  18               	Delay:
-  19               	.LFB6:
+  16               	.global	main
+  18               	main:
+  19               	.LFB7:
   20               	.LM1:
-  21               	.LVL0:
-  22               	/* prologue: function */
-  23               	/* frame size = 0 */
-  24               	.LM2:
-  25 0000 2AE0      		ldi r18,10
-  26 0002 660F      	1:	lsl r22
-  27 0004 771F      		rol r23
-  28 0006 881F      		rol r24
-  29 0008 991F      		rol r25
-  30 000a 2A95      		dec r18
-  31 000c 01F4      		brne 1b
-  32               	.LVL1:
-  33               	.LM3:
-  34 000e 28EE      		ldi r18,lo8(1000)
-  35 0010 33E0      		ldi r19,hi8(1000)
-  36 0012 40E0      		ldi r20,hlo8(1000)
-  37 0014 50E0      		ldi r21,hhi8(1000)
-  38 0016 0E94 0000 		call __udivmodsi4
-  39               	.LVL2:
-  40 001a 822F      		mov r24,r18
-  41 001c 0E94 0000 		call Kernel_Manual_Sleep
-  42               	/* epilogue start */
-  43               	.LM4:
-  44 0020 0895      		ret
-  45               	.LFE6:
-  47               	.global	main
-  49               	main:
-  50               	.LFB7:
-  51               	.LM5:
-  52               	/* prologue: function */
-  53               	/* frame size = 0 */
-  54               	.LM6:
-  55 0022 0E94 0000 		call Kernel_Init
-  56               	.LM7:
-  57 0026 399A      		sbi 39-32,1
-  58               	.LM8:
-  59 0028 4198      		cbi 40-32,1
-  60               	.L4:
-  61               	.LM9:
-  62 002a 61E0      		ldi r22,lo8(1)
-  63 002c 70E0      		ldi r23,hi8(1)
-  64 002e 80E0      		ldi r24,hlo8(1)
-  65 0030 90E0      		ldi r25,hhi8(1)
-  66 0032 0E94 0000 		call Delay
-  67 0036 00C0      		rjmp .L4
-  68               	.LFE7:
- 102               	.Letext0:
+  21               	/* prologue: function */
+  22               	/* frame size = 0 */
+  23               	.LM2:
+  24 0000 0E94 0000 		call Kernel_Init
+  25               	.LM3:
+  26 0004 0E94 0000 		call Kernel_Timer_Init
+  27               	.LM4:
+  28 0008 80E0      		ldi r24,lo8(gs(Tasks_Task1))
+  29 000a 90E0      		ldi r25,hi8(gs(Tasks_Task1))
+  30 000c 60E0      		ldi r22,lo8(0)
+  31 000e 0E94 0000 		call Kernel_Task_Create
+  32               	.LM5:
+  33 0012 80E0      		ldi r24,lo8(gs(Tasks_Task2))
+  34 0014 90E0      		ldi r25,hi8(gs(Tasks_Task2))
+  35 0016 61E0      		ldi r22,lo8(1)
+  36 0018 0E94 0000 		call Kernel_Task_Create
+  37               	.LM6:
+  38 001c 80E0      		ldi r24,lo8(gs(Tasks_Task3))
+  39 001e 90E0      		ldi r25,hi8(gs(Tasks_Task3))
+  40 0020 62E0      		ldi r22,lo8(2)
+  41 0022 0E94 0000 		call Kernel_Task_Create
+  42               	.LM7:
+  43 0026 80E0      		ldi r24,lo8(gs(Tasks_Task1))
+  44 0028 90E0      		ldi r25,hi8(gs(Tasks_Task1))
+  45 002a 60E0      		ldi r22,lo8(0)
+  46 002c 0E94 0000 		call Kernel_Task_Create
+  47               	.LM8:
+  48 0030 80E0      		ldi r24,lo8(gs(Tasks_Task2))
+  49 0032 90E0      		ldi r25,hi8(gs(Tasks_Task2))
+  50 0034 61E0      		ldi r22,lo8(1)
+  51 0036 0E94 0000 		call Kernel_Task_Create
+  52               	.LM9:
+  53 003a 80E0      		ldi r24,lo8(gs(Tasks_Task3))
+  54 003c 90E0      		ldi r25,hi8(gs(Tasks_Task3))
+  55 003e 62E0      		ldi r22,lo8(2)
+  56 0040 0E94 0000 		call Kernel_Task_Create
+  57               	.LM10:
+  58 0044 80E0      		ldi r24,lo8(gs(Tasks_Task1))
+  59 0046 90E0      		ldi r25,hi8(gs(Tasks_Task1))
+  60 0048 60E0      		ldi r22,lo8(0)
+  61 004a 0E94 0000 		call Kernel_Task_Create
+  62               	.LM11:
+  63 004e 80E0      		ldi r24,lo8(gs(Tasks_Task2))
+  64 0050 90E0      		ldi r25,hi8(gs(Tasks_Task2))
+  65 0052 61E0      		ldi r22,lo8(1)
+  66 0054 0E94 0000 		call Kernel_Task_Create
+  67               	.LM12:
+  68 0058 80E0      		ldi r24,lo8(gs(Tasks_Task3))
+  69 005a 90E0      		ldi r25,hi8(gs(Tasks_Task3))
+  70 005c 62E0      		ldi r22,lo8(2)
+  71 005e 0E94 0000 		call Kernel_Task_Create
+  72               	.LM13:
+  73 0062 0E94 0000 		call Kernel_Start_Tasks
+  74               	.L2:
+  75 0066 00C0      		rjmp .L2
+  76               	.LFE7:
+  78               	.global	Delay
+  80               	Delay:
+  81               	.LFB6:
+  82               	.LM14:
+  83               	.LVL0:
+  84               	/* prologue: function */
+  85               	/* frame size = 0 */
+  86               	.LM15:
+  87 0068 2AE0      		ldi r18,10
+  88 006a 660F      	1:	lsl r22
+  89 006c 771F      		rol r23
+  90 006e 881F      		rol r24
+  91 0070 991F      		rol r25
+  92 0072 2A95      		dec r18
+  93 0074 01F4      		brne 1b
+  94               	.LVL1:
+  95               	.LM16:
+  96 0076 28EE      		ldi r18,lo8(1000)
+  97 0078 33E0      		ldi r19,hi8(1000)
+  98 007a 40E0      		ldi r20,hlo8(1000)
+  99 007c 50E0      		ldi r21,hhi8(1000)
+ 100 007e 0E94 0000 		call __udivmodsi4
+ 101               	.LVL2:
+ 102 0082 822F      		mov r24,r18
+ 103 0084 8150      		subi r24,lo8(-(-1))
+ 104 0086 0E94 0000 		call Kernel_Manual_Sleep
+ 105               	/* epilogue start */
+ 106               	.LM17:
+ 107 008a 0895      		ret
+ 108               	.LFE6:
+ 142               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\WALTON\AppData\Local\Temp/ccJ4ZtUg.s:2      *ABS*:0000003f __SREG__
-C:\Users\WALTON\AppData\Local\Temp/ccJ4ZtUg.s:3      *ABS*:0000003e __SP_H__
-C:\Users\WALTON\AppData\Local\Temp/ccJ4ZtUg.s:4      *ABS*:0000003d __SP_L__
-C:\Users\WALTON\AppData\Local\Temp/ccJ4ZtUg.s:5      *ABS*:00000034 __CCP__
-C:\Users\WALTON\AppData\Local\Temp/ccJ4ZtUg.s:6      *ABS*:00000000 __tmp_reg__
-C:\Users\WALTON\AppData\Local\Temp/ccJ4ZtUg.s:7      *ABS*:00000001 __zero_reg__
-C:\Users\WALTON\AppData\Local\Temp/ccJ4ZtUg.s:18     .text:00000000 Delay
-C:\Users\WALTON\AppData\Local\Temp/ccJ4ZtUg.s:49     .text:00000022 main
+C:\Users\WALTON\AppData\Local\Temp/cc61etLY.s:2      *ABS*:0000003f __SREG__
+C:\Users\WALTON\AppData\Local\Temp/cc61etLY.s:3      *ABS*:0000003e __SP_H__
+C:\Users\WALTON\AppData\Local\Temp/cc61etLY.s:4      *ABS*:0000003d __SP_L__
+C:\Users\WALTON\AppData\Local\Temp/cc61etLY.s:5      *ABS*:00000034 __CCP__
+C:\Users\WALTON\AppData\Local\Temp/cc61etLY.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\WALTON\AppData\Local\Temp/cc61etLY.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\WALTON\AppData\Local\Temp/cc61etLY.s:18     .text:00000000 main
+C:\Users\WALTON\AppData\Local\Temp/cc61etLY.s:80     .text:00000068 Delay
 
 UNDEFINED SYMBOLS
+Kernel_Init
+Kernel_Timer_Init
+Tasks_Task1
+Kernel_Task_Create
+Tasks_Task2
+Tasks_Task3
+Kernel_Start_Tasks
 __udivmodsi4
 Kernel_Manual_Sleep
-Kernel_Init

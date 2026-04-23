@@ -12,7 +12,7 @@
 void Delay(uint32_t val){
 	val *= 1024;
 	val /= 1000;
-	Kernel_Manual_Sleep(val);
+	Kernel_Manual_Sleep(val - 1);
 }
 
 
@@ -20,18 +20,22 @@ int main(void) {
     
     
 	Kernel_Init();
-    
-    DDRC  |= (1<<1);
-	PORTC &=~(1<<1);
+	Kernel_Timer_Init();
+    Kernel_Task_Create(Tasks_Task1,0);
+    Kernel_Task_Create(Tasks_Task2,1);
+	Kernel_Task_Create(Tasks_Task3,2);
+	Kernel_Task_Create(Tasks_Task1,0);
+    Kernel_Task_Create(Tasks_Task2,1);
+	Kernel_Task_Create(Tasks_Task3,2);
+	Kernel_Task_Create(Tasks_Task1,0);
+    Kernel_Task_Create(Tasks_Task2,1);
+	Kernel_Task_Create(Tasks_Task3,2);
+	Kernel_Start_Tasks();
 	
     while(1){
 		
 		//Nothing to do here
 		//All tasks are handled by kernel
-
-        //PORTC ^= (1<<1);
-        Delay(1);
-
         
     }
 }

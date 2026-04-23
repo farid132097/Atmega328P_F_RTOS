@@ -87,24 +87,27 @@ void Tasks_Task4(void){
 }
 
 
-uint8_t tid, hiprtid, prio[5], hiprio, sleep[5], lst=5, ntask=5;
+uint8_t hiprtid, prio[5], hiprio, sleep[5], lst=5, ntask=5;
 
 void Tasks_Task5(void){
-  hiprio = 0xff;
-  hiprtid = 0;
-  for(uint8_t i=0; i<ntask; i++){
-    if(sleep[i]){
-      sleep[i]-=lst;
-      if((sleep[i] == 0) && (prio[i] < hiprio)){
-        hiprio = prio[i];
-        hiprtid = i;
-      }
+  hiprio = 0xff; //lower is higher
+  hiprtid = 0;   //task0 is idle task
+  loslp = 0xFF;
+  for(uint8_t task_id = 0; task_id < ntask; task_id++){
+    
+    //subtract if non zero
+    if(sleep[task_id]){
+      sleep[task_id]-=lst;
     }
-    else{
-      if(prio[i] < hiprio){
-        hiprio = prio[i];
-        hiprtid = i;
-      }
+    
+    //find lowest sleep time
+    if(sleep[task_id] < loslp){
+      loslp = sleep[task_id];
+    }
+
+    if((sleep[task_id] == 0) && (prio[task_id] < hiprio)){
+      hiprio = prio[task_id];
+      hiprtid = task_id;
     }
   }
   

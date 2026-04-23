@@ -63,6 +63,8 @@
 KerMSPZP:  .skip 4                                        ;2 bytes for MSP, 2 bytes for ZP     
 .global    KerTID                                         ;declare space for task id           
 KerTID:    .skip 1                                        ;single byte, max 0xff tasks         
+.global    KerHPTID                                       ;declare space for hi prio task id   
+KerHPTID:  .skip 1                                        ;single byte, max 0xff tasks         
 .global    KerNTSK                                        ;declare space for number of tasks   
 KerNTSK:   .skip 1                                        ;single byte, max 0xff tasks         
 .global    KerLST                                         ;declare space for lowest sleep time 
@@ -447,47 +449,40 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 		LDI   R18                , 0x00                   ;start from tid 0       (  1 clock ) 
 		LDS   R19                , KerNTSK                ;load val               (  2 clocks) 
 		LDI   R20                , 0xFF                   ;local lowest time      (  1 clock ) 
-		LDS   R21                , KerLST                 ;load lowest time       (  2 clocks) 
-		LDI   R30                , lo8(KerSleep)          ;load sleep reg low     (  1 clock ) 
+		LDI   R21                , 0xFF                   ;local hi prio          (  1 clock ) 
+        LDI   R22                , 0x00                   ;local hi prio tid      (  1 clock ) 
+		LDS   R23                , KerLST                 ;load LST               (  2 clocks) 
+		
+	_KER_SCH_LOOP1\@:
+	    LDI   R30                , lo8(KerSleep)          ;load sleep reg low     (  1 clock ) 
 		LDI   R31                , hi8(KerSleep)          ;load sleep reg high    (  1 clock ) 
-    _KER_SCH_LOOP1\@:
-	    LD    R22                , Z                      ;load sleep val         (  2 clocks) 
-		TST   R22                                         ;check val              (  1 clock ) 
+	    ADD   R30                , R18                    ;add                    (  1 clock ) 
+		ADC   R31                , R1                     ;add carry              (  1 clock ) 
+	    LD    R24                , Z                      ;load sleep val         (  2 clocks) 
+		TST   R24                                         ;check val              (  1 clock ) 
 		BREQ  _KER_SCH_SKIP1\@                            ;skip subtract          (  2 clocks) 
-		SUB   R22                , R21                    ;subtract LST           (  1 clock ) 
-		ST    Z+                 , R22                    ;store new val          (  2 clocks) 
+		SUB   R24                , R23                    ;subtract LST           (  1 clock ) 
+		ST    Z                  , R24                    ;store new val          (  2 clocks) 
+        TST   R24                                         ;check val              (  1 clock ) 
+		BRNE  _KER_SCH_LCI\@                              ;
+		LDI   R26                , lo8(KerPrio)           ;load prio reg low      (  1 clock ) 
+		LDI   R27                , hi8(KerPrio)           ;load prio reg high     (  1 clock ) 
+        ADD   R26                , R18                    ;add                    (  1 clock ) 
+		ADC   R27                , R1                     ;add carry              (  1 clock ) 
+		LD    R30                , X                      ;load prio              (  2 clocks) 
+		CP    R30                , R21                    ;compare                (  1 clock ) 
+		BRSH  _KER_SCH_LCI\@                              ;                                    
+		MOV   R21                , R30                    ;set new prio           (  1 clock ) 
+		MOV   R22                , R18                    ;set new prio tid       (  1 clock ) 
+
+	_KER_SCH_SKIP2\@:
+	    
 	_KER_SCH_SKIP1\@:
-	    CP    R22                , R20                    ;compare                (  1 clock ) 
-		BRSH  _KER_SCH_LCI1\@                             ;
-		MOV   R20                , R22                    ;copy lowest val        
-    _KER_SCH_LCI1\@:                                      ;loop counter increment              
-		INC   R18                                         ;increment              (  1 clock ) 
+	    ;if sleep val is zero
+    _KER_SCH_LCI\@:
+	    INC   R18                                         ;increment              (  1 clock ) 
 	    CP    R18                , R19                    ;compare with ntask     (  2 clocks) 
 		BRLO  _KER_SCH_LOOP1\@                            ;if task id<ntask       (  2 clocks) 
-    _KER_SCH_EXIT1\@:
-	    STS   KerLST             , R20                    ;save LST               (  2 clocks) 
-
-		LDI   R18                , 0x00                   ;start from tid 0       (  1 clock ) 
-		LDS   R19                , KerNTSK                ;load val               (  2 clocks) 
-		LDI   R20                , 0xFF                   ;local hi prio          (  1 clock ) 
-		LDS   R21                , KerLST                 ;load lowest time       (  2 clocks) 
-		LDI   R30                , lo8(KerSleep)          ;load sleep reg low     (  1 clock ) 
-		LDI   R31                , hi8(KerSleep)          ;load sleep reg high    (  1 clock ) 
-    _KER_SCH_LOOP2\@:
-	    LD    R22                , Z                      ;load sleep val         (  2 clocks) 
-		TST   R22                                         ;check val              (  1 clock ) 
-		BREQ  _KER_SCH_SKIP2\@                            ;skip subtract          (  2 clocks) 
-		
-	_KER_SCH_SKIP2\@:
-	    CP    R22                , R20                    ;compare                (  1 clock ) 
-		BRSH  _KER_SCH_LCI2\@                             ;
-		MOV   R20                , R22                    ;copy lowest val        
-    _KER_SCH_LCI2\@:                                      ;loop counter increment              
-		INC   R18                                         ;increment              (  1 clock ) 
-	    CP    R18                , R19                    ;compare with ntask     (  2 clocks) 
-		BRLO  _KER_SCH_LOOP2\@                            ;if task id<ntask       (  2 clocks) 
-    _KER_SCH_EXIT2\@:
-	    STS   KerLST             , R20                    ;save LST               (  2 clocks) 
 .endm                                                                                          
 ;;===================================set reload val end=====================================;; 
 

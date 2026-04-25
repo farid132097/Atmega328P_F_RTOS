@@ -461,6 +461,8 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 	_KER_SCH_LST\@:
 	    CP    R23                , R19                    ;compare                (  1 clock ) 
 		BRSH  _KER_SCH_PRIO\@
+		TST   R23                                         ;check if zero          (  1 clock ) 
+		BREQ  _KER_SCH_PRIO\@
 		MOV   R19                , R23                    ;assign new low val     (  1 clock ) 
 	_KER_SCH_PRIO\@:
 	    TST   R23                                         ;check if zero          (  1 clock ) 
@@ -568,11 +570,11 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 	    KER_DEBUG_PIN_SET                                 ;debug pin set          (  2 clocks) 
 		KER_CONTEXT_SAVE                                  ;save context           (          ) 
 		;KER_EXIT_SLEEP                                    ;exit sleep if enabled  (  5 clocks) 
-		LDI   R18                , 0x00                   ;handler mode           (  2 clocks) 
-		STS   KerSCHM            , R18                    ;set val                (  2 clocks) 
-		KER_RUN_SCHEDULER
+		;LDI   R18                , 0x00                   ;handler mode           (  2 clocks) 
+		;STS   KerSCHM            , R18                    ;set val                (  2 clocks) 
+		;KER_RUN_SCHEDULER
 
-		/*LDS  R18, KerTID
+		LDS  R18, KerTID
 		LDS  R19, KerNTSK
 		LDI  R20, 0x01
 		ADD  R18, R20
@@ -580,7 +582,7 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 		BRLO _VC_SKIP
 		LDI  R18, 0x00
     _VC_SKIP:
-	    STS  KerTID, R18*/
+	    STS  KerTID, R18
 
 
         KER_TIMER_RELOAD                                  ;reload timer           (  4 clocks) 

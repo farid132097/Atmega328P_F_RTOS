@@ -28,9 +28,7 @@ void Tasks_Task1(void){
     
     //atomic toggle, otherwise another task may interfare
     cli();
-    PORTC |= (1<<1);
-    _delay_us(500);
-    PORTC &=~ (1<<1);
+    PORTC ^= (1<<1);
     sei();
 
     //Kernel_Task_Sleep(50);
@@ -87,7 +85,7 @@ void Tasks_Task4(void){
 }
 
 
-uint8_t hiprtid, prio[5], hiprio, sleep[5], lst=5, ntask=5;
+uint8_t hiprtid, prio[5], hiprio, sleep[5], lst=5, ntask=5,loslp;
 
 void Tasks_Task5(void){
   hiprio = 0xff; //lower is higher

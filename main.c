@@ -9,13 +9,6 @@
 
 
 
-void Delay(uint32_t val){
-	val *= 1024;
-	val /= 1000;
-	Kernel_Manual_Sleep(val - 1);
-}
-
-
 int main(void) {
     
     

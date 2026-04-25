@@ -23,6 +23,7 @@ void Tasks_Disable_Peripherals(void){
 void Tasks_Task1(void){
   
   DDRC |= (1<<1);
+  //_delay_ms(1000);
   
   while(1){
     
@@ -31,7 +32,7 @@ void Tasks_Task1(void){
     PORTC ^= (1<<1);
     sei();
 
-    //Kernel_Task_Sleep(50);
+    Kernel_Task_Sleep(13);
     
   }
 }
@@ -39,6 +40,7 @@ void Tasks_Task1(void){
 void Tasks_Task2(void){
   
   DDRC |= (1<<2);
+  //_delay_ms(1000);
   
   while(1){
     
@@ -47,7 +49,7 @@ void Tasks_Task2(void){
     PORTC ^= (1<<2);
     sei();
     
-    //Kernel_Task_Sleep(100);
+    Kernel_Task_Sleep(119);
     
   }
 }
@@ -55,6 +57,7 @@ void Tasks_Task2(void){
 void Tasks_Task3(void){
   
   DDRC |= (1<<3);
+  //_delay_ms(1000);
   
   while(1){
     
@@ -63,7 +66,7 @@ void Tasks_Task3(void){
     PORTC ^= (1<<3);
     sei();
 
-    //Kernel_Task_Sleep(150);
+    Kernel_Task_Sleep(141);
     
   }
 }
@@ -108,6 +111,8 @@ void Tasks_Task5(void){
       hiprtid = task_id;
     }
   }
+
+  lst = loslp;
   
 
   while(1){

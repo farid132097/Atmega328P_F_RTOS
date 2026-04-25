@@ -8,7 +8,7 @@
   15               	.Ltext0:
   16               	.global	main
   18               	main:
-  19               	.LFB7:
+  19               	.LFB6:
   20               	.LM1:
   21               	/* prologue: function */
   22               	/* frame size = 0 */
@@ -33,48 +33,17 @@
   41 0022 0E94 0000 		call Kernel_Start_Tasks
   42               	.L2:
   43 0026 00C0      		rjmp .L2
-  44               	.LFE7:
-  46               	.global	Delay
-  48               	Delay:
-  49               	.LFB6:
-  50               	.LM7:
-  51               	.LVL0:
-  52               	/* prologue: function */
-  53               	/* frame size = 0 */
-  54               	.LM8:
-  55 0028 2AE0      		ldi r18,10
-  56 002a 660F      	1:	lsl r22
-  57 002c 771F      		rol r23
-  58 002e 881F      		rol r24
-  59 0030 991F      		rol r25
-  60 0032 2A95      		dec r18
-  61 0034 01F4      		brne 1b
-  62               	.LVL1:
-  63               	.LM9:
-  64 0036 28EE      		ldi r18,lo8(1000)
-  65 0038 33E0      		ldi r19,hi8(1000)
-  66 003a 40E0      		ldi r20,hlo8(1000)
-  67 003c 50E0      		ldi r21,hhi8(1000)
-  68 003e 0E94 0000 		call __udivmodsi4
-  69               	.LVL2:
-  70 0042 822F      		mov r24,r18
-  71 0044 8150      		subi r24,lo8(-(-1))
-  72 0046 0E94 0000 		call Kernel_Manual_Sleep
-  73               	/* epilogue start */
-  74               	.LM10:
-  75 004a 0895      		ret
-  76               	.LFE6:
- 110               	.Letext0:
+  44               	.LFE6:
+  70               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\WALTON\AppData\Local\Temp/cc6UeaGl.s:2      *ABS*:0000003f __SREG__
-C:\Users\WALTON\AppData\Local\Temp/cc6UeaGl.s:3      *ABS*:0000003e __SP_H__
-C:\Users\WALTON\AppData\Local\Temp/cc6UeaGl.s:4      *ABS*:0000003d __SP_L__
-C:\Users\WALTON\AppData\Local\Temp/cc6UeaGl.s:5      *ABS*:00000034 __CCP__
-C:\Users\WALTON\AppData\Local\Temp/cc6UeaGl.s:6      *ABS*:00000000 __tmp_reg__
-C:\Users\WALTON\AppData\Local\Temp/cc6UeaGl.s:7      *ABS*:00000001 __zero_reg__
-C:\Users\WALTON\AppData\Local\Temp/cc6UeaGl.s:18     .text:00000000 main
-C:\Users\WALTON\AppData\Local\Temp/cc6UeaGl.s:48     .text:00000028 Delay
+C:\Users\WALTON\AppData\Local\Temp/ccFUxVwr.s:2      *ABS*:0000003f __SREG__
+C:\Users\WALTON\AppData\Local\Temp/ccFUxVwr.s:3      *ABS*:0000003e __SP_H__
+C:\Users\WALTON\AppData\Local\Temp/ccFUxVwr.s:4      *ABS*:0000003d __SP_L__
+C:\Users\WALTON\AppData\Local\Temp/ccFUxVwr.s:5      *ABS*:00000034 __CCP__
+C:\Users\WALTON\AppData\Local\Temp/ccFUxVwr.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\WALTON\AppData\Local\Temp/ccFUxVwr.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\WALTON\AppData\Local\Temp/ccFUxVwr.s:18     .text:00000000 main
 
 UNDEFINED SYMBOLS
 Kernel_Init
@@ -83,5 +52,3 @@ Kernel_Task_Create
 Tasks_Task2
 Tasks_Task3
 Kernel_Start_Tasks
-__udivmodsi4
-Kernel_Manual_Sleep

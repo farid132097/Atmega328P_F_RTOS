@@ -91,18 +91,18 @@ void Tasks_Task4(void){
 uint8_t hiprtid, prio[5], hiprio, sleep[5], lst=5, ntask=5,loslp;
 
 void Tasks_Task5(void){
-  hiprio = 0xff; //lower is higher
+  hiprio  = 0xff; //lower is higher
   hiprtid = 0;   //task0 is idle task
-  loslp = 0xFF;
+  loslp   = 0xFF;
   for(uint8_t task_id = 0; task_id < ntask; task_id++){
     
     //subtract if non zero
     if(sleep[task_id]){
-      sleep[task_id]-=lst;
+      sleep[task_id] -= lst;
     }
     
     //find lowest sleep time
-    if(sleep[task_id] < loslp){
+    if((sleep[task_id] < loslp) && (sleep[task_id] != 0)){
       loslp = sleep[task_id];
     }
 

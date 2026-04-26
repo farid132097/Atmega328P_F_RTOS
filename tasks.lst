@@ -59,15 +59,15 @@
   71 0018 7091 0000 		lds r23,lst
   72 001c A0E0      		ldi r26,lo8(sleep)
   73 001e B0E0      		ldi r27,hi8(sleep)
-  74 0020 5FEF      		ldi r21,lo8(-1)
-  75 0022 60E0      		ldi r22,lo8(0)
+  74 0020 9FEF      		ldi r25,lo8(-1)
+  75 0022 50E0      		ldi r21,lo8(0)
   76               	.LVL0:
-  77 0024 9FEF      		ldi r25,lo8(-1)
+  77 0024 4FEF      		ldi r20,lo8(-1)
   78 0026 20E0      		ldi r18,lo8(0)
   79 0028 30E0      		ldi r19,hi8(0)
   80 002a 00C0      		rjmp .L7
   81               	.LVL1:
-  82               	.L12:
+  82               	.L13:
   83               	.LM12:
   84 002c 8C91      		ld r24,X
   85 002e 8823      		tst r24
@@ -78,181 +78,189 @@
   90               	.L8:
   91               	.LM14:
   92 0036 8C91      		ld r24,X
-  93 0038 8517      		cp r24,r21
+  93 0038 8917      		cp r24,r25
   94 003a 00F4      		brsh .L9
-  95 003c 582F      		mov r21,r24
-  96               	.L9:
-  97               	.LM15:
-  98 003e 8823      		tst r24
-  99 0040 01F4      		brne .L10
- 100 0042 F901      		movw r30,r18
- 101               	.LVL2:
- 102 0044 E050      		subi r30,lo8(-(prio))
- 103 0046 F040      		sbci r31,hi8(-(prio))
- 104 0048 E081      		ld r30,Z
- 105 004a E917      		cp r30,r25
- 106 004c 00F0      		brlo .L11
- 107               	.LVL3:
- 108               	.L10:
- 109 004e 462F      		mov r20,r22
- 110 0050 E92F      		mov r30,r25
- 111               	.L11:
- 112 0052 2F5F      		subi r18,lo8(-(1))
- 113 0054 3F4F      		sbci r19,hi8(-(1))
- 114 0056 1196      		adiw r26,1
- 115 0058 642F      		mov r22,r20
- 116 005a 9E2F      		mov r25,r30
- 117               	.LVL4:
- 118               	.L7:
- 119 005c 422F      		mov r20,r18
- 120               	.LVL5:
- 121               	.LM16:
- 122 005e 2117      		cp r18,r17
- 123 0060 00F0      		brlo .L12
- 124               	.LVL6:
- 125 0062 5093 0000 		sts loslp,r21
- 126 0066 6093 0000 		sts hiprtid,r22
- 127 006a 9093 0000 		sts hiprio,r25
- 128               	.LBE2:
- 129               	.LM17:
- 130 006e 5093 0000 		sts lst,r21
- 131               	.LVL7:
- 132               	.L13:
- 133 0072 00C0      		rjmp .L13
- 134               	.LFE11:
- 136               	.global	Tasks_Task3
- 138               	Tasks_Task3:
- 139               	.LFB9:
- 140               	.LM18:
- 141 0074 1F93      		push r17
- 142               	/* prologue: function */
- 143               	/* frame size = 0 */
- 144               	.LM19:
- 145 0076 3B9A      		sbi 39-32,3
- 146               	.LM20:
- 147 0078 18E0      		ldi r17,lo8(8)
- 148               	.L16:
- 149               	.LM21:
- 150               	/* #APP */
- 151               	 ;  65 "tasks.c" 1
- 152 007a F894      		cli
- 153               	 ;  0 "" 2
- 154               	.LM22:
- 155               	/* #NOAPP */
- 156 007c 88B1      		in r24,40-32
- 157 007e 8127      		eor r24,r17
- 158 0080 88B9      		out 40-32,r24
- 159               	.LM23:
- 160               	/* #APP */
- 161               	 ;  67 "tasks.c" 1
- 162 0082 7894      		sei
- 163               	 ;  0 "" 2
- 164               	.LM24:
- 165               	/* #NOAPP */
- 166 0084 8DE8      		ldi r24,lo8(-115)
- 167 0086 0E94 0000 		call Kernel_Task_Sleep
- 168 008a 00C0      		rjmp .L16
- 169               	.LFE9:
- 171               	.global	Tasks_Task2
- 173               	Tasks_Task2:
- 174               	.LFB8:
- 175               	.LM25:
- 176 008c 1F93      		push r17
- 177               	/* prologue: function */
- 178               	/* frame size = 0 */
- 179               	.LM26:
- 180 008e 3A9A      		sbi 39-32,2
- 181               	.LM27:
- 182 0090 14E0      		ldi r17,lo8(4)
- 183               	.L19:
- 184               	.LM28:
- 185               	/* #APP */
- 186               	 ;  48 "tasks.c" 1
- 187 0092 F894      		cli
- 188               	 ;  0 "" 2
- 189               	.LM29:
- 190               	/* #NOAPP */
- 191 0094 88B1      		in r24,40-32
- 192 0096 8127      		eor r24,r17
- 193 0098 88B9      		out 40-32,r24
- 194               	.LM30:
- 195               	/* #APP */
- 196               	 ;  50 "tasks.c" 1
- 197 009a 7894      		sei
- 198               	 ;  0 "" 2
- 199               	.LM31:
- 200               	/* #NOAPP */
- 201 009c 87E7      		ldi r24,lo8(119)
- 202 009e 0E94 0000 		call Kernel_Task_Sleep
- 203 00a2 00C0      		rjmp .L19
- 204               	.LFE8:
- 206               	.global	Tasks_Task1
- 208               	Tasks_Task1:
- 209               	.LFB7:
- 210               	.LM32:
- 211 00a4 1F93      		push r17
- 212               	/* prologue: function */
- 213               	/* frame size = 0 */
- 214               	.LM33:
- 215 00a6 399A      		sbi 39-32,1
- 216               	.LM34:
- 217 00a8 12E0      		ldi r17,lo8(2)
- 218               	.L22:
- 219               	.LM35:
- 220               	/* #APP */
- 221               	 ;  31 "tasks.c" 1
- 222 00aa F894      		cli
- 223               	 ;  0 "" 2
- 224               	.LM36:
- 225               	/* #NOAPP */
- 226 00ac 88B1      		in r24,40-32
- 227 00ae 8127      		eor r24,r17
- 228 00b0 88B9      		out 40-32,r24
- 229               	.LM37:
- 230               	/* #APP */
- 231               	 ;  33 "tasks.c" 1
- 232 00b2 7894      		sei
- 233               	 ;  0 "" 2
- 234               	.LM38:
- 235               	/* #NOAPP */
- 236 00b4 8DE0      		ldi r24,lo8(13)
- 237 00b6 0E94 0000 		call Kernel_Task_Sleep
- 238 00ba 00C0      		rjmp .L22
- 239               	.LFE7:
- 241               	.global	lst
- 242               		.data
- 245               	lst:
- 246 0000 05        		.byte	5
- 247               	.global	ntask
- 250               	ntask:
- 251 0001 05        		.byte	5
- 252               		.comm hiprtid,1,1
- 253               		.comm prio,5,1
- 254               		.comm hiprio,1,1
- 255               		.comm sleep,5,1
- 256               		.comm loslp,1,1
- 321               	.Letext0:
+  95 003c 8823      		tst r24
+  96 003e 01F0      		breq .L10
+  97 0040 00C0      		rjmp .L16
+  98               	.L9:
+  99               	.LM15:
+ 100 0042 8823      		tst r24
+ 101 0044 01F4      		brne .L12
+ 102               	.L10:
+ 103 0046 F901      		movw r30,r18
+ 104               	.LVL2:
+ 105 0048 E050      		subi r30,lo8(-(prio))
+ 106 004a F040      		sbci r31,hi8(-(prio))
+ 107 004c E081      		ld r30,Z
+ 108 004e E417      		cp r30,r20
+ 109 0050 00F4      		brsh .L12
+ 110 0052 892F      		mov r24,r25
+ 111 0054 00C0      		rjmp .L11
+ 112               	.LVL3:
+ 113               	.L12:
+ 114 0056 892F      		mov r24,r25
+ 115               	.L16:
+ 116 0058 652F      		mov r22,r21
+ 117 005a E42F      		mov r30,r20
+ 118               	.L11:
+ 119 005c 2F5F      		subi r18,lo8(-(1))
+ 120 005e 3F4F      		sbci r19,hi8(-(1))
+ 121 0060 1196      		adiw r26,1
+ 122 0062 982F      		mov r25,r24
+ 123 0064 562F      		mov r21,r22
+ 124 0066 4E2F      		mov r20,r30
+ 125               	.LVL4:
+ 126               	.L7:
+ 127 0068 622F      		mov r22,r18
+ 128               	.LVL5:
+ 129               	.LM16:
+ 130 006a 2117      		cp r18,r17
+ 131 006c 00F0      		brlo .L13
+ 132               	.LVL6:
+ 133 006e 9093 0000 		sts loslp,r25
+ 134 0072 5093 0000 		sts hiprtid,r21
+ 135 0076 4093 0000 		sts hiprio,r20
+ 136               	.LBE2:
+ 137               	.LM17:
+ 138 007a 9093 0000 		sts lst,r25
+ 139               	.LVL7:
+ 140               	.L14:
+ 141 007e 00C0      		rjmp .L14
+ 142               	.LFE11:
+ 144               	.global	Tasks_Task3
+ 146               	Tasks_Task3:
+ 147               	.LFB9:
+ 148               	.LM18:
+ 149 0080 1F93      		push r17
+ 150               	/* prologue: function */
+ 151               	/* frame size = 0 */
+ 152               	.LM19:
+ 153 0082 3B9A      		sbi 39-32,3
+ 154               	.LM20:
+ 155 0084 18E0      		ldi r17,lo8(8)
+ 156               	.L18:
+ 157               	.LM21:
+ 158               	/* #APP */
+ 159               	 ;  65 "tasks.c" 1
+ 160 0086 F894      		cli
+ 161               	 ;  0 "" 2
+ 162               	.LM22:
+ 163               	/* #NOAPP */
+ 164 0088 88B1      		in r24,40-32
+ 165 008a 8127      		eor r24,r17
+ 166 008c 88B9      		out 40-32,r24
+ 167               	.LM23:
+ 168               	/* #APP */
+ 169               	 ;  67 "tasks.c" 1
+ 170 008e 7894      		sei
+ 171               	 ;  0 "" 2
+ 172               	.LM24:
+ 173               	/* #NOAPP */
+ 174 0090 8DE8      		ldi r24,lo8(-115)
+ 175 0092 0E94 0000 		call Kernel_Task_Sleep
+ 176 0096 00C0      		rjmp .L18
+ 177               	.LFE9:
+ 179               	.global	Tasks_Task2
+ 181               	Tasks_Task2:
+ 182               	.LFB8:
+ 183               	.LM25:
+ 184 0098 1F93      		push r17
+ 185               	/* prologue: function */
+ 186               	/* frame size = 0 */
+ 187               	.LM26:
+ 188 009a 3A9A      		sbi 39-32,2
+ 189               	.LM27:
+ 190 009c 14E0      		ldi r17,lo8(4)
+ 191               	.L21:
+ 192               	.LM28:
+ 193               	/* #APP */
+ 194               	 ;  48 "tasks.c" 1
+ 195 009e F894      		cli
+ 196               	 ;  0 "" 2
+ 197               	.LM29:
+ 198               	/* #NOAPP */
+ 199 00a0 88B1      		in r24,40-32
+ 200 00a2 8127      		eor r24,r17
+ 201 00a4 88B9      		out 40-32,r24
+ 202               	.LM30:
+ 203               	/* #APP */
+ 204               	 ;  50 "tasks.c" 1
+ 205 00a6 7894      		sei
+ 206               	 ;  0 "" 2
+ 207               	.LM31:
+ 208               	/* #NOAPP */
+ 209 00a8 87E7      		ldi r24,lo8(119)
+ 210 00aa 0E94 0000 		call Kernel_Task_Sleep
+ 211 00ae 00C0      		rjmp .L21
+ 212               	.LFE8:
+ 214               	.global	Tasks_Task1
+ 216               	Tasks_Task1:
+ 217               	.LFB7:
+ 218               	.LM32:
+ 219 00b0 1F93      		push r17
+ 220               	/* prologue: function */
+ 221               	/* frame size = 0 */
+ 222               	.LM33:
+ 223 00b2 399A      		sbi 39-32,1
+ 224               	.LM34:
+ 225 00b4 12E0      		ldi r17,lo8(2)
+ 226               	.L24:
+ 227               	.LM35:
+ 228               	/* #APP */
+ 229               	 ;  31 "tasks.c" 1
+ 230 00b6 F894      		cli
+ 231               	 ;  0 "" 2
+ 232               	.LM36:
+ 233               	/* #NOAPP */
+ 234 00b8 88B1      		in r24,40-32
+ 235 00ba 8127      		eor r24,r17
+ 236 00bc 88B9      		out 40-32,r24
+ 237               	.LM37:
+ 238               	/* #APP */
+ 239               	 ;  33 "tasks.c" 1
+ 240 00be 7894      		sei
+ 241               	 ;  0 "" 2
+ 242               	.LM38:
+ 243               	/* #NOAPP */
+ 244 00c0 8DE0      		ldi r24,lo8(13)
+ 245 00c2 0E94 0000 		call Kernel_Task_Sleep
+ 246 00c6 00C0      		rjmp .L24
+ 247               	.LFE7:
+ 249               	.global	lst
+ 250               		.data
+ 253               	lst:
+ 254 0000 05        		.byte	5
+ 255               	.global	ntask
+ 258               	ntask:
+ 259 0001 05        		.byte	5
+ 260               		.comm hiprtid,1,1
+ 261               		.comm prio,5,1
+ 262               		.comm hiprio,1,1
+ 263               		.comm sleep,5,1
+ 264               		.comm loslp,1,1
+ 329               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 tasks.c
-C:\Users\WALTON\AppData\Local\Temp/ccEjQDdI.s:2      *ABS*:0000003f __SREG__
-C:\Users\WALTON\AppData\Local\Temp/ccEjQDdI.s:3      *ABS*:0000003e __SP_H__
-C:\Users\WALTON\AppData\Local\Temp/ccEjQDdI.s:4      *ABS*:0000003d __SP_L__
-C:\Users\WALTON\AppData\Local\Temp/ccEjQDdI.s:5      *ABS*:00000034 __CCP__
-C:\Users\WALTON\AppData\Local\Temp/ccEjQDdI.s:6      *ABS*:00000000 __tmp_reg__
-C:\Users\WALTON\AppData\Local\Temp/ccEjQDdI.s:7      *ABS*:00000001 __zero_reg__
-C:\Users\WALTON\AppData\Local\Temp/ccEjQDdI.s:18     .text:00000000 Tasks_Disable_Peripherals
-C:\Users\WALTON\AppData\Local\Temp/ccEjQDdI.s:30     .text:00000002 Tasks_Task4
-C:\Users\WALTON\AppData\Local\Temp/ccEjQDdI.s:61     .text:00000012 Tasks_Task5
-C:\Users\WALTON\AppData\Local\Temp/ccEjQDdI.s:250    .data:00000001 ntask
-C:\Users\WALTON\AppData\Local\Temp/ccEjQDdI.s:245    .data:00000000 lst
+C:\Users\WALTON\AppData\Local\Temp/ccnh1oHq.s:2      *ABS*:0000003f __SREG__
+C:\Users\WALTON\AppData\Local\Temp/ccnh1oHq.s:3      *ABS*:0000003e __SP_H__
+C:\Users\WALTON\AppData\Local\Temp/ccnh1oHq.s:4      *ABS*:0000003d __SP_L__
+C:\Users\WALTON\AppData\Local\Temp/ccnh1oHq.s:5      *ABS*:00000034 __CCP__
+C:\Users\WALTON\AppData\Local\Temp/ccnh1oHq.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\WALTON\AppData\Local\Temp/ccnh1oHq.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\WALTON\AppData\Local\Temp/ccnh1oHq.s:18     .text:00000000 Tasks_Disable_Peripherals
+C:\Users\WALTON\AppData\Local\Temp/ccnh1oHq.s:30     .text:00000002 Tasks_Task4
+C:\Users\WALTON\AppData\Local\Temp/ccnh1oHq.s:61     .text:00000012 Tasks_Task5
+C:\Users\WALTON\AppData\Local\Temp/ccnh1oHq.s:258    .data:00000001 ntask
+C:\Users\WALTON\AppData\Local\Temp/ccnh1oHq.s:253    .data:00000000 lst
                             *COM*:00000005 sleep
                             *COM*:00000005 prio
                             *COM*:00000001 loslp
                             *COM*:00000001 hiprtid
                             *COM*:00000001 hiprio
-C:\Users\WALTON\AppData\Local\Temp/ccEjQDdI.s:138    .text:00000074 Tasks_Task3
-C:\Users\WALTON\AppData\Local\Temp/ccEjQDdI.s:173    .text:0000008c Tasks_Task2
-C:\Users\WALTON\AppData\Local\Temp/ccEjQDdI.s:208    .text:000000a4 Tasks_Task1
+C:\Users\WALTON\AppData\Local\Temp/ccnh1oHq.s:146    .text:00000080 Tasks_Task3
+C:\Users\WALTON\AppData\Local\Temp/ccnh1oHq.s:181    .text:00000098 Tasks_Task2
+C:\Users\WALTON\AppData\Local\Temp/ccnh1oHq.s:216    .text:000000b0 Tasks_Task1
 
 UNDEFINED SYMBOLS
 Kernel_Task_Sleep

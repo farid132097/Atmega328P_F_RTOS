@@ -191,6 +191,23 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 
 
 
+;;=============================timer2 tcnt update busy starting=============================;; 
+;used registers          : R18                                                                 
+;arg registers           : None                                                                
+;return registers        : None                                                                
+;unsafe access registers : R18                                                                 
+.macro  KER_TIMER2_TCNT2_UB                               ;~9.13uS @8MHz          (~73 clocks) 
+	_KER_TMR2_UB\@:                                                                            
+	    LDS   R18                , SRASSR                 ;load ASSR              (  2 clocks) 
+        ANDI  R18                , 0x10                   ;check bit TCNT2UB      (  1 clock ) 
+		BRNE  _KER_TMR2_UB\@                              ;wait until UB cleared  (  2 clocks) 
+.endm                                                                                          
+;;==============================timer2 tcnt update busy end==================================;; 
+
+
+
+
+
 ;;=================================timer reload starting====================================;; 
 ;used registers          : R18                                                                 
 ;arg registers           : None                                                                
@@ -570,11 +587,11 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 	    KER_DEBUG_PIN_SET                                 ;debug pin set          (  2 clocks) 
 		KER_CONTEXT_SAVE                                  ;save context           (          ) 
 		;KER_EXIT_SLEEP                                    ;exit sleep if enabled  (  5 clocks) 
-		;LDI   R18                , 0x00                   ;handler mode           (  2 clocks) 
-		;STS   KerSCHM            , R18                    ;set val                (  2 clocks) 
-		;KER_RUN_SCHEDULER
+		LDI   R18                , 0x00                   ;handler mode           (  2 clocks) 
+		STS   KerSCHM            , R18                    ;set val                (  2 clocks) 
+		KER_RUN_SCHEDULER
 
-		LDS  R18, KerTID
+		/*LDS  R18, KerTID
 		LDS  R19, KerNTSK
 		LDI  R20, 0x01
 		ADD  R18, R20
@@ -582,10 +599,10 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 		BRLO _VC_SKIP
 		LDI  R18, 0x00
     _VC_SKIP:
-	    STS  KerTID, R18
-
+	    STS  KerTID, R18*/
 
         KER_TIMER_RELOAD                                  ;reload timer           (  4 clocks) 
+		KER_TIMER2_TCNT2_UB                               ;wait until update      (          )
 		KER_CONTEXT_RESTORE                               ;restore context        (          ) 
 	    KER_DEBUG_PIN_CLEAR                               ;debug pin clear        (  2 clocks) 
 		RETI                                              ;return from interrupt  (  4 clocks) 
@@ -733,6 +750,8 @@ Kernel_Init:                                              ;total 39.75uS @8MHz  
 Kernel_Start_Tasks:                                       ;total 25.63uS @8MHz    (205 clocks) 
         LDI   R18                , 0x00                   ;set max val            (  1 clock ) 
 		STS   KerTID             , R18                    ;set max val            (  1 clock ) 
+		LDI   R18                , 0x01                   ;handler mode           (  2 clocks) 
+		STS   KerSCHM            , R18                    ;set val                (  2 clocks) 
 		KER_RUN_SCHEDULER                                 ;run scheduler          (106 clocks) 
 		CALL  Kernel_Timer_Init                           ;init timer             ( 92 clocks) 
 		KER_CONTEXT_RESTORE                               ;restore context        ( 68 clocks) 
@@ -764,6 +783,7 @@ Kernel_Task_Sleep:                                        ;total 37.25uS @8MHz  
 		;STS   KerSCHM            , R18                    ;set val                (  2 clocks) 
 		;KER_RUN_SCHEDULER                                 ;run scheduler          (106 clocks) 
 		;KER_TIMER_RELOAD                                  ;reload timer           (  4 clocks) 
+		;KER_TIMER2_TCNT2_UB                               ;wait until update      (          )
 		KER_CONTEXT_RESTORE                               ;restore context        ( 68 clocks) 
 		;SEI
 		RET                                               ;return from subroutine (  4 clocks) 

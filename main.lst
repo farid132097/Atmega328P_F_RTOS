@@ -20,29 +20,23 @@
   28 0008 60E0      		ldi r22,lo8(0)
   29 000a 0E94 0000 		call Kernel_Task_Create
   30               	.LM4:
-  31 000e 80E0      		ldi r24,lo8(gs(Tasks_Task2))
-  32 0010 90E0      		ldi r25,hi8(gs(Tasks_Task2))
-  33 0012 61E0      		ldi r22,lo8(1)
-  34 0014 0E94 0000 		call Kernel_Task_Create
-  35               	.LM5:
-  36 0018 0E94 0000 		call Kernel_Start_Tasks
-  37               	.L2:
-  38 001c 00C0      		rjmp .L2
-  39               	.LFE6:
-  65               	.Letext0:
+  31 000e 0E94 0000 		call Kernel_Start_Tasks
+  32               	.L2:
+  33 0012 00C0      		rjmp .L2
+  34               	.LFE6:
+  60               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\WALTON\AppData\Local\Temp/ccO2jtHk.s:2      *ABS*:0000003f __SREG__
-C:\Users\WALTON\AppData\Local\Temp/ccO2jtHk.s:3      *ABS*:0000003e __SP_H__
-C:\Users\WALTON\AppData\Local\Temp/ccO2jtHk.s:4      *ABS*:0000003d __SP_L__
-C:\Users\WALTON\AppData\Local\Temp/ccO2jtHk.s:5      *ABS*:00000034 __CCP__
-C:\Users\WALTON\AppData\Local\Temp/ccO2jtHk.s:6      *ABS*:00000000 __tmp_reg__
-C:\Users\WALTON\AppData\Local\Temp/ccO2jtHk.s:7      *ABS*:00000001 __zero_reg__
-C:\Users\WALTON\AppData\Local\Temp/ccO2jtHk.s:18     .text:00000000 main
+C:\Users\WALTON\AppData\Local\Temp/cc1717rq.s:2      *ABS*:0000003f __SREG__
+C:\Users\WALTON\AppData\Local\Temp/cc1717rq.s:3      *ABS*:0000003e __SP_H__
+C:\Users\WALTON\AppData\Local\Temp/cc1717rq.s:4      *ABS*:0000003d __SP_L__
+C:\Users\WALTON\AppData\Local\Temp/cc1717rq.s:5      *ABS*:00000034 __CCP__
+C:\Users\WALTON\AppData\Local\Temp/cc1717rq.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\WALTON\AppData\Local\Temp/cc1717rq.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\WALTON\AppData\Local\Temp/cc1717rq.s:18     .text:00000000 main
 
 UNDEFINED SYMBOLS
 Kernel_Init
 Tasks_Task1
 Kernel_Task_Create
-Tasks_Task2
 Kernel_Start_Tasks

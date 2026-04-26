@@ -453,52 +453,34 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 ;return registers        : None                                                                
 ;unsafe access registers : None                                                                
 .macro  KER_RUN_SCHEDULER                                 ;total 0.25uS @8MHz     (  2 clocks) 
-        PUSH  R16                                         ;save                   (  2 clocks) 
-		PUSH  R17                                         ;save                   (  2 clocks) 
-        LDI   R16                , 0x00                   ;tid loop counter       (  1 clock ) 
-		LDS   R17                , KerNTSK                ;load max task number   (  2 clocks) 
-		LDS   R18                , KerLST                 ;load val               (  2 clocks) 
-		LDI   R19                , 0xFF                   ;local lowest time      (  1 clock ) 
-		LDI   R20                , 0xFF                   ;local hi prio          (  1 clock ) 
-        LDI   R21                , 0x00                   ;local hi prio tid      (  1 clock ) 
-		LDS   R22                , KerSCHM                ;load scheduler mode    (  2 clocks) 
-		LDI   R26                , lo8(KerPrio)           ;load prio reg low      (  1 clock ) 
-		LDI   R27                , hi8(KerPrio)           ;load prio reg high     (  1 clock ) 
+		LDS   R18                , KerTID                 ;load val               (  2 clocks) 
+		LDS   R19                , KerNTSK                ;load ntask             (  2 clocks) 
+		LDI   R20                , 0x01                   ;set val                (  1 clock ) 
+		ADD   R18                , R20                    ;increment val          (  1 clock ) 
+		
+		CP    R18                , R19                    ;compare val            (  1 clock ) 
+		BRLO  _KER_SCH_ASSN\@
+		LDI   R18                , 0x00                   ;roll back              (  1 clock ) 
+		STS   KerTID             , R18                    ;save val               (  2 clocks)  
+	_KER_SCH_ASSN\@:
+		LSL   R18                                         ;multiply by 2          (  1 clock ) 
 		LDI   R30                , lo8(KerSleep)          ;load sleep reg low     (  1 clock ) 
 		LDI   R31                , hi8(KerSleep)          ;load sleep reg high    (  1 clock ) 
-	_KER_SCH_LOOP\@:
-	    LD    R23                , Z                      ;load curr sleep val    (  2 clocks) 
-		LD    R24                , X                      ;load prio val          (  2 clocks) 
-		TST   R23                                         ;check if zero          (  1 clock ) 
-		BREQ  _KER_SCH_LST\@                              ;if not zero            (  2 clocks) 
-		TST   R22                                         ;check scheduler mdoe   (  1 clock ) 
-		BRNE  _KER_SCH_LST\@                              ;if not zero            (  2 clocks) 
-		SUB   R23                , R18                    ;subtract low time      (  1 clock ) 
-		ST    Z                  , R23                    ;store new val          (  2 clocks) 
-	_KER_SCH_LST\@:
-	    CP    R23                , R19                    ;compare                (  1 clock ) 
-		BRSH  _KER_SCH_PRIO\@
-		TST   R23                                         ;check if zero          (  1 clock ) 
-		BREQ  _KER_SCH_PRIO\@
-		MOV   R19                , R23                    ;assign new low val     (  1 clock ) 
-	_KER_SCH_PRIO\@:
-	    TST   R23                                         ;check if zero          (  1 clock ) 
-		BRNE  _KER_SCH_LCI\@                              ;jump to loop inc       (  2 clocks) 
-		CP    R24                , R20                    ;compare                (  1 clock ) 
-		BRSH  _KER_SCH_LCI\@                             ;jump to loop inc       (  2 clocks) 
-		MOV   R20                , R24                    ;assign new hi prio     (  1 clock ) 
-		MOV   R21                , R16                    ;assign new hi prio tid (  1 clock ) 
-    _KER_SCH_LCI\@:
-	    ADIW  R26                , 0x01                   ;increment X pointer    (  2 clocks) 
-		ADIW  R30                , 0x01                   ;increment Z pointer    (  2 clocks) 
-	    INC   R16                                         ;increment              (  1 clock ) 
-	    CP    R16                , R17                    ;compare with ntask     (  1 clocks) 
-		BRLO  _KER_SCH_LOOP\@                             ;if task id<ntask       (  2 clocks) 
-	_KER_SCH_EXIT\@:
-	    STS   KerLST             , R19                    ;store new lowest time  (  2 clocks) 
-		STS   KerTID             , R21                    ;store new HPTID        (  2 clocks) 
-		POP   R17                                         ;restore                (  2 clocks) 
-		POP   R16                                         ;restore                (  2 clocks) 
+		ADD   R30                , R18                    ;add                    (  1 clock ) 
+		LDI   R18                , 0x00                   ;set val 0              (  1 clock ) 
+		ADC   R31                , R18                    ;add with carry         (  1 clock ) 
+		LD    R18                , Z                      ;load val               (  1 clock ) 
+		STS   KerLST             , R18                    ;store val              (  2 clocks)  
+
+		LDS  R18, KerTID
+		LDS  R19, KerNTSK
+		LDI  R20, 0x01
+		ADD  R18, R20
+		CP   R18, R19
+		BRLO _VC_SKIP
+		LDI  R18, 0x00
+    _VC_SKIP:
+	    STS  KerTID, R18
 .endm                                                                                          
 ;;===================================set reload val end=====================================;; 
 
@@ -587,11 +569,11 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 	    KER_DEBUG_PIN_SET                                 ;debug pin set          (  2 clocks) 
 		KER_CONTEXT_SAVE                                  ;save context           (          ) 
 		;KER_EXIT_SLEEP                                    ;exit sleep if enabled  (  5 clocks) 
-		LDI   R18                , 0x00                   ;handler mode           (  2 clocks) 
-		STS   KerSCHM            , R18                    ;set val                (  2 clocks) 
-		KER_RUN_SCHEDULER
+		;LDI   R18                , 0x00                   ;handler mode           (  2 clocks) 
+		;STS   KerSCHM            , R18                    ;set val                (  2 clocks) 
+		;KER_RUN_SCHEDULER
 
-		/*LDS  R18, KerTID
+		LDS  R18, KerTID
 		LDS  R19, KerNTSK
 		LDI  R20, 0x01
 		ADD  R18, R20
@@ -599,7 +581,7 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 		BRLO _VC_SKIP
 		LDI  R18, 0x00
     _VC_SKIP:
-	    STS  KerTID, R18*/
+	    STS  KerTID, R18
 
         KER_TIMER_RELOAD                                  ;reload timer           (  4 clocks) 
 		KER_TIMER2_TCNT2_UB                               ;wait until update      (          )
@@ -750,9 +732,9 @@ Kernel_Init:                                              ;total 39.75uS @8MHz  
 Kernel_Start_Tasks:                                       ;total 25.63uS @8MHz    (205 clocks) 
         LDI   R18                , 0x00                   ;set max val            (  1 clock ) 
 		STS   KerTID             , R18                    ;set max val            (  1 clock ) 
-		LDI   R18                , 0x01                   ;handler mode           (  2 clocks) 
-		STS   KerSCHM            , R18                    ;set val                (  2 clocks) 
-		KER_RUN_SCHEDULER                                 ;run scheduler          (106 clocks) 
+		;LDI   R18                , 0x01                   ;handler mode           (  2 clocks) 
+		;STS   KerSCHM            , R18                    ;set val                (  2 clocks) 
+		;KER_RUN_SCHEDULER                                 ;run scheduler          (106 clocks) 
 		CALL  Kernel_Timer_Init                           ;init timer             ( 92 clocks) 
 		KER_CONTEXT_RESTORE                               ;restore context        ( 68 clocks) 
 		RET                                               ;return from subroutine (  4 clocks) 

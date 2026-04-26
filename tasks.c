@@ -24,6 +24,7 @@ void Tasks_Task1(void){
   
   DDRC |= (1<<1);
   //_delay_ms(1000);
+  Kernel_Task_Sleep(13);
   
   while(1){
     
@@ -32,7 +33,7 @@ void Tasks_Task1(void){
     PORTC ^= (1<<1);
     sei();
 
-    Kernel_Task_Sleep(13);
+    //Kernel_Task_Sleep(13);
     
   }
 }
@@ -41,6 +42,7 @@ void Tasks_Task2(void){
   
   DDRC |= (1<<2);
   //_delay_ms(1000);
+  Kernel_Task_Sleep(119);
   
   while(1){
     
@@ -49,7 +51,7 @@ void Tasks_Task2(void){
     PORTC ^= (1<<2);
     sei();
     
-    Kernel_Task_Sleep(119);
+    //Kernel_Task_Sleep(119);
     
   }
 }
@@ -58,6 +60,7 @@ void Tasks_Task3(void){
   
   DDRC |= (1<<3);
   //_delay_ms(1000);
+  Kernel_Task_Sleep(141);
   
   while(1){
     
@@ -66,7 +69,7 @@ void Tasks_Task3(void){
     PORTC ^= (1<<3);
     sei();
 
-    Kernel_Task_Sleep(141);
+    //Kernel_Task_Sleep(141);
     
   }
 }

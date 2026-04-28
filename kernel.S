@@ -455,32 +455,22 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 .macro  KER_RUN_SCHEDULER                                 ;total 0.25uS @8MHz     (  2 clocks) 
 		LDS   R18                , KerTID                 ;load val               (  2 clocks) 
 		LDS   R19                , KerNTSK                ;load ntask             (  2 clocks) 
+		
 		LDI   R20                , 0x01                   ;set val                (  1 clock ) 
 		ADD   R18                , R20                    ;increment val          (  1 clock ) 
-		
 		CP    R18                , R19                    ;compare val            (  1 clock ) 
 		BRLO  _KER_SCH_ASSN\@
 		LDI   R18                , 0x00                   ;roll back              (  1 clock ) 
-		STS   KerTID             , R18                    ;save val               (  2 clocks)  
 	_KER_SCH_ASSN\@:
-		LSL   R18                                         ;multiply by 2          (  1 clock ) 
+	    STS   KerTID             , R18                    ;save val               (  2 clocks)  
+
 		LDI   R30                , lo8(KerSleep)          ;load sleep reg low     (  1 clock ) 
 		LDI   R31                , hi8(KerSleep)          ;load sleep reg high    (  1 clock ) 
 		ADD   R30                , R18                    ;add                    (  1 clock ) 
 		LDI   R18                , 0x00                   ;set val 0              (  1 clock ) 
 		ADC   R31                , R18                    ;add with carry         (  1 clock ) 
 		LD    R18                , Z                      ;load val               (  1 clock ) 
-		STS   KerLST             , R18                    ;store val              (  2 clocks)  
-
-		LDS  R18, KerTID
-		LDS  R19, KerNTSK
-		LDI  R20, 0x01
-		ADD  R18, R20
-		CP   R18, R19
-		BRLO _VC_SKIP
-		LDI  R18, 0x00
-    _VC_SKIP:
-	    STS  KerTID, R18
+		STS   KerLST             , R18                    ;store val              (  2 clocks) 
 .endm                                                                                          
 ;;===================================set reload val end=====================================;; 
 
@@ -571,9 +561,9 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 		;KER_EXIT_SLEEP                                    ;exit sleep if enabled  (  5 clocks) 
 		;LDI   R18                , 0x00                   ;handler mode           (  2 clocks) 
 		;STS   KerSCHM            , R18                    ;set val                (  2 clocks) 
-		;KER_RUN_SCHEDULER
+		KER_RUN_SCHEDULER
 
-		LDS  R18, KerTID
+		/*LDS  R18, KerTID
 		LDS  R19, KerNTSK
 		LDI  R20, 0x01
 		ADD  R18, R20
@@ -581,10 +571,10 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 		BRLO _VC_SKIP
 		LDI  R18, 0x00
     _VC_SKIP:
-	    STS  KerTID, R18
+	    STS  KerTID, R18*/
 
         KER_TIMER_RELOAD                                  ;reload timer           (  4 clocks) 
-		KER_TIMER2_TCNT2_UB                               ;wait until update      (          )
+		;KER_TIMER2_TCNT2_UB                               ;wait until update      (          )
 		KER_CONTEXT_RESTORE                               ;restore context        (          ) 
 	    KER_DEBUG_PIN_CLEAR                               ;debug pin clear        (  2 clocks) 
 		RETI                                              ;return from interrupt  (  4 clocks) 
@@ -688,8 +678,8 @@ Kernel_Task_Idle:
 		;CALL  Kernel_PreSleep_Hook                        ;call func before sleep (  8 clocks) 
 		;#endif                                                                                 
 	    ;KER_ENTER_SLEEP                                   ;enter sleep mode       (  6 clocks) 
-		LDI   R24                , 0xFF                   ;load max sleep time    (  1 clock ) 
-		CALL  Kernel_Task_Sleep                           ;set sleep to max       (  2 clocks) 
+		;LDI   R24                , 0xFF                   ;load max sleep time    (  1 clock ) 
+		;CALL  Kernel_Task_Sleep                           ;set sleep to max       (  2 clocks) 
 		JMP   _IDLE_LOOP                                  ;jump to loop start     (  2 clocks) 
 ;;==================================kernel idle task end====================================;; 
 
@@ -736,7 +726,25 @@ Kernel_Start_Tasks:                                       ;total 25.63uS @8MHz  
 		;STS   KerSCHM            , R18                    ;set val                (  2 clocks) 
 		;KER_RUN_SCHEDULER                                 ;run scheduler          (106 clocks) 
 		CALL  Kernel_Timer_Init                           ;init timer             ( 92 clocks) 
+
+		KER_MSP_ZP_SAVE
+		LDI   R30                , lo8(KerSleep)
+		LDI   R31                , hi8(KerSleep)
+		LDI   R18                , 10
+		STD   Z+0                , R18
+		LDI   R18                , 41
+		STD   Z+1                , R18
+		LDI   R18                , 123
+		STD   Z+2                , R18
+		LDI   R18                , 225
+		STD   Z+3                , R18
+		KER_MSP_ZP_RESTORE
+
 		KER_CONTEXT_RESTORE                               ;restore context        ( 68 clocks) 
+
+
+
+
 		RET                                               ;return from subroutine (  4 clocks) 
 ;;==================================kernel start tasks end==================================;; 
 
@@ -751,7 +759,7 @@ Kernel_Start_Tasks:                                       ;total 25.63uS @8MHz  
 ;unsafe access registers : R18, R19, R20, R24, R25, R30(ZL), R31(ZH)                           
 Kernel_Task_Sleep:                                        ;total 37.25uS @8MHz    (298 clocks) 
         ;save current context                                                                  
-        KER_CONTEXT_SAVE                                  ;save context           ( 69 clocks) 
+        ;KER_CONTEXT_SAVE                                  ;save context           ( 69 clocks) 
 		;create next task wakeup time (arg R24)                                                
 		LDI   R30                , lo8(KerSleep)          ;load low byte          (  1 clock ) 
 		LDI   R31                , hi8(KerSleep)          ;load high byte         (  1 clock ) 
@@ -766,7 +774,7 @@ Kernel_Task_Sleep:                                        ;total 37.25uS @8MHz  
 		;KER_RUN_SCHEDULER                                 ;run scheduler          (106 clocks) 
 		;KER_TIMER_RELOAD                                  ;reload timer           (  4 clocks) 
 		;KER_TIMER2_TCNT2_UB                               ;wait until update      (          )
-		KER_CONTEXT_RESTORE                               ;restore context        ( 68 clocks) 
+		;KER_CONTEXT_RESTORE                               ;restore context        ( 68 clocks) 
 		;SEI
 		RET                                               ;return from subroutine (  4 clocks) 
 ;;=================================kernel task sleep end====================================;; 

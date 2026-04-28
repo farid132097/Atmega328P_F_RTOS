@@ -23,8 +23,7 @@ void Tasks_Disable_Peripherals(void){
 void Tasks_Task1(void){
   
   DDRC |= (1<<1);
-  //_delay_ms(1000);
-  Kernel_Task_Sleep(13);
+  //Kernel_Task_Sleep(13);
   
   while(1){
     
@@ -41,8 +40,7 @@ void Tasks_Task1(void){
 void Tasks_Task2(void){
   
   DDRC |= (1<<2);
-  //_delay_ms(1000);
-  Kernel_Task_Sleep(119);
+  //Kernel_Task_Sleep(119);
   
   while(1){
     
@@ -59,8 +57,7 @@ void Tasks_Task2(void){
 void Tasks_Task3(void){
   
   DDRC |= (1<<3);
-  //_delay_ms(1000);
-  Kernel_Task_Sleep(141);
+  //Kernel_Task_Sleep(141);
   
   while(1){
     

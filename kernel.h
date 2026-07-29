@@ -2,7 +2,7 @@
 /*
  * File          : kernel.h
  * Author        : MD. Faridul Islam (faridmdislam@gmail.com)
- * Description   : AVR kernel for bare-metal RTOS
+ * Description   : AVR kernel for tickless (asynchronous) RTOS
  * Created       : Jul 27, 2025, 9:30 PM
  * Last Modified : Apr 16, 2026, 12:31 PM
  */
@@ -21,6 +21,7 @@
 //In idle time, cpu will be in sleep
 #define  KER_IDLE_AS_SLEEP
 
+
 //Before entering sleep, several peripherals needs to be disabled
 //User can hook a function which will disable peripherals before sleep
 //Add function by calling Kernel_PreSleep_Hook(func_name) before Kernel_Start_Tasks() 
@@ -30,6 +31,7 @@
 //Define maximum number of task
 //Higher numbers will allocate larger ram space
 #define  KER_MAX_TASK    5
+
 
 //Define IO address of the DDR & PORT for debug
 #ifdef   KER_DBG_ENABLE
@@ -43,10 +45,11 @@
 
 
 
-#ifndef __ASSEMBLER__           //Only accessible via C
+#ifndef __ASSEMBLER__           
+//Only accessible via C
 extern void      Kernel_Timer_Init(void);
 extern void      Kernel_Init(void);
-extern void      Kernel_Task_Create(void (*func)(void), uint8_t priority);
+extern void      Kernel_Task_Create(void (*fn)(void), uint8_t priority);
 extern void      Kernel_Start_Tasks(void);
 extern void      Kernel_Task_Idle(void);
 extern void      Kernel_Task_Sleep(uint8_t val);

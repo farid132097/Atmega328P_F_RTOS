@@ -9,12 +9,12 @@
 
 
 
-#include <avr/io.h>
 #include "kernel.h"
 
 
+
+
 ;;============================define user address or macro starting=========================;; 
-.equ     KER_RLD,         0x00                            ;KER_RLD=0xFF-(F_CPU/KER_PRS/KER_TR) 
 .equ     KER_STK_SZ,      128                             ;stack size in bytes for each task   
 .equ     KER_MX_NTSK,     KER_MAX_TASK+1                  ;max number of tasks                 
 ;;==============================define user address or macro end============================;; 
@@ -71,10 +71,12 @@ KerNTSK:   .skip 1                                        ;single byte, max 0xff
 KerLST:    .skip 1                                        ;single byte, max 0xff unit sleep    
 .global    KerSCHM                                        ;declare space for scheduler mode    
 KerSCHM:   .skip 1                                        ;single byte, mode 0 isr, 1 thread   
+.global    KerINTST                                       ;declare space for interrupt state   
+KerINTST:  .skip 1                                        ;single byte for storing curr state  
 .global    KerSleep                                       ;declare space for task sleep time   
-KerSleep:  .skip KER_MX_NTSK*1                            ;singel byte for each task           
+KerSleep:  .skip KER_MX_NTSK*1                            ;single byte for each task           
 .global    KerPrio                                        ;declare space for task priority     
-KerPrio:   .skip KER_MX_NTSK*1                            ;singel byte for each task           
+KerPrio:   .skip KER_MX_NTSK*1                            ;single byte for each task           
 .global    KerTSP                                         ;declare space for stack pointer     
 KerTSP:    .skip KER_MX_NTSK*2                            ;2 bytes for each task               
 .global    KerStack                                       ;declare global space for stack      
@@ -107,9 +109,64 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 
 
 
+.macro  KER_DEBUG_PIN_INIT                                ;total 0.5uS @8MHz      (  4 clocks) 
+        #ifdef KER_DBG_ENABLE                                                                  
+		CBI   KER_DBG_PORT       , KER_DBG_PIN            ;clear port bit         (  2 clocks) 
+		SBI   KER_DBG_DDR        , KER_DBG_PIN            ;set bit in DDR         (  2 clocks) 
+		#endif                                                                                 
+.endm                                                                                          
 
 
-.macro  KER_TIMER2_ASYNC_INIT                             ;~9.13uS @8MHz          (~73 clocks) 
+
+
+
+
+.macro  KER_DEBUG_PIN_SET                                 ;total 0.25uS @8MHz     (  2 clocks) 
+        #ifdef KER_DBG_ENABLE                                                                  
+        SBI   KER_DBG_PORT       , KER_DBG_PIN            ;set gpio               (  2 clocks) 
+		#endif                                                                                 
+.endm                                                                                          
+
+
+
+
+
+
+.macro  KER_DEBUG_PIN_CLEAR                               ;total 0.25uS @8MHz     (  2 clocks) 
+        #ifdef KER_DBG_ENABLE                                                                  
+		CBI   KER_DBG_PORT       , KER_DBG_PIN            ;clear gpio             (  2 clocks) 
+		#endif                                                                                 
+.endm                                                                                          
+
+
+
+
+
+
+.macro  KER_INTERRUPT_STATE_SAVE                          ;total 0.375uS @8MHz    (  3 clocks) 
+        IN    R18                , IOSREG                 ;load val               (  1 clock ) 
+		STS   KerINTST           , R18                    ;store val              (  2 clocks) 
+.endm                                                                                          
+
+
+
+
+
+
+.macro  KER_INTERRUPT_STATE_RESTORE                       ;total 0.625uS @8MHz    (  5 clocks) 
+        LDS   R18                , KerINTST               ;load interrupt state   (  2 clocks) 
+		SBRC  R18                , 0x07                   ;check bit7 (I bit)     (  2 clocks) 
+		SEI                                               ;enable interrupt       (  1 clock ) 
+.endm                                                                                          
+
+
+
+
+
+
+.macro  KER_TIMER_INIT                                    ;~9.13uS @8MHz          (~73 clocks) 
+		KER_INTERRUPT_STATE_SAVE                          ;save interrupt state   (  3 clocks) 
+        CLI                                               ;disable interrupts     (  1 clock ) 
 		LDI   R18                , 0x00                   ;clear interrupt enbits (  1 clock ) 
 		STS   SRTIMSK2           , R18                    ;set val to TIMSK2      (  2 clocks) 
 		STS   SRTCCR2A           , R18                    ;set val to TCCR2A      (  2 clocks) 
@@ -138,18 +195,7 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 		STS   SRTIFR2            , R18                    ;set val                (  2 clocks) 
 		LDI   R18                , 0x04                   ;set bit                (  1 clock ) 
 		STS   SRTIFR2            , R18                    ;set val                (  2 clocks) 
-.endm                                                                                          
-
-
-
-
-
- 
-.macro  KER_TIMER2_TCNT2_UB                               ;~9.13uS @8MHz          (~73 clocks) 
-	_KER_TMR2_UB\@:                                                                            
-	    LDS   R18                , SRASSR                 ;load ASSR              (  2 clocks) 
-        ANDI  R18                , 0x10                   ;check bit TCNT2UB      (  1 clock ) 
-		BRNE  _KER_TMR2_UB\@                              ;wait until UB cleared  (  2 clocks) 
+		KER_INTERRUPT_STATE_RESTORE                       ;restore interrupt      (  5 clocks) 
 .endm                                                                                          
 
 
@@ -198,49 +244,6 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 		LDI   R18                , 0x01                   ;load val               (  1 clock ) 
 		STS   SRTIFR2            , R18                    ;store val              (  2 clocks) 
 		STS   SRTIMSK2           , R18                    ;store val              (  2 clocks) 
-.endm                                                                                          
-
-
-
-
-
-
-.macro  KER_TIMER_INIT                                    ;~9.13uS max @8MHz      (~73 clocks) 
-		KER_TIMER2_ASYNC_INIT                             ;total 1.5uS @8MHz      (~73 clocks) 
-.endm                                                                                          
-
-
-
-
-
-
-.macro  KER_DEBUG_PIN_INIT                                ;total 0.5uS @8MHz      (  4 clocks) 
-        #ifdef KER_DBG_ENABLE                                                                  
-		CBI   KER_DBG_PORT       , KER_DBG_PIN            ;clear port bit         (  2 clocks) 
-		SBI   KER_DBG_DDR        , KER_DBG_PIN            ;set bit in DDR         (  2 clocks) 
-		#endif                                                                                 
-.endm                                                                                          
-
-
-
-
-
-
-.macro  KER_DEBUG_PIN_SET                                 ;total 0.25uS @8MHz     (  2 clocks) 
-        #ifdef KER_DBG_ENABLE                                                                  
-        SBI   KER_DBG_PORT       , KER_DBG_PIN            ;set gpio               (  2 clocks) 
-		#endif                                                                                 
-.endm                                                                                          
-
-
-
-
-
-
-.macro  KER_DEBUG_PIN_CLEAR                               ;total 0.25uS @8MHz     (  2 clocks) 
-        #ifdef KER_DBG_ENABLE                                                                  
-		CBI   KER_DBG_PORT       , KER_DBG_PIN            ;clear gpio             (  2 clocks) 
-		#endif                                                                                 
 .endm                                                                                          
 
 
@@ -387,7 +390,6 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 .macro  KER_RUN_SCHEDULER                                 ;total 0.25uS @8MHz     (  2 clocks) 
 		LDS   R18                , KerTID                 ;load val               (  2 clocks) 
 		LDS   R19                , KerNTSK                ;load ntask             (  2 clocks) 
-		
 		LDI   R20                , 0x01                   ;set val                (  1 clock ) 
 		ADD   R18                , R20                    ;increment val          (  1 clock ) 
 		CP    R18                , R19                    ;compare val            (  1 clock ) 
@@ -395,7 +397,6 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 		LDI   R18                , 0x00                   ;roll back              (  1 clock ) 
 	_KER_SCH_ASSN\@:
 	    STS   KerTID             , R18                    ;save val               (  2 clocks)  
-
 		LDI   R30                , lo8(KerSleep)          ;load sleep reg low     (  1 clock ) 
 		LDI   R31                , hi8(KerSleep)          ;load sleep reg high    (  1 clock ) 
 		ADD   R30                , R18                    ;add                    (  1 clock ) 
@@ -498,6 +499,70 @@ Kernel_Timer_Init:                                        ;total 11.50uS @8MHz  
 
 
 Kernel_Task_Create:                                       ;total 21.50uS @8MHz    (172 clocks) 
+		KER_MSP_ZP_SAVE                                   ;push MSP and ZP        ( 18 clocks) 
+		;set priority to KerPrio+task_id                                                       
+		LDI   R30                , lo8(KerPrio)           ;load low byte          (  1 clock ) 
+		LDI   R31                , hi8(KerPrio)           ;load high byte         (  1 clock ) 
+		LDS   R18                , KerTID                 ;fetch task_id          (  2 clocks) 
+		ADD   R30                , R18                    ;add offset to array    (  1 clock ) 
+		LDI   R18                , 0x00                   ;clear for carry prop   (  1 clock ) 
+		ADC   R31                , R18                    ;add carry if any       (  1 clock ) 
+		ST    Z                  , R22                    ;save priority          (  2 clocks) 
+
+		;set task status to KerSleep+task_id                                                  
+		LDI   R30                , lo8(KerSleep)          ;load low byte          (  1 clock ) 
+		LDI   R31                , hi8(KerSleep)          ;load high byte         (  1 clock ) 
+		LDS   R18                , KerTID                 ;fetch task_id          (  2 clocks) 
+		ADD   R30                , R18                    ;add offset to array    (  1 clock ) 
+		LDI   R18                , 0x00                   ;clear for carry prop   (  1 clock ) 
+		ADC   R31                , R18                    ;add carry if any       (  1 clock ) 
+		ST    Z                  , R22                    ;save priority          (  2 clocks) 
+		LDI   R18                , 0x00                   ;set sleep time->ready  (  1 clock ) 
+		ST    Z                  , R18                    ;save status            (  2 clocks) 
+
+		;stack pointer for current task (KerStack + KER_STK_SZ*(task_id+1) - 1) ->stack top    
+		LDS   R18                , KerTID                 ;load task_id           (  2 clocks) 
+		INC   R18                                         ;increment task_id      (  1 clock ) 
+		LDI   R19                , KER_STK_SZ             ;load stack size        (  1 clock ) 
+		MUL   R18                , R19                    ;multiply to get offset (  2 clocks) 
+		MOV   R30                , R0                     ;load multiplied low    (  1 clocks) 
+		MOV   R31                , R1                     ;load multiplied high   (  1 clocks) 
+		SBIW  R30                , 0x01                   ;dec multiplied val-1   (  2 clocks) 
+		CLR   R1                                          ;gcc expects cleared    (  1 clock ) 
+		LDI   R18                , lo8(KerStack)          ;load base addr low     (  1 clock ) 
+		LDI   R19                , hi8(KerStack)          ;load base addr high    (  1 clock ) 
+		ADD   R30                , R18                    ;add low bytes          (  1 clock ) 
+		ADC   R31                , R19                    ;add high bytes+carry   (  1 clock ) 
+		OUT   IOSPL              , R30                    ;load SPL               (  1 clock ) 
+        OUT   IOSPH              , R31                    ;load SPH               (  1 clock ) 
+		;function argument directly returns word address                                       
+	    PUSH  R24                                         ;push word addr low     (  2 clocks) 
+		PUSH  R25                                         ;push word addr high    (  2 clocks) 
+		;push context to stack of this task                                                    
+		SEI                                               ;enable interrupt       (  1 clock ) 
+		KER_CONTEXT_SAVE                                  ;save context           ( 68 clocks) 
+		;read stack pointer of current task (necessary when restore)                           
+		IN    R18                , IOSPL                  ;read SPL               (  1 clock ) 
+        IN    R19                , IOSPH                  ;read SPH               (  1 clock ) 
+		;calculate the address where current task's SP will be stored and store SP             
+		LDS   R20                , KerTID                 ;load task_id           (  2 clocks) 
+		LSL   R20                                         ;left shift to multiply (  1 clock ) 
+		LDI   R30                , lo8(KerTSP)            ;fetch base pos low     (  1 clock ) 
+		LDI   R31                , hi8(KerTSP)            ;fetch base pos high    (  1 clock ) 
+		ADD   R30                , R20                    ;add offset to array    (  1 clock ) 
+		LDI   R20                , 0x00                   ;clear reg              (  1 clock ) 
+		ADC   R31                , R20                    ;add carry if any       (  1 clock ) 
+		ST    Z+                 , R18                    ;SPL at KerTSP+offset   (  2 clocks) 
+		ST    Z                  , R19                    ;SPH at KerTSP+offset   (  2 clocks) 
+		;increment task_id                                                                     
+		LDS   R18                , KerTID                 ;load task_id           (  2 clocks) 
+		INC   R18                                         ;increment task_id      (  1 clock ) 
+		STS   KerTID             , R18                    ;store task_id          (  2 clocks) 
+		;increment ntask                                                                       
+		LDS   R18                , KerNTSK                ;load ntask             (  2 clocks) 
+		INC   R18                                         ;increment ntask        (  1 clock ) 
+		STS   KerNTSK   , R18                             ;store ntask            (  2 clocks) 
+		KER_MSP_ZP_RESTORE                                ;pop MSP and ZP         ( 18 clocks) 
 		RET                                               ;return from subroutine (  4 clocks) 
 
 
@@ -516,6 +581,9 @@ Kernel_Task_Idle:
 
 
 Kernel_Init:                                              ;total 39.75uS @8MHz    (318 clocks) 
+        CLI                                               ;clear interrupt        (  1 clock ) 
+
+		CALL  Kernel_Timer_Init                           ;timer init             (--- clocks) 
 		RET                                               ;return from subroutine (  4 clocks) 
 
 

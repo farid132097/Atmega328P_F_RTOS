@@ -23,13 +23,13 @@
   56               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\WALTON\AppData\Local\Temp/cc4I8mCS.s:2      *ABS*:0000003f __SREG__
-C:\Users\WALTON\AppData\Local\Temp/cc4I8mCS.s:3      *ABS*:0000003e __SP_H__
-C:\Users\WALTON\AppData\Local\Temp/cc4I8mCS.s:4      *ABS*:0000003d __SP_L__
-C:\Users\WALTON\AppData\Local\Temp/cc4I8mCS.s:5      *ABS*:00000034 __CCP__
-C:\Users\WALTON\AppData\Local\Temp/cc4I8mCS.s:6      *ABS*:00000000 __tmp_reg__
-C:\Users\WALTON\AppData\Local\Temp/cc4I8mCS.s:7      *ABS*:00000001 __zero_reg__
-C:\Users\WALTON\AppData\Local\Temp/cc4I8mCS.s:18     .text:00000000 main
+C:\Users\Farid\AppData\Local\Temp/ccfMzqPs.s:2      *ABS*:0000003f __SREG__
+C:\Users\Farid\AppData\Local\Temp/ccfMzqPs.s:3      *ABS*:0000003e __SP_H__
+C:\Users\Farid\AppData\Local\Temp/ccfMzqPs.s:4      *ABS*:0000003d __SP_L__
+C:\Users\Farid\AppData\Local\Temp/ccfMzqPs.s:5      *ABS*:00000034 __CCP__
+C:\Users\Farid\AppData\Local\Temp/ccfMzqPs.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\Farid\AppData\Local\Temp/ccfMzqPs.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\Farid\AppData\Local\Temp/ccfMzqPs.s:18     .text:00000000 main
 
 UNDEFINED SYMBOLS
 Kernel_Timer_Init

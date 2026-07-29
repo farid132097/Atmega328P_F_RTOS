@@ -12,16 +12,16 @@
 int main(void) {
     
     
-	Kernel_Init();
-    Kernel_Task_Create(Tasks_Task1,0);
-    Kernel_Task_Create(Tasks_Task2,1);
-	Kernel_Task_Create(Tasks_Task3,2);
-	Kernel_Start_Tasks();
+	Kernel_Timer_Init();
+	_delay_ms(1000);
 	
     while(1){
 		
 		//Nothing to do here
 		//All tasks are handled by kernel
+
+		Kernel_Task_Sleep(250);
+
         
     }
 }

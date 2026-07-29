@@ -14,51 +14,22 @@
   22               	/* frame size = 0 */
   23               	.LM2:
   24 0000 0E94 0000 		call Kernel_Timer_Init
-  25 0004 80E1      		ldi r24,lo8(10000)
-  26 0006 97E2      		ldi r25,hi8(10000)
-  27               	.LVL0:
-  28               	.LBB12:
-  29               	.LBB13:
-  30               	.LBB14:
-  31               	.LBB15:
-  32               	.LM3:
-  33 0008 24E6      		ldi r18,lo8(100)
-  34 000a 30E0      		ldi r19,hi8(100)
-  35               	.L2:
-  36 000c F901      		movw r30,r18
-  37               	.LVL1:
-  38               	/* #APP */
-  39               	 ;  105 "c:/winavr-20100110/lib/gcc/../../avr/include/util/delay_basic.h" 1
-  40 000e 3197      		1: sbiw r30,1
-  41 0010 01F4      		brne 1b
-  42               	 ;  0 "" 2
-  43               	/* #NOAPP */
-  44               	.LBE15:
-  45               	.LBE14:
-  46               	.LM4:
-  47 0012 0197      		sbiw r24,1
-  48               	.LM5:
-  49 0014 01F4      		brne .L2
-  50               	.L6:
-  51               	.LBE13:
-  52               	.LBE12:
-  53               	.LM6:
-  54 0016 8AEF      		ldi r24,lo8(-6)
-  55               	.LVL2:
-  56 0018 0E94 0000 		call Kernel_Task_Sleep
-  57               	.LVL3:
-  58 001c 00C0      		rjmp .L6
-  59               	.LFE6:
-  85               	.Letext0:
+  25               	.L2:
+  26               	.LM3:
+  27 0004 8AEF      		ldi r24,lo8(-6)
+  28 0006 0E94 0000 		call Kernel_Task_Sleep
+  29 000a 00C0      		rjmp .L2
+  30               	.LFE6:
+  56               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\WALTON\AppData\Local\Temp/ccrxsXcG.s:2      *ABS*:0000003f __SREG__
-C:\Users\WALTON\AppData\Local\Temp/ccrxsXcG.s:3      *ABS*:0000003e __SP_H__
-C:\Users\WALTON\AppData\Local\Temp/ccrxsXcG.s:4      *ABS*:0000003d __SP_L__
-C:\Users\WALTON\AppData\Local\Temp/ccrxsXcG.s:5      *ABS*:00000034 __CCP__
-C:\Users\WALTON\AppData\Local\Temp/ccrxsXcG.s:6      *ABS*:00000000 __tmp_reg__
-C:\Users\WALTON\AppData\Local\Temp/ccrxsXcG.s:7      *ABS*:00000001 __zero_reg__
-C:\Users\WALTON\AppData\Local\Temp/ccrxsXcG.s:18     .text:00000000 main
+C:\Users\WALTON\AppData\Local\Temp/cc4I8mCS.s:2      *ABS*:0000003f __SREG__
+C:\Users\WALTON\AppData\Local\Temp/cc4I8mCS.s:3      *ABS*:0000003e __SP_H__
+C:\Users\WALTON\AppData\Local\Temp/cc4I8mCS.s:4      *ABS*:0000003d __SP_L__
+C:\Users\WALTON\AppData\Local\Temp/cc4I8mCS.s:5      *ABS*:00000034 __CCP__
+C:\Users\WALTON\AppData\Local\Temp/cc4I8mCS.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\WALTON\AppData\Local\Temp/cc4I8mCS.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\WALTON\AppData\Local\Temp/cc4I8mCS.s:18     .text:00000000 main
 
 UNDEFINED SYMBOLS
 Kernel_Timer_Init

@@ -102,18 +102,7 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 .global  Kernel_Start_Tasks
 ;;================================define global functions end===============================;; 
 
-
-
-
-
-.macro  KER_TIMER2_DISABLE                                ;1.75uS @8MHz           ( 14 clocks) 
-		LDI   R18                , 0x00                   ;clear interrupt enbits (  1 clock ) 
-		STS   SRTIMSK2           , R18                    ;set val to TIMSK2      (  2 clocks) 
-		STS   SRTCCR2B           , R18                    ;set val to TCCR2B      (  2 clocks) 
-		STS   SRASSR             , R18                    ;set val to ASSR        (  2 clocks) 
-		STS   SROCR2B            , R18                    ;clear OCR2B            (  2 clocks) 
-		STS   SRTCNT2            , R18                    ;clear TCNT2            (  2 clocks) 
-.endm                                                                                          
+                                                                  
 
 
 
@@ -121,39 +110,28 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 
 
 .macro  KER_TIMER2_ASYNC_INIT                             ;~9.13uS @8MHz          (~73 clocks) 
-		LDI   R18                , 0x00                   ;clear interrupts       (  1 clock ) 
-		STS   SRTCCR2B           , R18                    ;stop timer             (  2 clocks) 
-		STS   SRTIMSK2           , R18                    ;clear TIMSK2           (  2 clocks) 
+		LDI   R18                , 0x00                   ;clear interrupt enbits (  1 clock ) 
+		STS   SRTIMSK2           , R18                    ;set val to TIMSK2      (  2 clocks) 
+		STS   SRTCCR2A           , R18                    ;set val to TCCR2A      (  2 clocks) 
+		STS   SRTCCR2B           , R18                    ;set val to TCCR2B      (  2 clocks) 
+		STS   SRASSR             , R18                    ;set val to ASSR        (  2 clocks) 
+		STS   SRTCNT2            , R18                    ;clear TCNT2            (  2 clocks) 
 		LDI   R18                , 0x20                   ;set AS2 bit            (  1 clock ) 
 		STS   SRASSR             , R18                    ;set val to ASSR        (  2 clocks) 
-		LDI   R18                , 0x00                   ;clear interrupts       (  1 clock ) 
-		STS   SROCR2A            , R18                    ;clear compare reg      (  2 clocks) 
-		STS   SROCR2B            , R18                    ;clear compare reg      (  2 clocks) 
-		STS   SRTCCR2A           , R18                    ;clear controlA reg     (  2 clocks) 
-		LDI   R18                , 0x03                   ;prescaler 3            (  1 clock ) 
+		LDI   R18                , 0x03                   ;prescaler 32           (  1 clock ) 
 		STS   SRTCCR2B           , R18                    ;set prescaler          (  2 clocks) 
-		LDI   R18                , 0x00                   ;clear reg              (  1 clock ) 
-		STS   SRTCNT2            , R18                    ;clear TCNT2            (  2 clocks) 
-	_KER_TC2_AUB\@:                                                                            
+	_KER_TCR2AUB\@:                                                                            
 	    LDS   R18                , SRASSR                 ;load ASSR              (  2 clocks) 
         ANDI  R18                , 0x02                   ;check bit TCR2AUB      (  1 clock ) 
-		BRNE  _KER_TC2_AUB\@                              ;wait until AUB cleared (  2 clocks) 
-	_KER_TC2_BUB\@:                                                                            
+		BRNE  _KER_TCR2AUB\@                              ;wait until AUB cleared (  2 clocks) 
+	_KER_TCR2BUB\@:                                                                            
 	    LDS   R18                , SRASSR                 ;load ASSR              (  2 clocks) 
         ANDI  R18                , 0x01                   ;check bit TCR2BUB      (  1 clock ) 
-		BRNE  _KER_TC2_BUB\@                              ;wait until BUB cleared (  2 clocks) 
-	_KER_OC2_AUB\@:                                                                            
-	    LDS   R18                , SRASSR                 ;load ASSR              (  2 clocks) 
-        ANDI  R18                , 0x08                   ;check bit OR2AUB       (  1 clock ) 
-		BRNE  _KER_OC2_AUB\@                              ;wait until AUB cleared (  2 clocks) 
-	_KER_OC2_BUB\@:                                                                            
-	    LDS   R18                , SRASSR                 ;load ASSR              (  2 clocks) 
-        ANDI  R18                , 0x04                   ;check bit OCR2BUB      (  1 clock ) 
-		BRNE  _KER_OC2_BUB\@                              ;wait until BUB cleared (  2 clocks) 
-	_KER_TC2_UB\@:                                                                             
+		BRNE  _KER_TCR2BUB\@                              ;wait until BUB cleared (  2 clocks) 
+	_KER_TCN2UB\@:                                                                             
 	    LDS   R18                , SRASSR                 ;load ASSR              (  2 clocks) 
         ANDI  R18                , 0x10                   ;check bit TCNT2UB      (  1 clock ) 
-		BRNE  _KER_TC2_UB\@                               ;wait until UB cleared  (  2 clocks) 
+		BRNE  _KER_TCN2UB\@                               ;wait until UB cleared  (  2 clocks) 
 		LDI   R18                , 0x01                   ;set bit                (  1 clock ) 
 		STS   SRTIFR2            , R18                    ;set val                (  2 clocks) 
 		LDI   R18                , 0x02                   ;set bit                (  1 clock ) 
@@ -228,7 +206,6 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 
 
 .macro  KER_TIMER_INIT                                    ;~9.13uS max @8MHz      (~73 clocks) 
-        ;KER_TIMER2_DISABLE                                ;1.75uS @8MHz           ( 14 clocks) 
 		KER_TIMER2_ASYNC_INIT                             ;total 1.5uS @8MHz      (~73 clocks) 
 .endm                                                                                          
 
@@ -493,8 +470,14 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 .global  __vector_9                                                                            
     __vector_9:                                           ;total 40.00uS @8MHz    (344 clocks) 
 	    KER_DEBUG_PIN_SET                                 ;debug pin set          (  2 clocks) 
+
+		;KER_CONTEXT_SAVE                                  ;save context           ( 83 clocks) 
+
 		LDI  R18,  0x00
 		STS  SRTIMSK2, R18
+
+		;KER_CONTEXT_RESTORE                               ;save context           ( 81 clocks) 
+
 	    KER_DEBUG_PIN_CLEAR                               ;debug pin clear        (  2 clocks) 
 		RETI                                              ;return from interrupt  (  4 clocks) 
 

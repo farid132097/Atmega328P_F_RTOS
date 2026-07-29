@@ -230,20 +230,20 @@
  317               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 tasks.c
-C:\Users\WALTON\AppData\Local\Temp/ccxav5BK.s:2      *ABS*:0000003f __SREG__
-C:\Users\WALTON\AppData\Local\Temp/ccxav5BK.s:3      *ABS*:0000003e __SP_H__
-C:\Users\WALTON\AppData\Local\Temp/ccxav5BK.s:4      *ABS*:0000003d __SP_L__
-C:\Users\WALTON\AppData\Local\Temp/ccxav5BK.s:5      *ABS*:00000034 __CCP__
-C:\Users\WALTON\AppData\Local\Temp/ccxav5BK.s:6      *ABS*:00000000 __tmp_reg__
-C:\Users\WALTON\AppData\Local\Temp/ccxav5BK.s:7      *ABS*:00000001 __zero_reg__
-C:\Users\WALTON\AppData\Local\Temp/ccxav5BK.s:18     .text:00000000 Tasks_Disable_Peripherals
-C:\Users\WALTON\AppData\Local\Temp/ccxav5BK.s:30     .text:00000002 Tasks_Task1
-C:\Users\WALTON\AppData\Local\Temp/ccxav5BK.s:61     .text:00000012 Tasks_Task2
-C:\Users\WALTON\AppData\Local\Temp/ccxav5BK.s:92     .text:00000022 Tasks_Task3
-C:\Users\WALTON\AppData\Local\Temp/ccxav5BK.s:123    .text:00000032 Tasks_Task4
-C:\Users\WALTON\AppData\Local\Temp/ccxav5BK.s:154    .text:00000042 Tasks_Task5
-C:\Users\WALTON\AppData\Local\Temp/ccxav5BK.s:246    .data:00000001 ntask
-C:\Users\WALTON\AppData\Local\Temp/ccxav5BK.s:241    .data:00000000 lst
+C:\Users\WALTON\AppData\Local\Temp/ccgTzLaT.s:2      *ABS*:0000003f __SREG__
+C:\Users\WALTON\AppData\Local\Temp/ccgTzLaT.s:3      *ABS*:0000003e __SP_H__
+C:\Users\WALTON\AppData\Local\Temp/ccgTzLaT.s:4      *ABS*:0000003d __SP_L__
+C:\Users\WALTON\AppData\Local\Temp/ccgTzLaT.s:5      *ABS*:00000034 __CCP__
+C:\Users\WALTON\AppData\Local\Temp/ccgTzLaT.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\WALTON\AppData\Local\Temp/ccgTzLaT.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\WALTON\AppData\Local\Temp/ccgTzLaT.s:18     .text:00000000 Tasks_Disable_Peripherals
+C:\Users\WALTON\AppData\Local\Temp/ccgTzLaT.s:30     .text:00000002 Tasks_Task1
+C:\Users\WALTON\AppData\Local\Temp/ccgTzLaT.s:61     .text:00000012 Tasks_Task2
+C:\Users\WALTON\AppData\Local\Temp/ccgTzLaT.s:92     .text:00000022 Tasks_Task3
+C:\Users\WALTON\AppData\Local\Temp/ccgTzLaT.s:123    .text:00000032 Tasks_Task4
+C:\Users\WALTON\AppData\Local\Temp/ccgTzLaT.s:154    .text:00000042 Tasks_Task5
+C:\Users\WALTON\AppData\Local\Temp/ccgTzLaT.s:246    .data:00000001 ntask
+C:\Users\WALTON\AppData\Local\Temp/ccgTzLaT.s:241    .data:00000000 lst
                             *COM*:00000005 sleep
                             *COM*:00000005 prio
                             *COM*:00000001 loslp

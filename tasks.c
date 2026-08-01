@@ -23,7 +23,6 @@ void Tasks_Disable_Peripherals(void){
 void Tasks_Task1(void){
   
   DDRC |= (1<<1);
-  //Kernel_Task_Sleep(13);
   
   while(1){
     
@@ -32,7 +31,7 @@ void Tasks_Task1(void){
     PORTC ^= (1<<1);
     sei();
 
-    //Kernel_Task_Sleep(13);
+    Kernel_Task_Sleep(250);
     
   }
 }
@@ -40,7 +39,6 @@ void Tasks_Task1(void){
 void Tasks_Task2(void){
   
   DDRC |= (1<<2);
-  //Kernel_Task_Sleep(119);
   
   while(1){
     
@@ -49,7 +47,7 @@ void Tasks_Task2(void){
     PORTC ^= (1<<2);
     sei();
     
-    //Kernel_Task_Sleep(119);
+    Kernel_Task_Sleep(250);
     
   }
 }
@@ -57,7 +55,6 @@ void Tasks_Task2(void){
 void Tasks_Task3(void){
   
   DDRC |= (1<<3);
-  //Kernel_Task_Sleep(141);
   
   while(1){
     
@@ -66,7 +63,7 @@ void Tasks_Task3(void){
     PORTC ^= (1<<3);
     sei();
 
-    //Kernel_Task_Sleep(141);
+    Kernel_Task_Sleep(250);
     
   }
 }
@@ -88,36 +85,5 @@ void Tasks_Task4(void){
 }
 
 
-uint8_t hiprtid, prio[5], hiprio, sleep[5], lst=5, ntask=5,loslp;
-
-void Tasks_Task5(void){
-  hiprio  = 0xff; //lower is higher
-  hiprtid = 0;   //task0 is idle task
-  loslp   = 0xFF;
-  for(uint8_t task_id = 0; task_id < ntask; task_id++){
-    
-    //subtract if non zero
-    if(sleep[task_id]){
-      sleep[task_id] -= lst;
-    }
-    
-    //find lowest sleep time
-    if((sleep[task_id] < loslp) && (sleep[task_id] != 0)){
-      loslp = sleep[task_id];
-    }
-
-    if((sleep[task_id] == 0) && (prio[task_id] < hiprio)){
-      hiprio = prio[task_id];
-      hiprtid = task_id;
-    }
-  }
-
-  lst = loslp;
-  
-
-  while(1){
-
-  }
-}
 
 

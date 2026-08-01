@@ -13,24 +13,42 @@
   21               	/* prologue: function */
   22               	/* frame size = 0 */
   23               	.LM2:
-  24 0000 0E94 0000 		call Kernel_Timer_Init
-  25               	.L2:
-  26               	.LM3:
-  27 0004 8AEF      		ldi r24,lo8(-6)
-  28 0006 0E94 0000 		call Kernel_Task_Sleep
-  29 000a 00C0      		rjmp .L2
-  30               	.LFE6:
-  56               	.Letext0:
+  24 0000 0E94 0000 		call Kernel_Init
+  25               	.LM3:
+  26 0004 80E0      		ldi r24,lo8(gs(Tasks_Task1))
+  27 0006 90E0      		ldi r25,hi8(gs(Tasks_Task1))
+  28 0008 60E0      		ldi r22,lo8(0)
+  29 000a 0E94 0000 		call Kernel_Task_Create
+  30               	.LM4:
+  31 000e 80E0      		ldi r24,lo8(gs(Tasks_Task2))
+  32 0010 90E0      		ldi r25,hi8(gs(Tasks_Task2))
+  33 0012 61E0      		ldi r22,lo8(1)
+  34 0014 0E94 0000 		call Kernel_Task_Create
+  35               	.LM5:
+  36 0018 80E0      		ldi r24,lo8(gs(Tasks_Task3))
+  37 001a 90E0      		ldi r25,hi8(gs(Tasks_Task3))
+  38 001c 62E0      		ldi r22,lo8(2)
+  39 001e 0E94 0000 		call Kernel_Task_Create
+  40               	.LM6:
+  41 0022 0E94 0000 		call Kernel_Start_Tasks
+  42               	.L2:
+  43 0026 00C0      		rjmp .L2
+  44               	.LFE6:
+  70               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\Farid\AppData\Local\Temp/ccfMzqPs.s:2      *ABS*:0000003f __SREG__
-C:\Users\Farid\AppData\Local\Temp/ccfMzqPs.s:3      *ABS*:0000003e __SP_H__
-C:\Users\Farid\AppData\Local\Temp/ccfMzqPs.s:4      *ABS*:0000003d __SP_L__
-C:\Users\Farid\AppData\Local\Temp/ccfMzqPs.s:5      *ABS*:00000034 __CCP__
-C:\Users\Farid\AppData\Local\Temp/ccfMzqPs.s:6      *ABS*:00000000 __tmp_reg__
-C:\Users\Farid\AppData\Local\Temp/ccfMzqPs.s:7      *ABS*:00000001 __zero_reg__
-C:\Users\Farid\AppData\Local\Temp/ccfMzqPs.s:18     .text:00000000 main
+C:\Users\WALTON\AppData\Local\Temp/ccH8bG4o.s:2      *ABS*:0000003f __SREG__
+C:\Users\WALTON\AppData\Local\Temp/ccH8bG4o.s:3      *ABS*:0000003e __SP_H__
+C:\Users\WALTON\AppData\Local\Temp/ccH8bG4o.s:4      *ABS*:0000003d __SP_L__
+C:\Users\WALTON\AppData\Local\Temp/ccH8bG4o.s:5      *ABS*:00000034 __CCP__
+C:\Users\WALTON\AppData\Local\Temp/ccH8bG4o.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\WALTON\AppData\Local\Temp/ccH8bG4o.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\WALTON\AppData\Local\Temp/ccH8bG4o.s:18     .text:00000000 main
 
 UNDEFINED SYMBOLS
-Kernel_Timer_Init
-Kernel_Task_Sleep
+Kernel_Init
+Tasks_Task1
+Kernel_Task_Create
+Tasks_Task2
+Tasks_Task3
+Kernel_Start_Tasks

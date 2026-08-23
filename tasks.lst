@@ -74,7 +74,7 @@
   86               	 ;  0 "" 2
   87               	.LM15:
   88               	/* #NOAPP */
-  89 0022 8AEF      		ldi r24,lo8(-6)
+  89 0022 84E6      		ldi r24,lo8(100)
   90 0024 0E94 0000 		call Kernel_Task_Sleep
   91 0028 00C0      		rjmp .L7
   92               	.LFE9:
@@ -107,7 +107,7 @@
  121               	 ;  0 "" 2
  122               	.LM22:
  123               	/* #NOAPP */
- 124 003a 8AEF      		ldi r24,lo8(-6)
+ 124 003a 82E3      		ldi r24,lo8(50)
  125 003c 0E94 0000 		call Kernel_Task_Sleep
  126 0040 00C0      		rjmp .L10
  127               	.LFE8:
@@ -140,24 +140,24 @@
  156               	 ;  0 "" 2
  157               	.LM29:
  158               	/* #NOAPP */
- 159 0052 8AEF      		ldi r24,lo8(-6)
+ 159 0052 89E1      		ldi r24,lo8(25)
  160 0054 0E94 0000 		call Kernel_Task_Sleep
  161 0058 00C0      		rjmp .L13
  162               	.LFE7:
  220               	.Letext0:
 DEFINED SYMBOLS
                             *ABS*:00000000 tasks.c
-C:\Users\WALTON\AppData\Local\Temp/ccZrLemu.s:2      *ABS*:0000003f __SREG__
-C:\Users\WALTON\AppData\Local\Temp/ccZrLemu.s:3      *ABS*:0000003e __SP_H__
-C:\Users\WALTON\AppData\Local\Temp/ccZrLemu.s:4      *ABS*:0000003d __SP_L__
-C:\Users\WALTON\AppData\Local\Temp/ccZrLemu.s:5      *ABS*:00000034 __CCP__
-C:\Users\WALTON\AppData\Local\Temp/ccZrLemu.s:6      *ABS*:00000000 __tmp_reg__
-C:\Users\WALTON\AppData\Local\Temp/ccZrLemu.s:7      *ABS*:00000001 __zero_reg__
-C:\Users\WALTON\AppData\Local\Temp/ccZrLemu.s:18     .text:00000000 Tasks_Disable_Peripherals
-C:\Users\WALTON\AppData\Local\Temp/ccZrLemu.s:30     .text:00000002 Tasks_Task4
-C:\Users\WALTON\AppData\Local\Temp/ccZrLemu.s:61     .text:00000012 Tasks_Task3
-C:\Users\WALTON\AppData\Local\Temp/ccZrLemu.s:96     .text:0000002a Tasks_Task2
-C:\Users\WALTON\AppData\Local\Temp/ccZrLemu.s:131    .text:00000042 Tasks_Task1
+C:\Users\WALTON\AppData\Local\Temp/ccjLsDGC.s:2      *ABS*:0000003f __SREG__
+C:\Users\WALTON\AppData\Local\Temp/ccjLsDGC.s:3      *ABS*:0000003e __SP_H__
+C:\Users\WALTON\AppData\Local\Temp/ccjLsDGC.s:4      *ABS*:0000003d __SP_L__
+C:\Users\WALTON\AppData\Local\Temp/ccjLsDGC.s:5      *ABS*:00000034 __CCP__
+C:\Users\WALTON\AppData\Local\Temp/ccjLsDGC.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\WALTON\AppData\Local\Temp/ccjLsDGC.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\WALTON\AppData\Local\Temp/ccjLsDGC.s:18     .text:00000000 Tasks_Disable_Peripherals
+C:\Users\WALTON\AppData\Local\Temp/ccjLsDGC.s:30     .text:00000002 Tasks_Task4
+C:\Users\WALTON\AppData\Local\Temp/ccjLsDGC.s:61     .text:00000012 Tasks_Task3
+C:\Users\WALTON\AppData\Local\Temp/ccjLsDGC.s:96     .text:0000002a Tasks_Task2
+C:\Users\WALTON\AppData\Local\Temp/ccjLsDGC.s:131    .text:00000042 Tasks_Task1
 
 UNDEFINED SYMBOLS
 Kernel_Task_Sleep

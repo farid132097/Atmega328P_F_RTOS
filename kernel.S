@@ -407,6 +407,24 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 
 
 
+.macro  KER_FIND_LST                                      ;total 0.25uS @8MHz     (  2 clocks) 
+		LDS   R18                , KerNTSK                ;load ntask             (  2 clocks) 
+		LDI   R19                , 0x00                   ;loop counter           (  1 clock ) 
+		LDI   R30                , lo8(KerSleep)          ;fetch base pos low     (  1 clock ) 
+		LDI   R31                , hi8(KerSleep)          ;fetch base pos high    (  1 clock ) 
+    KER_LST_LOOP\@:
+	    INC   R19                                         ;increment              (  1 clock ) 
+		LDD   R20                , Z+                     ;load sleep val         (  2 clocks) 
+		CP    R19                , R18                    ;compare                (  1 clock ) 
+		
+	KER_LST_EXIT\@:
+.endm                                                                                          
+
+
+
+
+
+
 .macro  KER_RUN_SCHEDULER                                 ;total 0.25uS @8MHz     (  2 clocks) 
 		LDS   R18                , KerTID                 ;load val               (  2 clocks) 
 		LDS   R19                , KerNTSK                ;load ntask             (  2 clocks) 

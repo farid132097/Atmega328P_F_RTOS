@@ -23,7 +23,7 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   9 .debug_frame  00000080  00000000  00000000  00001290  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    000000d9  00000000  00000000  00001310  2**0
+ 10 .debug_str    00000114  00000000  00000000  00001310  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -70,29 +70,19 @@ Disassembly of section .text:
   7c:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
 
 00000080 <main>:
-
-int main(void) {
-    
-    
-	//Kernel_Timer_Init();
-	Kernel_Init();
   80:	0e 94 be 01 	call	0x37c	; 0x37c <Kernel_Init>
-	Kernel_Task_Create(Tasks_Task1, 0);
   84:	85 e7       	ldi	r24, 0x75	; 117
   86:	90 e0       	ldi	r25, 0x00	; 0
   88:	60 e0       	ldi	r22, 0x00	; 0
   8a:	0e 94 37 01 	call	0x26e	; 0x26e <Kernel_Task_Create>
-	Kernel_Task_Create(Tasks_Task2, 1);
   8e:	89 e6       	ldi	r24, 0x69	; 105
   90:	90 e0       	ldi	r25, 0x00	; 0
   92:	61 e0       	ldi	r22, 0x01	; 1
   94:	0e 94 37 01 	call	0x26e	; 0x26e <Kernel_Task_Create>
-	Kernel_Task_Create(Tasks_Task3, 2);
   98:	8d e5       	ldi	r24, 0x5D	; 93
   9a:	90 e0       	ldi	r25, 0x00	; 0
   9c:	62 e0       	ldi	r22, 0x02	; 2
   9e:	0e 94 37 01 	call	0x26e	; 0x26e <Kernel_Task_Create>
-	Kernel_Start_Tasks();
   a2:	0e 94 df 01 	call	0x3be	; 0x3be <Kernel_Start_Tasks>
   a6:	ff cf       	rjmp	.-2      	; 0xa6 <main+0x26>
 
@@ -136,7 +126,7 @@ void Tasks_Task4(void){
   b8:	fa cf       	rjmp	.-12     	; 0xae <Tasks_Task4+0x4>
 
 000000ba <Tasks_Task3>:
-    Kernel_Task_Sleep(250);
+    Kernel_Task_Sleep(50);
     
   }
 }
@@ -167,13 +157,13 @@ void Tasks_Task3(void){
     sei();
   c8:	78 94       	sei
 
-    Kernel_Task_Sleep(250);
-  ca:	8a ef       	ldi	r24, 0xFA	; 250
+    Kernel_Task_Sleep(100);
+  ca:	84 e6       	ldi	r24, 0x64	; 100
   cc:	0e 94 20 02 	call	0x440	; 0x440 <Kernel_Task_Sleep>
   d0:	f7 cf       	rjmp	.-18     	; 0xc0 <SRUCSR0A>
 
 000000d2 <Tasks_Task2>:
-    Kernel_Task_Sleep(250);
+    Kernel_Task_Sleep(25);
     
   }
 }
@@ -204,8 +194,8 @@ void Tasks_Task2(void){
     sei();
   e0:	78 94       	sei
     
-    Kernel_Task_Sleep(250);
-  e2:	8a ef       	ldi	r24, 0xFA	; 250
+    Kernel_Task_Sleep(50);
+  e2:	82 e3       	ldi	r24, 0x32	; 50
   e4:	0e 94 20 02 	call	0x440	; 0x440 <Kernel_Task_Sleep>
   e8:	f7 cf       	rjmp	.-18     	; 0xd8 <Tasks_Task2+0x6>
 
@@ -241,8 +231,8 @@ void Tasks_Task1(void){
     sei();
   f8:	78 94       	sei
 
-    Kernel_Task_Sleep(250);
-  fa:	8a ef       	ldi	r24, 0xFA	; 250
+    Kernel_Task_Sleep(25);
+  fa:	89 e1       	ldi	r24, 0x19	; 25
   fc:	0e 94 20 02 	call	0x440	; 0x440 <Kernel_Task_Sleep>
  100:	f7 cf       	rjmp	.-18     	; 0xf0 <Tasks_Task1+0x6>
 

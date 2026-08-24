@@ -103,6 +103,7 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 .global  Kernel_Task_Sleep
 .global  Kernel_Task_Create
 .global  Kernel_Start_Tasks
+.global  Kernel_Task_Sleep_Test
 ;;================================define global functions end===============================;; 
 
                                                                   
@@ -410,14 +411,20 @@ KerStack:  .skip KER_STK_SZ*KER_MX_NTSK                   ;KER_STK_SZ bytes for 
 .macro  KER_FIND_LST                                      ;total 0.25uS @8MHz     (  2 clocks) 
 		LDS   R18                , KerNTSK                ;load ntask             (  2 clocks) 
 		LDI   R19                , 0x00                   ;loop counter           (  1 clock ) 
+		LDI   R20                , 0x00                   ;initial LST TID        (  1 clock ) 
+		LDI   R21                , 0xFF                   ;initial LST            (  1 clock ) 
 		LDI   R30                , lo8(KerSleep)          ;fetch base pos low     (  1 clock ) 
 		LDI   R31                , hi8(KerSleep)          ;fetch base pos high    (  1 clock ) 
-    KER_LST_LOOP\@:
-	    INC   R19                                         ;increment              (  1 clock ) 
-		LDD   R20                , Z+                     ;load sleep val         (  2 clocks) 
+    KER_LST_LOOP\@:																			   
+		LDD   R22                , Z+                     ;load sleep val         (  2 clocks) 
+		CP    R22                , R21                    ;compare                (  1 clock ) 
+		BRSH  KER_LST_LP_CMPRE\@                          ;jmp to label           (  2 clocks) 
+		MOV   R20                , R19                    ;new LST TID            (  1 clock ) 
+		MOV   R21                , R22                    ;new LST                (  1 clock ) 
+	KER_LST_LP_CMPRE\@:																		   
+		INC   R19                                         ;increment              (  1 clock ) 
 		CP    R19                , R18                    ;compare                (  1 clock ) 
-		
-	KER_LST_EXIT\@:
+		BRLO  KER_LST_LOOP\@                              ;jmp to label           (  2 clocks) 
 .endm                                                                                          
 
 
@@ -659,3 +666,12 @@ Kernel_Task_Sleep:                                        ;total 37.25uS @8MHz  
 
 
 
+Kernel_Task_Sleep_Test:                                   ;total 37.25uS @8MHz    (298 clocks) 
+		LDI   R30                , lo8(KerSleep)          ;fetch base pos low     (  1 clock ) 
+		LDI   R31                , hi8(KerSleep)          ;fetch base pos high    (  1 clock ) 
+		LDS   R18                , KerTID                 ;load TID               (  1 clock ) 
+		ADD   R30                , R18                    ;add regs               (  1 clock ) 
+		LDI   R18                , 0x00                   ;clear reg              (  1 clock ) 
+		ADC   R31                , R18                    ;add regs with carry    (  1 clock ) 
+		ST    Z                  , R24                    ;store val              (  2 clocks)  
+		RET                                               ;return from subroutine (  4 clocks) 

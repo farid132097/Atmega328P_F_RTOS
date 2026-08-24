@@ -31,6 +31,7 @@ void Tasks_Task1(void){
     PORTC ^= (1<<1);
     sei();
 
+    Kernel_Task_Sleep_Test(25);
     Kernel_Task_Sleep(25);
     
   }
@@ -47,6 +48,7 @@ void Tasks_Task2(void){
     PORTC ^= (1<<2);
     sei();
     
+    Kernel_Task_Sleep_Test(25);
     Kernel_Task_Sleep(50);
     
   }
@@ -63,6 +65,7 @@ void Tasks_Task3(void){
     PORTC ^= (1<<3);
     sei();
 
+    Kernel_Task_Sleep_Test(25);
     Kernel_Task_Sleep(100);
     
   }

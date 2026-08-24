@@ -54,6 +54,7 @@ extern void      Kernel_Start_Tasks(void);
 extern void      Kernel_Task_Idle(void);
 extern void      Kernel_Task_Sleep(uint8_t val);
 extern void      Kernel_Manual_Sleep(uint8_t val);
+extern void      Kernel_Task_Sleep_Test(uint8_t val);
 
 #endif
 
